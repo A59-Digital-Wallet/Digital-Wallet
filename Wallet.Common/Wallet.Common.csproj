@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Digital-Wallet\Wallet.API.csproj" />
     <ProjectReference Include="..\Wallet.Data\Wallet.Data.csproj" />
     <ProjectReference Include="..\Wallet.Services\Wallet.Services.csproj" />

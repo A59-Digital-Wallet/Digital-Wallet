@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Digital_Wallet.Controllers
@@ -7,6 +8,7 @@ namespace Digital_Wallet.Controllers
     [ApiController]
     public class CreditCardController : ControllerBase
     {
+        [Authorize]
         [HttpGet]
         public IActionResult Get()
         {

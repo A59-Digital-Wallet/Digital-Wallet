@@ -1,6 +1,11 @@
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using System.Runtime.ConstrainedExecution;
 using Wallet.Data.Db;
+using Wallet.Data.Models;
 using static System.Net.WebRequestMethods;
 
 namespace Digital_Wallet
@@ -20,10 +25,25 @@ namespace Digital_Wallet
 
             // Add controllers
             builder.Services.AddControllers();
+            builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
+            builder.Services.AddAuthorizationBuilder();
+            builder.Services.AddIdentityCore<AppUser>()
+                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddApiEndpoints();
 
             // Configure Swagger for API documentation
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            }); 
+             
 
             var app = builder.Build();
 
@@ -35,6 +55,7 @@ namespace Digital_Wallet
                 app.UseSwaggerUI();
             }
 
+            app.MapIdentityApi<AppUser>();
             // Enable HTTPS Redirection
             app.UseHttpsRedirection();
 
