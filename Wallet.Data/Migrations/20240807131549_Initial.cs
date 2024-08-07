@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Wallet.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class intiial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -159,7 +159,7 @@ namespace Wallet.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreditCards",
+                name: "Cards",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -167,14 +167,15 @@ namespace Wallet.Data.Migrations
                     CardNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CardHolderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CVV = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CVV = table.Column<string>(type: "nvarchar(4)", maxLength: 4, nullable: false),
+                    CardType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreditCards", x => x.Id);
+                    table.PrimaryKey("PK_Cards", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreditCards_AspNetUsers_AppUserId",
+                        name: "FK_Cards_AspNetUsers_AppUserId",
                         column: x => x.AppUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -223,14 +224,14 @@ namespace Wallet.Data.Migrations
                 {
                     table.PrimaryKey("PK_Transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transaction_CreditCards_CreditCardId",
+                        name: "FK_Transaction_Cards_CreditCardId",
                         column: x => x.CreditCardId,
-                        principalTable: "CreditCards",
+                        principalTable: "Cards",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Transaction_CreditCards_Withdraw_CreditCardId",
+                        name: "FK_Transaction_Cards_Withdraw_CreditCardId",
                         column: x => x.Withdraw_CreditCardId,
-                        principalTable: "CreditCards",
+                        principalTable: "Cards",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transaction_Wallets_RecipientWalletId",
@@ -285,8 +286,8 @@ namespace Wallet.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreditCards_AppUserId",
-                table: "CreditCards",
+                name: "IX_Cards_AppUserId",
+                table: "Cards",
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
@@ -341,7 +342,7 @@ namespace Wallet.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "CreditCards");
+                name: "Cards");
 
             migrationBuilder.DropTable(
                 name: "Wallets");

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Digital_Wallet.Controllers
 {
-    [Route("api/credit")]
+    [Route("api/card")]
     [ApiController]
-    public class CreditCardController : ControllerBase
+    public class CardController : ControllerBase
     {
         [Authorize]
         [HttpGet]

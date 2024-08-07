@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wallet.Data.Models.Transactions.Enum
+namespace Wallet.Data.Models.Enum
 {
     public enum TransactionStatus
     {

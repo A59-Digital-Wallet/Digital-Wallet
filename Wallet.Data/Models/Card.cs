@@ -5,10 +5,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wallet.Data.Models.Enum;
 
 namespace Wallet.Data.Models
 {
-    public class CreditCard
+    public class Card
     {
 
         [Key]
@@ -24,7 +25,11 @@ namespace Wallet.Data.Models
         public DateTime ExpiryDate { get; set; }
 
         [Required]
+        [MaxLength(4)]
         public string CVV { get; set; }
+
+        [Required]
+        public CardType CardType { get; set; }
 
         [Required]
         public string AppUserId { get; set; }

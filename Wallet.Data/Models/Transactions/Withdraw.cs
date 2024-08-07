@@ -14,6 +14,6 @@ namespace Wallet.Data.Models.Transactions
         public int CreditCardId { get; set; }
 
         [ForeignKey("CreditCardId")]
-        public CreditCard CreditCard { get; set; }
+        public Card CreditCard { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Wallet.Data.Db
         {
         }
 
-        public DbSet<CreditCard> CreditCards { get; set; }
+        public DbSet<Card> Cards { get; set; }
         public DbSet<AddMoney> AddMoneyTransactions { get; set; }
         public DbSet<Transfer> TransferMoneyTransactions { get; set; }
         public DbSet<Withdraw> WithdrawMoneyTransactions { get; set; }
@@ -69,6 +69,11 @@ namespace Wallet.Data.Db
                 .Property(t => t.Status)
                 .HasConversion<string>();
 
+            // Configure enum to string conversion for CardType
+            modelBuilder.Entity<Card>()
+                .Property(c => c.CardType)
+                .HasConversion<string>();
+
             modelBuilder.Entity<AddMoney>()
                 .HasOne(t => t.CreditCard)
                 .WithMany()
@@ -80,6 +85,15 @@ namespace Wallet.Data.Db
                 .WithMany()
                 .HasForeignKey(t => t.CreditCardId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Configure decimal properties
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Amount)
+                .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<UserWallet>()
+                .Property(w => w.Balance)
+                .HasColumnType("decimal(18,2)");
         }
     }
 }

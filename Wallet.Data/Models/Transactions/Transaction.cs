@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wallet.Data.Models.Transactions.Enum;
+using Wallet.Data.Models.Enum;
 
 namespace Wallet.Data.Models.Transactions
 {
