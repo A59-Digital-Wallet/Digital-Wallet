@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -30,6 +31,9 @@ namespace Digital_Wallet
             builder.Services.AddIdentityCore<AppUser>()
                 .AddEntityFrameworkStores<ApplicationContext>()
                 .AddApiEndpoints();
+
+
+            
 
             // Configure Swagger for API documentation
             builder.Services.AddEndpointsApiExplorer();
