@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Wallet.Data.Models.Transactions
 {
-    public class Withdraw
+    public class Withdraw : Transaction
     {
         [Required]
         public int CreditCardId { get; set; }

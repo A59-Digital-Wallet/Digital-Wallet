@@ -24,8 +24,8 @@ namespace Wallet.Data.Models
         public string LastName{ get; set; }
 
         public List<CreditCard> Cards { get; set; }
-        public List<Transaction> Transactions { get; set; }
-        public List<Wallettt> Wallets { get; set; }
-        public List<Transfer> Transfers { get; set; }
+        
+        public List<UserWallet> Wallets { get; set; }
+        
     }
 }

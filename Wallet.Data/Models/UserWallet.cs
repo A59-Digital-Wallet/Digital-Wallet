@@ -10,7 +10,7 @@ using Wallet.Data.Models.Transactions;
 namespace Wallet.Data.Models
 {
 
-    public class Wallettt
+    public class UserWallet
     {
             [Key]
             public int Id { get; set; }
@@ -30,7 +30,9 @@ namespace Wallet.Data.Models
             [ForeignKey("AppUserId")]
             public AppUser AppUser { get; set; }
 
-            public List<Transaction> Transactions { get; set; }
+        public List<AddMoney> AddMoneyTransactions { get; set; }
+        public List<Transfer> TransferMoneyTransactions { get; set; }
+        public List<Withdraw> WithdrawMoneyTransactions { get; set; }
     }
     
 }

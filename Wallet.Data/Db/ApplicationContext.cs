@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Transactions;
 
@@ -22,7 +17,7 @@ namespace Wallet.Data.Db
         public DbSet<AddMoney> AddMoneyTransactions { get; set; }
         public DbSet<Transfer> TransferMoneyTransactions { get; set; }
         public DbSet<Withdraw> WithdrawMoneyTransactions { get; set; }
-        public DbSet<Wallettt> Wallets { get; set; }
+        public DbSet<UserWallet> Wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,21 +26,36 @@ namespace Wallet.Data.Db
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.Cards)
                 .WithOne(c => c.AppUser)
-                .HasForeignKey(c => c.AppUserId);
+                .HasForeignKey(c => c.AppUserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.Wallets)
                 .WithOne(w => w.AppUser)
-                .HasForeignKey(w => w.AppUserId);
+                .HasForeignKey(w => w.AppUserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Wallettt>()
+            modelBuilder.Entity<UserWallet>()
                 .HasIndex(w => new { w.AppUserId, w.Name })
                 .IsUnique();
 
-            modelBuilder.Entity<Wallettt>()
-                .HasMany(w => w.Transactions)
+            modelBuilder.Entity<UserWallet>()
+                .HasMany(w => w.AddMoneyTransactions)
                 .WithOne(t => t.Wallet)
-                .HasForeignKey(t => t.WalletId);
+                .HasForeignKey(t => t.WalletId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<UserWallet>()
+                .HasMany(w => w.TransferMoneyTransactions)
+                .WithOne(t => t.Wallet)
+                .HasForeignKey(t => t.WalletId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<UserWallet>()
+                .HasMany(w => w.WithdrawMoneyTransactions)
+                .WithOne(t => t.Wallet)
+                .HasForeignKey(t => t.WalletId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Configure inheritance for transactions
             modelBuilder.Entity<Transaction>()
@@ -58,6 +68,18 @@ namespace Wallet.Data.Db
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Status)
                 .HasConversion<string>();
+
+            modelBuilder.Entity<AddMoney>()
+                .HasOne(t => t.CreditCard)
+                .WithMany()
+                .HasForeignKey(t => t.CreditCardId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Withdraw>()
+                .HasOne(t => t.CreditCard)
+                .WithMany()
+                .HasForeignKey(t => t.CreditCardId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -28,6 +28,6 @@ namespace Wallet.Data.Models.Transactions
         public int WalletId { get; set; }
 
         [ForeignKey("WalletId")]
-        public Wallettt Wallet { get; set; }
+        public UserWallet Wallet { get; set; }
     }
 }

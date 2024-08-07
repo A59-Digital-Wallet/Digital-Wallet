@@ -9,6 +9,6 @@ namespace Wallet.Data.Models.Transactions
         public int RecipientWalletId { get; set; }
 
         [ForeignKey("RecipientWalletId")]
-        public Wallettt RecipientWallet { get; set; }
+        public UserWallet RecipientWallet { get; set; }
     }
 }
