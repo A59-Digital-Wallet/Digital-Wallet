@@ -230,7 +230,7 @@ namespace Wallet.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Wallet.Data.Models.CreditCard", b =>
+            modelBuilder.Entity("Wallet.Data.Models.Card", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -244,13 +244,18 @@ namespace Wallet.Data.Migrations
 
                     b.Property<string>("CVV")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("CardHolderName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -261,7 +266,7 @@ namespace Wallet.Data.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.ToTable("CreditCards");
+                    b.ToTable("Cards");
                 });
 
             modelBuilder.Entity("Wallet.Data.Models.Transactions.Transaction", b =>
@@ -433,7 +438,7 @@ namespace Wallet.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Wallet.Data.Models.CreditCard", b =>
+            modelBuilder.Entity("Wallet.Data.Models.Card", b =>
                 {
                     b.HasOne("Wallet.Data.Models.AppUser", "AppUser")
                         .WithMany("Cards")
@@ -457,7 +462,7 @@ namespace Wallet.Data.Migrations
 
             modelBuilder.Entity("Wallet.Data.Models.Transactions.AddMoney", b =>
                 {
-                    b.HasOne("Wallet.Data.Models.CreditCard", "CreditCard")
+                    b.HasOne("Wallet.Data.Models.Card", "CreditCard")
                         .WithMany()
                         .HasForeignKey("CreditCardId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -495,7 +500,7 @@ namespace Wallet.Data.Migrations
 
             modelBuilder.Entity("Wallet.Data.Models.Transactions.Withdraw", b =>
                 {
-                    b.HasOne("Wallet.Data.Models.CreditCard", "CreditCard")
+                    b.HasOne("Wallet.Data.Models.Card", "CreditCard")
                         .WithMany()
                         .HasForeignKey("CreditCardId")
                         .OnDelete(DeleteBehavior.NoAction)

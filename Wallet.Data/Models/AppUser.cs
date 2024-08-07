@@ -23,7 +23,7 @@ namespace Wallet.Data.Models
         [Required]
         public string LastName{ get; set; }
 
-        public List<CreditCard> Cards { get; set; }
+        public List<Card> Cards { get; set; }
         
         public List<UserWallet> Wallets { get; set; }
         
