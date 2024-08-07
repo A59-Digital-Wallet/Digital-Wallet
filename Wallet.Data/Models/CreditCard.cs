@@ -12,8 +12,8 @@ namespace Wallet.Data.Models
         public int CreditCardId { get; set; }
         public string CardNumber { get; set; }
 
-        //public int UserId { get; set; }
-        //public User User { get; set; }
+        public int AppUserId { get; set; }
+        public AppUser AppUser { get; set; }
         public DateTime ExpirationDate { get; set; }
         public string CardHolder { get; set; }
         public int CheckNumber { get; set; }

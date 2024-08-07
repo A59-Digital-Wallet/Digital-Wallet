@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wallet.Data.Models.Transactions;
 
 namespace Wallet.Data.Models
 {
@@ -24,6 +25,7 @@ namespace Wallet.Data.Models
 
         public List<CreditCard> Cards { get; set; }
         public List<Transaction> Transactions { get; set; }
-        public List<Wallet> Wallets { get; set; }
+        public List<Wallettt> Wallets { get; set; }
+        public List<Transfer> Transfers { get; set; }
     }
 }
