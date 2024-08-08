@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Wallet.Data.Models;
+using Wallet.DTO.Request;
+using Wallet.Services.Contracts;
 
 namespace Digital_Wallet.Controllers
 {
@@ -8,11 +11,27 @@ namespace Digital_Wallet.Controllers
     [ApiController]
     public class CardController : ControllerBase
     {
-        [Authorize]
-        [HttpGet]
-        public IActionResult Get()
+        ICardService _cardService;
+        public CardController(ICardService cardService)
         {
-            return Ok("Welcome to Digital Wallet API!");
+            _cardService = cardService;
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddCard([FromBody] CardRequest cardRequest)
+        {
+            await _cardService.AddCardAsync(cardRequest);
+            return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCard(int id)
+        {
+            var card = await _cardService.GetCardAsync(id);
+            if (card != null)
+            {
+                return Ok(card);
+            }
+            return NotFound();
         }
     }
 }

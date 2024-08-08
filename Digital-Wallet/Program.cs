@@ -1,11 +1,16 @@
-
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using System.Runtime.ConstrainedExecution;
 using Wallet.Data.Db;
 using Wallet.Data.Models;
+using Wallet.Data.Repositories.Contracts;
+using Wallet.Data.Repositories.Implementations;
+using Wallet.Services.Contracts;
+using Wallet.Services.Encryption;
+using Wallet.Services.Factory;
+using Wallet.Services.Factory.Contracts;
+using Wallet.Services.Implementations;
 using static System.Net.WebRequestMethods;
 
 namespace Digital_Wallet
@@ -42,8 +47,18 @@ namespace Digital_Wallet
                     Type = SecuritySchemeType.ApiKey
                 });
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
-            }); 
-             
+            });
+
+            // Repositories
+            builder.Services.AddScoped<ICardRepository, CardRepository>();
+
+            // Services
+            builder.Services.AddScoped<ICardService, CardService>();
+            //builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+
+            // Factories
+            builder.Services.AddScoped<ICardFactory, CardFactory>();
+
 
             var app = builder.Build();
 
