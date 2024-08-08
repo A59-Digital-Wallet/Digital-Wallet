@@ -26,6 +26,8 @@ namespace Wallet.Data.Models
         public List<Card> Cards { get; set; }
         
         public List<UserWallet> Wallets { get; set; }
-        
+        public string? EmailConfirmationCode { get; set; }
+        public DateTime? EmailConfirmationCodeGeneratedAt { get; set; }
+
     }
 }

@@ -1,12 +1,13 @@
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Runtime.ConstrainedExecution;
 using Wallet.Data.Db;
 using Wallet.Data.Models;
+using Wallet.Services.Contracts;
+using Wallet.Services.Implementations;
 using static System.Net.WebRequestMethods;
 
 namespace Digital_Wallet
@@ -28,12 +29,17 @@ namespace Digital_Wallet
             builder.Services.AddControllers();
             builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
             builder.Services.AddAuthorizationBuilder();
-            builder.Services.AddIdentityCore<AppUser>()
-                .AddEntityFrameworkStores<ApplicationContext>()
-                .AddApiEndpoints();
+           
+               
+            builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
+            .AddEntityFrameworkStores<ApplicationContext>()
+            .AddDefaultTokenProviders()
+             .AddApiEndpoints();
 
-
-            
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
 
             // Configure Swagger for API documentation
             builder.Services.AddEndpointsApiExplorer();
