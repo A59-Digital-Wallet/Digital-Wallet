@@ -9,7 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="DevExpress.Data" Version="24.1.4" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
+    <PackageReference Include="IdentityServer4.Storage" Version="4.1.2" />
     <PackageReference Include="MailKit" Version="4.7.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Wallet.Data.Models.Transactions;
+using Wallet.Data.Models.Enums;
 
 namespace Wallet.Data.Models
 {
@@ -19,16 +20,17 @@ namespace Wallet.Data.Models
             public string Name { get; set; }
 
             [Required]
-            public string Currency { get; set; }
+            public Currency Currency { get; set; }
 
             [Required]
-            public decimal Balance { get; set; }
+            public double Balance { get; set; }
 
             [Required]
             public string AppUserId { get; set; }
 
             [ForeignKey("AppUserId")]
             public AppUser AppUser { get; set; }
+
 
         public List<AddMoney> AddMoneyTransactions { get; set; }
         public List<Transfer> TransferMoneyTransactions { get; set; }

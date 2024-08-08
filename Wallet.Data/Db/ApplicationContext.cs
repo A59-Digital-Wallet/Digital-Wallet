@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 
 namespace Wallet.Data.Db
@@ -59,10 +60,10 @@ namespace Wallet.Data.Db
 
             // Configure inheritance for transactions
             modelBuilder.Entity<Transaction>()
-                .HasDiscriminator<string>("TransactionType")
-                .HasValue<AddMoney>("AddMoney")
-                .HasValue<Transfer>("TransferMoney")
-                .HasValue<Withdraw>("WithdrawMoney");
+                .HasDiscriminator<TransactionType>("TransactionType")
+                .HasValue<AddMoney>(TransactionType.Add)
+                .HasValue<Transfer>(TransactionType.Transfer)
+                .HasValue<Withdraw>(TransactionType.Withdraw);
 
             // Configure enum to string conversion for TransactionStatus
             modelBuilder.Entity<Transaction>()

@@ -2,9 +2,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Wallet.Data.Models;
+using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Services.Implementations;
 
@@ -17,14 +21,14 @@ namespace Digital_Wallet.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
         private readonly IEmailSender emailSender;
-        
+        private readonly IConfiguration _configuration;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender)
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
-            //this.registerConfirmationModel = registerConfirmationModel;
+            _configuration = configuration;
         }
 
         [HttpPost("add-user")]
@@ -100,6 +104,44 @@ namespace Digital_Wallet.Controllers
             }
 
             return BadRequest("Invalid or expired confirmation code.");
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await this.userManager.FindByEmailAsync(model.Email);
+            if (user != null && await this.userManager.CheckPasswordAsync(user, model.Password))
+            {
+                var token = GenerateJwtToken(user);
+                return Ok(new { token });
+            }
+
+            return Unauthorized("Invalid email or password.");
+        }
+
+        private string GenerateJwtToken(AppUser user)
+        {
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings["Secret"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.UserData, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email) // Added claim for email address
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
 

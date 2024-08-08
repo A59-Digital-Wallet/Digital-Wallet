@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Wallet.Data\Wallet.Data.csproj" />
   </ItemGroup>
 
