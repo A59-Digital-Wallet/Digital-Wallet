@@ -13,6 +13,7 @@ using Wallet.Services.Contracts;
 using Wallet.Services.Factory;
 using Wallet.Services.Factory.Contracts;
 using Wallet.Services.Implementations;
+using Wallet.Services.Validation.CardValidation;
 
 namespace Digital_Wallet
 {
@@ -87,22 +88,22 @@ namespace Digital_Wallet
                     Scheme = "Bearer"
                 });
                 options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header,
-            },
-            new List<string>()
-        }
-    });
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+                        },
+                        new List<string>()
+                    }
+                });
             });
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             // Repositories
@@ -116,6 +117,8 @@ namespace Digital_Wallet
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();
             builder.Services.AddScoped<IWalletFactory, WalletFactory>();
+
+            builder.Services.AddScoped<CardValidation>();
 
             var app = builder.Build();
 

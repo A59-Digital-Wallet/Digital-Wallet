@@ -6,7 +6,7 @@ namespace Wallet.Services.Factory
 {
     public class CardFactory : ICardFactory
     {
-        public Card Map(CardRequest cardRequest)
+        public Card Map(CardRequest cardRequest, string userId)
         {
             return new Card
             {
@@ -15,6 +15,7 @@ namespace Wallet.Services.Factory
                 ExpiryDate = cardRequest.ExpiryDate,
                 CVV = cardRequest.CVV,
                 CardType = cardRequest.CardType,
+                AppUserId = userId,
                 // Need to figure out how to handle user.
             };
         }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Wallet.Data.Models.Enum;
+using Wallet.Data.Models.Enums;
 
 namespace Wallet.Data.Models
 {
@@ -30,6 +31,9 @@ namespace Wallet.Data.Models
 
         [Required]
         public CardType CardType { get; set; }
+
+        [Required]
+        public CardNetwork CardNetwork { get; set; }
 
         [Required]
         public string AppUserId { get; set; }

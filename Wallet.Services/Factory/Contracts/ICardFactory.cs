@@ -5,6 +5,6 @@ namespace Wallet.Services.Factory.Contracts
 {
     public interface ICardFactory
     {
-        Card Map(CardRequest cardRequest);
+        Card Map(CardRequest cardRequest, string userId);
     }
 }

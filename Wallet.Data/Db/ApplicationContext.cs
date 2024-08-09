@@ -15,7 +15,7 @@ namespace Wallet.Data.Db
         }
 
         public DbSet<Card> Cards { get; set; }
-        
+
         public DbSet<Transfer> TransferMoneyTransactions { get; set; }
         public DbSet<NonTransfer> NonTransferTransactions { get; set; }
         public DbSet<UserWallet> Wallets { get; set; }
@@ -52,7 +52,7 @@ namespace Wallet.Data.Db
                 .HasForeignKey(t => t.WalletId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-          
+
 
             // Configure inheritance for transactions
             modelBuilder.Entity<Transaction>()
@@ -71,13 +71,18 @@ namespace Wallet.Data.Db
                 .Property(c => c.CardType)
                 .HasConversion<string>();
 
+            // Configure enum to string conversion for CardNetwork
+            modelBuilder.Entity<Card>()
+                .Property(c => c.CardNetwork)
+                .HasConversion<string>();
+
             modelBuilder.Entity<NonTransfer>()
                 .HasOne(t => t.UserCard)
                 .WithMany()
                 .HasForeignKey(t => t.UserCardID)
                 .OnDelete(DeleteBehavior.NoAction);
 
-           
+
 
             // Configure decimal properties
             modelBuilder.Entity<Transaction>()

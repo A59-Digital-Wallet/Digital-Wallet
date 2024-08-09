@@ -10,7 +10,7 @@ namespace Wallet.Services.Contracts
 {
     public interface ICardService
     {
-        Task AddCardAsync(CardRequest cardRequest);
+        Task AddCardAsync(CardRequest cardRequest, string userID);
         Task<Card> GetCardAsync(int cardId);
 
     }
