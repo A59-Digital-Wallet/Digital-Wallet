@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Wallet.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class updating : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -218,21 +218,16 @@ namespace Wallet.Data.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WalletId = table.Column<int>(type: "int", nullable: false),
                     TransactionType = table.Column<int>(type: "int", nullable: false),
-                    CreditCardId = table.Column<int>(type: "int", nullable: true),
-                    RecipientWalletId = table.Column<int>(type: "int", nullable: true),
-                    Withdraw_CreditCardId = table.Column<int>(type: "int", nullable: true)
+                    UserCardID = table.Column<int>(type: "int", nullable: true),
+                    CardId = table.Column<int>(type: "int", nullable: true),
+                    RecipientWalletId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transaction_Cards_CreditCardId",
-                        column: x => x.CreditCardId,
-                        principalTable: "Cards",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Transaction_Cards_Withdraw_CreditCardId",
-                        column: x => x.Withdraw_CreditCardId,
+                        name: "FK_Transaction_Cards_UserCardID",
+                        column: x => x.UserCardID,
                         principalTable: "Cards",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -293,24 +288,19 @@ namespace Wallet.Data.Migrations
                 column: "AppUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transaction_CreditCardId",
-                table: "Transaction",
-                column: "CreditCardId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Transaction_RecipientWalletId",
                 table: "Transaction",
                 column: "RecipientWalletId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Transaction_UserCardID",
+                table: "Transaction",
+                column: "UserCardID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transaction_WalletId",
                 table: "Transaction",
                 column: "WalletId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transaction_Withdraw_CreditCardId",
-                table: "Transaction",
-                column: "Withdraw_CreditCardId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Wallets_AppUserId_Name",

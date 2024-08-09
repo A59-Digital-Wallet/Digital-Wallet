@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Wallet.Data.Models.Enum;
 using Wallet.Data.Models.Enums;
 
+
 namespace Wallet.Data.Models.Transactions
 {
     public abstract class Transaction : ITransaction

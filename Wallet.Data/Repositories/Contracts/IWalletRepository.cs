@@ -7,6 +7,7 @@ using System.Transactions;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Transactions;
 
+
 namespace Wallet.Data.Repositories.Contracts
 {
     public interface IWalletRepository

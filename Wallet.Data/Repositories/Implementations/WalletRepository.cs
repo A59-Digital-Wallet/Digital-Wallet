@@ -8,6 +8,7 @@ using System.Transactions;
 using Wallet.Data.Db;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Transactions;
+
 using Wallet.Data.Repositories.Contracts;
 
 namespace Wallet.Data.Repositories.Implementations
@@ -30,8 +31,7 @@ namespace Wallet.Data.Repositories.Implementations
         public async Task<List<ITransaction>> GetTransactionHistoryAsync(int id, int pageIndex, int pageSize)
         {
             var wallet = await this.applicationContext.Wallets
-                .Include(w => w.AddMoneyTransactions)
-                .Include(w => w.WithdrawMoneyTransactions)
+                .Include(w => w.NonTransferTransactions)               
                 .Include(w => w.TransferMoneyTransactions)
                 .FirstOrDefaultAsync(w => w.Id == id);
 
@@ -40,9 +40,8 @@ namespace Wallet.Data.Repositories.Implementations
                 return new List<ITransaction>();
             }
 
-            var history = wallet.AddMoneyTransactions
-                .Cast<ITransaction>()
-                .Union(wallet.WithdrawMoneyTransactions)
+            var history = wallet.NonTransferTransactions
+                .Cast<ITransaction>()               
                 .Union(wallet.TransferMoneyTransactions)
                 .OrderByDescending(t => t.Date) // Assuming transactions have a Date property for sorting
                 .Skip((pageIndex - 1) * pageSize)
@@ -67,10 +66,10 @@ namespace Wallet.Data.Repositories.Implementations
                     wallet.TransferMoneyTransactions.Add((Transfer)transaction);
                     break;
                 case Models.Enums.TransactionType.Add:
-                    wallet.AddMoneyTransactions.Add((AddMoney)transaction);
+                    wallet.NonTransferTransactions.Add((NonTransfer)transaction);
                     break;
                 case Models.Enums.TransactionType.Withdraw:
-                    wallet.WithdrawMoneyTransactions.Add((Withdraw)transaction);
+                    wallet.NonTransferTransactions.Add((NonTransfer)transaction);
                     break;
             }
             return this.applicationContext.SaveChanges() > 0;

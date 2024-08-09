@@ -12,8 +12,8 @@ using Wallet.Data.Db;
 namespace Wallet.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240808105246_updating")]
-    partial class updating
+    [Migration("20240809094704_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -345,18 +345,21 @@ namespace Wallet.Data.Migrations
                     b.ToTable("Wallets");
                 });
 
-            modelBuilder.Entity("Wallet.Data.Models.Transactions.AddMoney", b =>
+            modelBuilder.Entity("Wallet.Data.Models.Transactions.NonTransfer", b =>
                 {
                     b.HasBaseType("Wallet.Data.Models.Transactions.Transaction");
 
-                    b.Property<int>("CreditCardId")
+                    b.Property<int>("CardId")
                         .HasColumnType("int");
 
-                    b.HasIndex("CreditCardId");
+                    b.Property<int>("UserCardID")
+                        .HasColumnType("int");
+
+                    b.HasIndex("UserCardID");
 
                     b.HasIndex("WalletId");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("Wallet.Data.Models.Transactions.Transfer", b =>
@@ -371,26 +374,6 @@ namespace Wallet.Data.Migrations
                     b.HasIndex("WalletId");
 
                     b.HasDiscriminator().HasValue(2);
-                });
-
-            modelBuilder.Entity("Wallet.Data.Models.Transactions.Withdraw", b =>
-                {
-                    b.HasBaseType("Wallet.Data.Models.Transactions.Transaction");
-
-                    b.Property<int>("CreditCardId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("CreditCardId");
-
-                    b.HasIndex("WalletId");
-
-                    b.ToTable("Transaction", t =>
-                        {
-                            t.Property("CreditCardId")
-                                .HasColumnName("Withdraw_CreditCardId");
-                        });
-
-                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -466,21 +449,21 @@ namespace Wallet.Data.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("Wallet.Data.Models.Transactions.AddMoney", b =>
+            modelBuilder.Entity("Wallet.Data.Models.Transactions.NonTransfer", b =>
                 {
-                    b.HasOne("Wallet.Data.Models.Card", "CreditCard")
+                    b.HasOne("Wallet.Data.Models.Card", "UserCard")
                         .WithMany()
-                        .HasForeignKey("CreditCardId")
+                        .HasForeignKey("UserCardID")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Wallet.Data.Models.UserWallet", "Wallet")
-                        .WithMany("AddMoneyTransactions")
+                        .WithMany("NonTransferTransactions")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("CreditCard");
+                    b.Navigation("UserCard");
 
                     b.Navigation("Wallet");
                 });
@@ -504,25 +487,6 @@ namespace Wallet.Data.Migrations
                     b.Navigation("Wallet");
                 });
 
-            modelBuilder.Entity("Wallet.Data.Models.Transactions.Withdraw", b =>
-                {
-                    b.HasOne("Wallet.Data.Models.Card", "CreditCard")
-                        .WithMany()
-                        .HasForeignKey("CreditCardId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Wallet.Data.Models.UserWallet", "Wallet")
-                        .WithMany("WithdrawMoneyTransactions")
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("CreditCard");
-
-                    b.Navigation("Wallet");
-                });
-
             modelBuilder.Entity("Wallet.Data.Models.AppUser", b =>
                 {
                     b.Navigation("Cards");
@@ -532,11 +496,9 @@ namespace Wallet.Data.Migrations
 
             modelBuilder.Entity("Wallet.Data.Models.UserWallet", b =>
                 {
-                    b.Navigation("AddMoneyTransactions");
+                    b.Navigation("NonTransferTransactions");
 
                     b.Navigation("TransferMoneyTransactions");
-
-                    b.Navigation("WithdrawMoneyTransactions");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,15 +5,19 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wallet.Data.Models.Enums;
+
 
 namespace Wallet.Data.Models.Transactions
 {
-    public class Withdraw : Transaction
+    public class NonTransfer : Transaction
     {
         [Required]
-        public int CreditCardId { get; set; }
+        public int UserCardID { get; set; }
 
-        [ForeignKey("CreditCardId")]
-        public Card CreditCard { get; set; }
+        [ForeignKey("CardId")]
+        public Card UserCard { get; set; }
+
+        
     }
 }

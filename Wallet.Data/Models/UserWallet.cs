@@ -32,9 +32,9 @@ namespace Wallet.Data.Models
             public AppUser AppUser { get; set; }
 
 
-        public List<AddMoney> AddMoneyTransactions { get; set; }
+        public List<NonTransfer> NonTransferTransactions { get; set; }
         public List<Transfer> TransferMoneyTransactions { get; set; }
-        public List<Withdraw> WithdrawMoneyTransactions { get; set; }
+        
     }
     
 }
