@@ -11,6 +11,7 @@ namespace Wallet.Data.Repositories.Contracts
     {
         Task AddCardAsync(Card card);
         Task<Card> GetCardAsync(int cardId);
+        Task DeleteCardAsync(Card card);
 
     }
 }

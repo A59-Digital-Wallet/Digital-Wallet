@@ -29,5 +29,11 @@ namespace Wallet.Data.Repositories.Implementations
             return card;
         }
 
+        public async Task DeleteCardAsync(Card card)
+        {
+            _context.Cards.Remove(card);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
 
@@ -12,6 +13,8 @@ namespace Wallet.Services.Validation.CardValidation
     {
         public ValidationResult Validate(CardRequest cardRequest)
         {
+            DateTime expiryDate = DateTimeHelper.ConvertToDateTime(cardRequest.ExpiryDate);
+
             ValidationResult result = new ValidationResult();
 
             // Validate Card Number using Luhn's Algorithm
@@ -34,7 +37,7 @@ namespace Wallet.Services.Validation.CardValidation
             }
 
             // Validate Expiration Date
-            if (!ValidateExpirationDate(cardRequest.ExpiryDate))
+            if (!ValidateExpirationDate(expiryDate))
             {
                 result.Errors.Add("Card has expired.");
             }
@@ -58,6 +61,11 @@ namespace Wallet.Services.Validation.CardValidation
             }
 
             return result;
+        }
+
+        public bool ValidateExpirationDate(DateTime expiryDate)
+        {
+            return expiryDate > DateTime.UtcNow;
         }
 
         private bool CardNumberValidation(string cardNumber)
@@ -137,11 +145,6 @@ namespace Wallet.Services.Validation.CardValidation
             }
 
             return CardNetwork.Unknown;
-        }
-
-        private bool ValidateExpirationDate(DateTime expiryDate)
-        {
-            return expiryDate > DateTime.UtcNow;
         }
 
         private bool ValidateCVV(string cvv, CardNetwork cardNetwork)
