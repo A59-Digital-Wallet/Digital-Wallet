@@ -8,6 +8,7 @@ namespace Wallet.Data.Models.Enums
 {
     public enum Currency
     {
+        None,
         BGN,
         GBP,
         EURO,

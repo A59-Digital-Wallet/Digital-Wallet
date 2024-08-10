@@ -8,8 +8,9 @@ namespace Wallet.Data.Models.Enums
 {
     public enum TransactionType
     {
+        None,
         Withdraw,
-        Add,
+        Deposit,
         Transfer
     }
 }

@@ -10,6 +10,7 @@ using Wallet.Data.Models;
 using Wallet.Data.Models.Transactions;
 
 using Wallet.Data.Repositories.Contracts;
+using Transaction = Wallet.Data.Models.Transactions.Transaction;
 
 namespace Wallet.Data.Repositories.Implementations
 {
@@ -28,28 +29,7 @@ namespace Wallet.Data.Repositories.Implementations
             await applicationContext.SaveChangesAsync();
         }
 
-        public async Task<List<ITransaction>> GetTransactionHistoryAsync(int id, int pageIndex, int pageSize)
-        {
-            var wallet = await this.applicationContext.Wallets
-                .Include(w => w.NonTransferTransactions)               
-                .Include(w => w.TransferMoneyTransactions)
-                .FirstOrDefaultAsync(w => w.Id == id);
-
-            if (wallet == null)
-            {
-                return new List<ITransaction>();
-            }
-
-            var history = wallet.NonTransferTransactions
-                .Cast<ITransaction>()               
-                .Union(wallet.TransferMoneyTransactions)
-                .OrderByDescending(t => t.Date) // Assuming transactions have a Date property for sorting
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            return history;
-        }
+     
 
         public async Task<UserWallet> GetWalletAsync(int id)
         {
@@ -57,32 +37,14 @@ namespace Wallet.Data.Repositories.Implementations
             return wallet;
         }
 
-        public async Task<bool> UpdateTransactionHistoryAsync(int id, ITransaction transaction)
+        public async Task UpdateWalletAsync(UserWallet wallet)
         {
-            var wallet = await this.applicationContext.Wallets.FindAsync(id);
-            switch(transaction.TransactionType)
-            {
-                case Models.Enums.TransactionType.Transfer:
-                    wallet.TransferMoneyTransactions.Add((Transfer)transaction);
-                    break;
-                case Models.Enums.TransactionType.Add:
-                    wallet.NonTransferTransactions.Add((NonTransfer)transaction);
-                    break;
-                case Models.Enums.TransactionType.Withdraw:
-                    wallet.NonTransferTransactions.Add((NonTransfer)transaction);
-                    break;
-            }
-            return this.applicationContext.SaveChanges() > 0;
+            applicationContext.Wallets.Update(wallet);
+            await applicationContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateWalletSumAsync(int id, double amount)
-        {
-            var wallet = await this.applicationContext.Wallets.FindAsync(id);
-            wallet.Balance += amount;
-            
-            return this.applicationContext.SaveChanges() > 0; 
 
-        }
+
 
 
     }

@@ -11,13 +11,13 @@ using Wallet.Data.Models.Enums;
 
 namespace Wallet.Data.Models.Transactions
 {
-    public abstract class Transaction : ITransaction
+    public class Transaction
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
@@ -33,5 +33,17 @@ namespace Wallet.Data.Models.Transactions
         public UserWallet Wallet { get; set; }
 
         public TransactionType TransactionType { get; set; }
+
+        public int? RecipientWalletId { get; set; } // For transfers
+
+        [ForeignKey("RecipientWalletId")]
+        public UserWallet? RecipientWallet { get; set; }
+
+        public int? CardId { get; set; } // For withdrawals or deposits using a credit card
+
+        [ForeignKey("CardId")]
+        public Card? Card { get; set; }
+
+
     }
 }

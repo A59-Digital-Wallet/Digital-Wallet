@@ -23,7 +23,7 @@ namespace Wallet.Data.Models
             public Currency Currency { get; set; }
 
             [Required]
-            public double Balance { get; set; }
+            public decimal Balance { get; set; }
 
             [Required]
             public string AppUserId { get; set; }
@@ -32,8 +32,9 @@ namespace Wallet.Data.Models
             public AppUser AppUser { get; set; }
 
 
-        public List<NonTransfer> NonTransferTransactions { get; set; }
-        public List<Transfer> TransferMoneyTransactions { get; set; }
+        public List<Transaction> Transactions { get; set; }
+        
+        
         
     }
     

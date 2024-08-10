@@ -31,7 +31,7 @@ namespace Wallet.API.Controllers
         public async Task<IActionResult> CreateWallet([FromBody] UserWalletRequest wallet)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-            //var userId = "bruh";
+            
             await _walletService.CreateWallet(wallet, userId);
             return Ok();
         }
@@ -49,12 +49,6 @@ namespace Wallet.API.Controllers
             return Ok(wallet);
         }
 
-        [HttpGet("{id}/transactions")]
-        public async Task<ActionResult<List<ITransaction>>> GetTransactionHistory(int id, [FromQuery] int pageIndex, [FromQuery] int pageSize)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.UserData);
-            var transactions = await _walletService.GetTransactionHistoryAsync(id, pageIndex, pageSize, userId);
-            return Ok(transactions);
-        }
+      
     }
 }

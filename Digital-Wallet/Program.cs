@@ -75,6 +75,20 @@ namespace Digital_Wallet
             // Add Controllers
             builder.Services.AddControllers();
 
+            var apiKey = builder.Configuration["CurrencyLayer:ApiKey"];
+
+            // Add services to the container.
+            builder.Services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>(client =>
+            {
+                client.BaseAddress = new Uri("https://api.currencylayer.com/");
+            });
+
+            builder.Services.AddSingleton<ICurrencyExchangeService, CurrencyExchangeService>(sp =>
+            {
+                var httpClient = sp.GetRequiredService<HttpClient>();
+                return new CurrencyExchangeService(httpClient, apiKey);
+            });
+
             // Add Swagger for API documentation
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
@@ -109,16 +123,20 @@ namespace Digital_Wallet
             // Repositories
             builder.Services.AddScoped<ICardRepository, CardRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
+            builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 
             // Services
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IWalletService, WalletService>();
+            builder.Services.AddScoped<ITransactionService, TransactionService>();
 
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();
             builder.Services.AddScoped<IWalletFactory, WalletFactory>();
+            builder.Services.AddScoped<ITransactionFactory, TransactionFactory>();
 
             builder.Services.AddScoped<CardValidation>();
+            
 
             var app = builder.Build();
 

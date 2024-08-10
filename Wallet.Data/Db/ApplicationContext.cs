@@ -16,8 +16,8 @@ namespace Wallet.Data.Db
 
         public DbSet<Card> Cards { get; set; }
 
-        public DbSet<Transfer> TransferMoneyTransactions { get; set; }
-        public DbSet<NonTransfer> NonTransferTransactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        
         public DbSet<UserWallet> Wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,15 +39,10 @@ namespace Wallet.Data.Db
             modelBuilder.Entity<UserWallet>()
                 .HasIndex(w => new { w.AppUserId, w.Name })
                 .IsUnique();
+          
 
             modelBuilder.Entity<UserWallet>()
-                .HasMany(w => w.NonTransferTransactions)
-                .WithOne(t => t.Wallet)
-                .HasForeignKey(t => t.WalletId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<UserWallet>()
-                .HasMany(w => w.TransferMoneyTransactions)
+                .HasMany(w => w.Transactions)
                 .WithOne(t => t.Wallet)
                 .HasForeignKey(t => t.WalletId)
                 .OnDelete(DeleteBehavior.NoAction);
@@ -57,9 +52,9 @@ namespace Wallet.Data.Db
             // Configure inheritance for transactions
             modelBuilder.Entity<Transaction>()
                 .HasDiscriminator<TransactionType>("TransactionType")
-                .HasValue<NonTransfer>(TransactionType.Add)
-                .HasValue<Transfer>(TransactionType.Transfer)
-                .HasValue<NonTransfer>(TransactionType.Withdraw);
+                .HasValue<Transaction>(TransactionType.Deposit)
+                .HasValue<Transaction>(TransactionType.Transfer)
+                .HasValue<Transaction>(TransactionType.Withdraw);
 
             // Configure enum to string conversion for TransactionStatus
             modelBuilder.Entity<Transaction>()
@@ -76,11 +71,7 @@ namespace Wallet.Data.Db
                 .Property(c => c.CardNetwork)
                 .HasConversion<string>();
 
-            modelBuilder.Entity<NonTransfer>()
-                .HasOne(t => t.UserCard)
-                .WithMany()
-                .HasForeignKey(t => t.UserCardID)
-                .OnDelete(DeleteBehavior.NoAction);
+           
 
 
 

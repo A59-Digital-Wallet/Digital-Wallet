@@ -35,16 +35,7 @@ namespace Wallet.Services.Implementations
             await _walletRepository.CreateWallet(createdWallet);
         }
 
-        public async Task<List<ITransaction>> GetTransactionHistoryAsync(int id, int pageIndex, int pageSize, string userId)
-        {
-            var wallet = await _walletRepository.GetWalletAsync(id);
-            if (wallet == null || wallet.AppUserId != userId)
-            {
-                throw new UnauthorizedAccessException("User does not have access to this wallet.");
-            }
-
-            return await _walletRepository.GetTransactionHistoryAsync(id, pageIndex, pageSize);
-        }
+      
 
       
 
@@ -59,31 +50,6 @@ namespace Wallet.Services.Implementations
             return wallet;
         }
 
-        public async Task<bool> UpdateTransactionHistoryAsync(int id, ITransaction transaction, AppUser appUser)
-        {
-            var wallet = await _walletRepository.GetWalletAsync(id);
-            if (wallet == null || wallet.AppUserId != appUser.Id)
-            {
-                throw new UnauthorizedAccessException("User does not have access to this wallet.");
-            }
-
-            return await _walletRepository.UpdateTransactionHistoryAsync(id, transaction);
-        }
-
-        public async Task<bool> UpdateWalletSumAsync(int id, double amount, AppUser appUser)
-        {
-            var wallet = await _walletRepository.GetWalletAsync(id);
-            if (wallet == null || wallet.AppUserId != appUser.Id)
-            {
-                throw new UnauthorizedAccessException("User does not have access to this wallet.");
-            }
-
-            return await _walletRepository.UpdateWalletSumAsync(id, amount);
-        }
-
-        public Task<bool> UpdateWalletSumAsync(int id, double amount, string userID)
-        {
-            throw new NotImplementedException();
-        }
+      
     }
 }

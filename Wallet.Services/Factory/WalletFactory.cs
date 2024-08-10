@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.DTO.Request;
+using Wallet.Services.Factory.Contracts;
 
-namespace Wallet.Services.Factory.Contracts
+namespace Wallet.Services.Factory
 {
     public class WalletFactory : IWalletFactory
     {
@@ -20,7 +21,7 @@ namespace Wallet.Services.Factory.Contracts
             };
 
             return wallet;
-            
+
         }
     }
 }

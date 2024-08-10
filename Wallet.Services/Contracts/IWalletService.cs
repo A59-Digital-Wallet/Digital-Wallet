@@ -14,8 +14,5 @@ namespace Wallet.Services.Contracts
     {
         Task CreateWallet(UserWalletRequest wallet, string userID);
         Task<UserWallet> GetWalletAsync(int id, string userID);
-        Task<bool> UpdateWalletSumAsync(int id, double amount, AppUser userID);
-        Task<List<ITransaction>> GetTransactionHistoryAsync(int id, int pageIndex, int pageSize, string appUser);
-        Task<bool> UpdateTransactionHistoryAsync(int id, ITransaction transaction, AppUser appUser);
     }
 }
