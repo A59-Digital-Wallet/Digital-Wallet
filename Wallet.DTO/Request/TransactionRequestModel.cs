@@ -11,7 +11,7 @@ namespace Wallet.DTO.Request
     {
         public decimal Amount { get; set; }
         public int WalletId { get; set; }
-        public int? RecipientWalletId { get; set; } 
+        
         public string Description { get; set; }
         public TransactionType TransactionType { get; set; }
         public int CardId { get; set; }

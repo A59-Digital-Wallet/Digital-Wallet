@@ -50,11 +50,7 @@ namespace Wallet.Data.Db
 
 
             // Configure inheritance for transactions
-            modelBuilder.Entity<Transaction>()
-                .HasDiscriminator<TransactionType>("TransactionType")
-                .HasValue<Transaction>(TransactionType.Deposit)
-                .HasValue<Transaction>(TransactionType.Transfer)
-                .HasValue<Transaction>(TransactionType.Withdraw);
+           
 
             // Configure enum to string conversion for TransactionStatus
             modelBuilder.Entity<Transaction>()
@@ -71,7 +67,9 @@ namespace Wallet.Data.Db
                 .Property(c => c.CardNetwork)
                 .HasConversion<string>();
 
-           
+            modelBuilder.Entity<UserWallet>()
+            .Property(w => w.Currency)
+            .HasConversion<string>();
 
 
 

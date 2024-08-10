@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.DTO.Request;
@@ -30,6 +31,11 @@ namespace Wallet.Services.Implementations
 
         public async Task CreateWallet(UserWalletRequest wallet, string userId)
         {
+
+            if (wallet.Currency == Currency.None)
+            {
+                throw new ArgumentException("Invalid currency selected.");
+            }
             var createdWallet = _walletFactory.Map(wallet);
             createdWallet.AppUserId = userId;
             await _walletRepository.CreateWallet(createdWallet);

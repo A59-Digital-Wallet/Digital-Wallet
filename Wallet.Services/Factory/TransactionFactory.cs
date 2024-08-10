@@ -7,6 +7,7 @@ using Wallet.Data.Models.Enum;
 using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Factory.Contracts;
 
 namespace Wallet.Services.Factory
@@ -28,7 +29,7 @@ namespace Wallet.Services.Factory
             // Set the recipient wallet ID if it's a transfer
             if (transactionRequest.TransactionType == TransactionType.Transfer)
             {
-                transaction.RecipientWalletId = transactionRequest.RecipientWalletId;
+                transaction.RecipientWalletId = transactionRequest.RecepientWalletId;
             }
 
             // Set the card ID if a card is involved
@@ -39,6 +40,20 @@ namespace Wallet.Services.Factory
             }
 
             return transaction;
+        }
+
+        public TransactionDto Map(Transaction transaction)
+        {
+            return new TransactionDto
+            {               
+                Amount = (decimal)transaction.Amount,
+                Date = transaction.Date,
+                Description = transaction.Description,
+                Status = transaction.Status,
+                WalletId = transaction.WalletId,
+                WalletName = transaction.Wallet?.Name, // Optional
+                TransactionType = transaction.TransactionType
+            };
         }
     }
 }

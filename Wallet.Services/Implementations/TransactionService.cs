@@ -11,6 +11,8 @@ using Wallet.Data.Models.Transactions;
 using Wallet.Data.Models.Enum;
 using Wallet.DTO.Request;
 using Wallet.Services.Factory.Contracts;
+using Wallet.DTO.Response;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 
 namespace Wallet.Services.Implementations
 {
@@ -106,18 +108,19 @@ namespace Wallet.Services.Implementations
             transaction.RecipientWalletId = recipientWallet.Id;
 
             // Save recipient wallet changes
+            await _walletRepository.UpdateWalletAsync(wallet);
             await _walletRepository.UpdateWalletAsync(recipientWallet);
         }
 
-        public async Task<ICollection<Transaction>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userID)
+        public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
         {
-            
-            return await _transactionRepository.FilterBy(page, pageSize, filterParameters, userID);
+            var transactions = await _transactionRepository.FilterBy(page, pageSize, filterParameters, userId);
+            return transactions.Select(t => _transactionFactory.Map(t)).ToList();
         }
 
-       
 
-      
+
+
     }
 
 }
