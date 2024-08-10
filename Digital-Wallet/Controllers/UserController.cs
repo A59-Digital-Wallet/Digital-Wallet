@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -48,6 +49,7 @@ namespace Digital_Wallet.Controllers
             var result = await userManager.CreateAsync(user, user.PasswordHash!);
             if (result.Succeeded)
             {
+                await this.userManager.AddToRoleAsync(user, "User");
                 // Generate a 6-digit code
                 var confirmationCode = new Random().Next(100000, 999999).ToString();
                 user.EmailConfirmationCode = confirmationCode;
@@ -119,13 +121,16 @@ namespace Digital_Wallet.Controllers
             return Unauthorized("Invalid email or password.");
         }
 
-        private string GenerateJwtToken(AppUser user)
+        private async Task<string> GenerateJwtToken(AppUser user)
         {
+            
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings["Secret"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var roles = await this.userManager.GetRolesAsync(user);
 
-            var claims = new[]
+            var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -134,6 +139,7 @@ namespace Digital_Wallet.Controllers
                 new Claim(ClaimTypes.Email, user.Email) // Added claim for email address
             };
 
+            claims.AddRange(roleClaims);
             var token = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
@@ -144,6 +150,27 @@ namespace Digital_Wallet.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        [HttpPost("assign")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignRole(string userId)
+        {
+            var user = await this.userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+          
+
+            var result = await this.userManager.AddToRoleAsync(user, "Admin");
+            if (result.Succeeded)
+            {
+                return Ok(result);
+            }
+            
+
+            return BadRequest("Failed to assign role");
+        }
 
 
 

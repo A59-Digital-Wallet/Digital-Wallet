@@ -42,7 +42,8 @@ namespace Digital_Wallet
                 options.Lockout.AllowedForNewUsers = true; // Lockout new users by default
             })
             .AddEntityFrameworkStores<ApplicationContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddRoles<IdentityRole>();
 
             // Add Authentication and JWT Bearer token services
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -71,6 +72,7 @@ namespace Digital_Wallet
             {
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             });
+
 
             // Add Controllers
             builder.Services.AddControllers();
@@ -139,6 +141,12 @@ namespace Digital_Wallet
             
 
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+                SeedRolesOnce(roleManager, userManager).Wait(); // Blocking wait since Main is not async
+            }
 
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
@@ -160,6 +168,24 @@ namespace Digital_Wallet
             app.MapControllers();
 
             app.Run();
+        }
+
+        private static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
+        {
+            // Define roles to be created
+            string[] roleNames = { "Admin", "User" };
+
+            foreach (var roleName in roleNames)
+            {
+                
+                if (!await roleManager.RoleExistsAsync(roleName))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            
+           
         }
     }
 }
