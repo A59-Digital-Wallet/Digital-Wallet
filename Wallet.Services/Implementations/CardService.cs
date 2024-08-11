@@ -39,8 +39,7 @@ namespace Wallet.Services.Implementations
                 throw new ArgumentException(string.Join("; ", validationResult.Errors));
             }
 
-            var card = _cardFactory.Map(cardRequest, userID);
-            card.CardNetwork = validationResult.CardNetwork;
+            var card = _cardFactory.Map(cardRequest, userID, validationResult.CardNetwork);
             //Uncomment when encryption is fully set up.
             //card.CardNumber = await _encryptionService.EncryptAsync(card.CardNumber);
             //card.CVV = await _encryptionService.EncryptAsync(card.CVV);
@@ -58,6 +57,24 @@ namespace Wallet.Services.Implementations
             //    card.CVV = await _encryptionService.DecryptAsync(card.CVV);
             //}
             return card;
+        }
+
+        public async Task<bool> DeleteCardAsync(int cardId, string userId)
+        {
+            var card = await _cardRepository.GetCardAsync(cardId);
+
+            if(card == null)
+            {
+                throw new ArgumentException("Card not found.");
+            }
+            if (card.AppUserId != userId)
+            {
+                throw new ArgumentException("Ýou are not authorized to delete this card.");
+            }
+
+
+           await _cardRepository.DeleteCardAsync(card);
+           return true;
         }
     }
 }

@@ -12,6 +12,6 @@ namespace Wallet.Services.Contracts
     {
         Task AddCardAsync(CardRequest cardRequest, string userID);
         Task<Card> GetCardAsync(int cardId);
-
+        Task<bool> DeleteCardAsync(int cardId, string userId);
     }
 }
