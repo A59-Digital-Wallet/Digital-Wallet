@@ -25,13 +25,15 @@ namespace Digital_Wallet.Controllers
         private readonly SignInManager<AppUser> signInManager;
         private readonly IEmailSender emailSender;
         private readonly IConfiguration _configuration;
+        private readonly TwilioVerifyService _verifyService;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender, IConfiguration configuration)
+        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender, IConfiguration configuration, TwilioVerifyService verifyService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.emailSender = emailSender;
             _configuration = configuration;
+            _verifyService = verifyService;
         }
 
         [HttpPost("add-user")]
@@ -68,9 +70,15 @@ namespace Digital_Wallet.Controllers
                     $"Hello, please confirm your email by entering the following code: {confirmationCode}"
                 );
 
+                var phoneVerificationSent = await _verifyService.SendVerificationCodeAsync(user.PhoneNumber);
+                if (!phoneVerificationSent)
+                {
+                    return BadRequest("Failed to send phone verification code.");
+                }
+
                 if (userManager.Options.SignIn.RequireConfirmedAccount)
                 {
-                    return Ok("Confirmation code sent. Please check your email.");
+                    return Ok("Confirmation codes sent. Please check your email and SMS.");
                 }
                 else
                 {
@@ -82,7 +90,6 @@ namespace Digital_Wallet.Controllers
             return BadRequest(result);
 
 
-            
         }
 
         [HttpPost("verify-email")]
@@ -121,6 +128,25 @@ namespace Digital_Wallet.Controllers
             }
 
             return Unauthorized("Invalid email or password.");
+        }
+        [HttpPost("verify-phone")]
+        public async Task<IActionResult> VerifyPhone(string phoneNumber, string code)
+        {
+            var user = await this.userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var verified = await _verifyService.VerifyCodeAsync(phoneNumber, code);
+            if (verified)
+            {
+                user.PhoneNumberConfirmed = true;
+                await this.userManager.UpdateAsync(user);
+                return Ok("Phone number verified successfully.");
+            }
+
+            return BadRequest("Invalid verification code.");
         }
 
         private async Task<string> GenerateJwtToken(AppUser user)

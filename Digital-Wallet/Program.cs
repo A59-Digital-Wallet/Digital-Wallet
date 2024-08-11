@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
+using Twilio.Clients;
 using Wallet.Data.Db;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
@@ -138,6 +139,7 @@ namespace Digital_Wallet
                 });
             });
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+            builder.Services.AddTransient<TwilioVerifyService>();
             // Repositories
             builder.Services.AddScoped<ICardRepository, CardRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
