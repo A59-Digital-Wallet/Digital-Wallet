@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,8 @@ namespace Wallet.Services.Contracts
     {
         Task<AppUser> GetUserByIdAsync(string userId);
         Task<PagedResult<AppUser>> SearchUsersAsync(string searchTerm, int page, int pageSize);
-      
+        Task UploadProfilePictureAsync(string userId, IFormFile file);
+
+
     }
 }

@@ -13,6 +13,7 @@ using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
+using Wallet.Common.Exceptions;
 
 
 namespace Digital_Wallet.Controllers
@@ -21,19 +22,28 @@ namespace Digital_Wallet.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
-        private readonly SignInManager<AppUser> signInManager;
-        private readonly IEmailSender emailSender;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IEmailSender _emailSender;
         private readonly IConfiguration _configuration;
         private readonly TwilioVerifyService _verifyService;
 
-        public UserController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailSender emailSender, IConfiguration configuration, TwilioVerifyService verifyService)
+        private readonly IUserService _userService;
+
+        public UserController(UserManager<AppUser> userManager, 
+                              SignInManager<AppUser> signInManager, 
+                              IEmailSender emailSender, 
+                              IConfiguration configuration, 
+                              TwilioVerifyService verifyService,
+                              IUserService userService)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-            this.emailSender = emailSender;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _emailSender = emailSender;
             _configuration = configuration;
             _verifyService = verifyService;
+            _userService = userService;
+
         }
 
         [HttpPost("add-user")]
@@ -47,23 +57,22 @@ namespace Digital_Wallet.Controllers
                 UserName = model.UserName,
                 PasswordHash = model.Password,
                 PhoneNumber = model.PhoneNumber,
-
             };
 
-            var result = await userManager.CreateAsync(user, user.PasswordHash!);
+            var result = await _userManager.CreateAsync(user, user.PasswordHash!);
             if (result.Succeeded)
             {
-                await this.userManager.AddToRoleAsync(user, "User");
+                await this._userManager.AddToRoleAsync(user, "User");
                 // Generate a 6-digit code
                 var confirmationCode = new Random().Next(100000, 999999).ToString();
                 user.EmailConfirmationCode = confirmationCode;
                 user.EmailConfirmationCodeGeneratedAt = DateTime.UtcNow;
 
                 // Update user with confirmation code
-                await userManager.UpdateAsync(user);
+                await _userManager.UpdateAsync(user);
 
                 // Send the code via email
-                await emailSender.SendEmail(
+                await _emailSender.SendEmail(
                     "Email Confirmation",
                     user.Email,
                     user.FirstName,
@@ -76,13 +85,13 @@ namespace Digital_Wallet.Controllers
                     return BadRequest("Failed to send phone verification code.");
                 }
 
-                if (userManager.Options.SignIn.RequireConfirmedAccount)
+                if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {
                     return Ok("Confirmation codes sent. Please check your email and SMS.");
                 }
                 else
                 {
-                    await signInManager.SignInAsync(user, isPersistent: false);
+                    await _signInManager.SignInAsync(user, isPersistent: false);
                     return Ok(result);
                 }
             }
@@ -95,7 +104,7 @@ namespace Digital_Wallet.Controllers
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail(VerifyEmailModel model)
         {
-            var user = await userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
                 return BadRequest("Invalid email address.");
@@ -109,7 +118,7 @@ namespace Digital_Wallet.Controllers
                 user.EmailConfirmed = true;
                 user.EmailConfirmationCode = null;
                 user.EmailConfirmationCodeGeneratedAt = null;
-                await userManager.UpdateAsync(user);
+                await _userManager.UpdateAsync(user);
 
                 return Ok("Email confirmed successfully.");
             }
@@ -120,8 +129,8 @@ namespace Digital_Wallet.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await this.userManager.FindByEmailAsync(model.Email);
-            if (user != null && await this.userManager.CheckPasswordAsync(user, model.Password))
+            var user = await this._userManager.FindByEmailAsync(model.Email);
+            if (user != null && await this._userManager.CheckPasswordAsync(user, model.Password))
             {
                 var token = GenerateJwtToken(user);
                 return Ok(new { token });
@@ -132,7 +141,7 @@ namespace Digital_Wallet.Controllers
         [HttpPost("verify-phone")]
         public async Task<IActionResult> VerifyPhone(string phoneNumber, string code)
         {
-            var user = await this.userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            var user = await this._userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
             if (user == null)
             {
                 return NotFound("User not found.");
@@ -142,7 +151,7 @@ namespace Digital_Wallet.Controllers
             if (verified)
             {
                 user.PhoneNumberConfirmed = true;
-                await this.userManager.UpdateAsync(user);
+                await this._userManager.UpdateAsync(user);
                 return Ok("Phone number verified successfully.");
             }
 
@@ -155,7 +164,7 @@ namespace Digital_Wallet.Controllers
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings["Secret"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var roles = await this.userManager.GetRolesAsync(user);
+            var roles = await this._userManager.GetRolesAsync(user);
 
             var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
             var claims = new List<Claim>
@@ -178,10 +187,34 @@ namespace Digital_Wallet.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-       
-      
+        [HttpPost("uploadProfilePicture")]
+        [Authorize]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
 
-        
+            try
+            {
+                await _userService.UploadProfilePictureAsync(userId, file);
+                return Ok(new { message = "Profile picture updated successfully" });
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+
+
+
 
 
     }

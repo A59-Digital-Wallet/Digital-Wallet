@@ -94,16 +94,14 @@ namespace Digital_Wallet
                 return new CurrencyExchangeService(httpClient, apiKey);
             });
 
-            // Configure Cloudinary settings
-            var cloudinaryConfig = builder.Configuration.GetSection("Cloudinary").Get<CloudinarySettings>();
-            var cloudinary = new Cloudinary(new Account(
-                cloudinaryConfig.CloudName,
-                cloudinaryConfig.ApiKey,
-                cloudinaryConfig.ApiSecret
-            ));
+            var cloudinaryConfig = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+            builder.Services.AddSingleton(cloudinaryConfig);
 
-            // Register Cloudinary as a singleton
-            builder.Services.AddSingleton(cloudinary);
+            builder.Services.AddSingleton(provider =>
+            {
+                var config = provider.GetRequiredService<CloudinarySettings>();
+                return new Cloudinary(new Account(config.CloudName, config.ApiKey, config.ApiSecret));
+            });
 
             // Register CloudinaryService
             builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
@@ -169,6 +167,21 @@ namespace Digital_Wallet
                 SeedRolesOnce(roleManager, userManager).Wait(); // Blocking wait since Main is not async
             }
 
+            // Call the seed method
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    ApplicationDbContextSeed.SeedAsync(services).Wait();
+                }
+                catch (Exception ex)
+                {
+                    // Handle exceptions during seeding
+                    Console.WriteLine($"An error occurred seeding the DB: {ex.Message}");
+                }
+            }
+
             // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
@@ -203,10 +216,7 @@ namespace Digital_Wallet
                 {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
-            }
-
-            
-           
+            }               
         }
     }
 }

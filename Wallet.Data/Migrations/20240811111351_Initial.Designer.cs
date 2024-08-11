@@ -12,8 +12,8 @@ using Wallet.Data.Db;
 namespace Wallet.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240810140846_fixedBugs")]
-    partial class fixedBugs
+    [Migration("20240811111351_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,11 +210,14 @@ namespace Wallet.Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("ProfilePictureURL")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -424,7 +427,8 @@ namespace Wallet.Data.Migrations
                 {
                     b.HasOne("Wallet.Data.Models.Card", "Card")
                         .WithMany()
-                        .HasForeignKey("CardId");
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Wallet.Data.Models.UserWallet", "RecipientWallet")
                         .WithMany()

@@ -13,7 +13,7 @@ namespace Wallet.Data.Repositories.Contracts
         Task<AppUser> GetUserByIdAsync(string userId);
         Task<List<AppUser>> SearchUsersAsync(string? searchTerm, int page, int pageSize);
         Task<int> GetUserCountAsync(string searchTerm);
-       
+        Task<bool> UpdateProfilePictureAsync(string userId, string pictureURL);
     }
 
 }

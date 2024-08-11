@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Wallet.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class newest : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,11 +30,12 @@ namespace Wallet.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailConfirmationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EmailConfirmationCodeGeneratedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProfilePictureURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -192,7 +193,7 @@ namespace Wallet.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Currency = table.Column<int>(type: "int", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -219,9 +220,8 @@ namespace Wallet.Data.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     WalletId = table.Column<int>(type: "int", nullable: false),
                     TransactionType = table.Column<int>(type: "int", nullable: false),
-                    UserCardID = table.Column<int>(type: "int", nullable: true),
-                    CardId = table.Column<int>(type: "int", nullable: true),
-                    RecipientWalletId = table.Column<int>(type: "int", nullable: true)
+                    RecipientWalletId = table.Column<int>(type: "int", nullable: true),
+                    CardId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -230,13 +230,13 @@ namespace Wallet.Data.Migrations
                         name: "FK_Transactions_Cards_CardId",
                         column: x => x.CardId,
                         principalTable: "Cards",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Transactions_Wallets_RecipientWalletId",
                         column: x => x.RecipientWalletId,
                         principalTable: "Wallets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Wallets_WalletId",
                         column: x => x.WalletId,

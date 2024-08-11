@@ -15,12 +15,13 @@ namespace Wallet.Data.Repositories.Implementations
     public class UserRepository : IUserRepository
     {
         private readonly UserManager<AppUser> _userManager;
-   
+        private readonly ApplicationContext _context;
+
 
         public UserRepository(UserManager<AppUser> userManager, ApplicationContext context)
         {
             _userManager = userManager;
-            
+            _context = context;
         }
 
         public async Task<AppUser> GetUserByIdAsync(string userId)
@@ -61,11 +62,17 @@ namespace Wallet.Data.Repositories.Implementations
             return await usersQuery.CountAsync();
         }
 
-      
+        public async Task<bool> UpdateProfilePictureAsync(string userId, string pictureURL)
+        {
+            AppUser user = await GetUserByIdAsync(userId);
+            if (user != null)
+            {
+                user.ProfilePictureURL = pictureURL;
 
-      
-
-        
+                var result = await _userManager.UpdateAsync(user);
+                return result.Succeeded;
+            }
+            return false;
+        }
     }
-
 }
