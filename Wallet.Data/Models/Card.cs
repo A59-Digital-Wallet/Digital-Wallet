@@ -41,5 +41,6 @@ namespace Wallet.Data.Models
         [ForeignKey("AppUserId")]
         public AppUser AppUser { get; set; }
 
+        
     }
 }
