@@ -12,6 +12,8 @@ using Wallet.Data.Models;
 using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Services.Implementations;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Digital_Wallet.Controllers
 {
@@ -40,7 +42,7 @@ namespace Digital_Wallet.Controllers
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 Email = model.Email,
-                UserName = model.Email,
+                UserName = model.UserName,
                 PasswordHash = model.Password,
                 PhoneNumber = model.PhoneNumber,
 
@@ -150,29 +152,10 @@ namespace Digital_Wallet.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        [HttpPost("assign")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AssignRole(string userId)
-        {
-            var user = await this.userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound();
-            }
+       
+      
 
-          
-
-            var result = await this.userManager.AddToRoleAsync(user, "Admin");
-            if (result.Succeeded)
-            {
-                return Ok(result);
-            }
-            
-
-            return BadRequest("Failed to assign role");
-        }
-
-
+        
 
 
     }

@@ -14,6 +14,7 @@ namespace Wallet.Services.Contracts
     {
         Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId);
         Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userID);
+        Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm);
     }
 
 }

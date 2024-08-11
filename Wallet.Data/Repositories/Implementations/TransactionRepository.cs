@@ -38,7 +38,7 @@ namespace Wallet.Data.Repositories.Implementations
         public async Task<IList<Transaction>> GetTransactionsByWalletId(int walletId)
         {
             return await _context.Transactions
-                                 .Where(t => t.WalletId == walletId)
+                                 .Where(t => t.WalletId == walletId || t.RecipientWalletId == walletId)
                                  .Include(t => t.Wallet)
                                  .ThenInclude(u => u.AppUser)
                                  .ToListAsync();
@@ -46,7 +46,7 @@ namespace Wallet.Data.Repositories.Implementations
         public async Task<IList<Transaction>> GetTransactionsByUserId(string userId)
         {
             return await _context.Transactions
-                                 .Where(t => t.Wallet.AppUserId == userId)
+                                 .Where(t => t.Wallet.AppUserId == userId || t.RecipientWallet.AppUserId == userId)
                                  .Include(t => t.Wallet) 
                                  .ToListAsync();
         }

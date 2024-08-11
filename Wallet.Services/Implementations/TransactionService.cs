@@ -13,6 +13,8 @@ using Wallet.DTO.Request;
 using Wallet.Services.Factory.Contracts;
 using Wallet.DTO.Response;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Wallet.Services.Implementations
 {
@@ -23,20 +25,22 @@ namespace Wallet.Services.Implementations
         private readonly ICurrencyExchangeService _currencyExchangeService;
         private readonly ICardRepository _cardRepository;
         private readonly ITransactionFactory _transactionFactory;
-
-        public TransactionService(ITransactionRepository transactionRepository, IWalletRepository walletRepository, ICurrencyExchangeService currencyExchangeService, ICardRepository cardRepository, ITransactionFactory transactionFactory)
+        private readonly UserManager<AppUser> userManager;
+        public TransactionService(ITransactionRepository transactionRepository, IWalletRepository walletRepository, ICurrencyExchangeService currencyExchangeService, ICardRepository cardRepository, ITransactionFactory transactionFactory, UserManager<AppUser> userManager)
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
             _currencyExchangeService = currencyExchangeService;
             _cardRepository = cardRepository;
             _transactionFactory = transactionFactory;
+            this.userManager = userManager;
         }
 
         public async Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId )
         {
             var wallet = await _walletRepository.GetWalletAsync(transactionRequest.WalletId);
-            if(wallet.AppUserId != userId)
+            var user = await this.userManager.FindByIdAsync(userId);
+            if (wallet.AppUserId != userId)
             {
                 throw new ArgumentException("Not your wallet!");
             }
@@ -61,6 +65,10 @@ namespace Wallet.Services.Implementations
             switch (transactionRequest.TransactionType)
             {
                 case TransactionType.Transfer:
+                    if (await this.userManager.IsInRoleAsync(user, "Blocked"))
+                    {
+                        throw new InvalidOperationException("Blocked users are not allowed to transfer money to other users.");
+                    }
                     await HandleTransferAsync(transactionRequest, transaction, wallet);
                     break;
 
@@ -84,6 +92,8 @@ namespace Wallet.Services.Implementations
 
         private async Task HandleTransferAsync(TransactionRequestModel transactionRequest, Transaction transaction, UserWallet wallet)
         {
+            
+            
             var recipientWallet = await _walletRepository.GetWalletAsync(transactionRequest.RecepientWalletId);
 
             if (recipientWallet == null)
@@ -118,7 +128,31 @@ namespace Wallet.Services.Implementations
             return transactions.Select(t => _transactionFactory.Map(t)).ToList();
         }
 
+        public async Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm)
+        {
+            var user = await this.userManager.Users
+                .Include(u => u.Wallets)
+                .Where(u => u.UserName.Contains(searchTerm) || u.Email.Contains(searchTerm) || u.PhoneNumber.Contains(searchTerm))
+                .Select(u => new UserWithWalletsDto
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    Wallets = u.Wallets.Select(w => new WalletDto
+                    {
+                        WalletId = w.Id,
+                        Currency = w.Currency,
+                        Balance = w.Balance
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
 
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            return user;
+        }
 
 
     }

@@ -81,5 +81,24 @@ namespace Wallet.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
             }
         }
+
+        [HttpGet("search-user")]
+        [Authorize]
+        public async Task<IActionResult> SearchUser(string searchTerm)
+        {
+            try
+            {
+                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(searchTerm);
+                return Ok(userWithWallets);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+            }
+        }
     }
 }

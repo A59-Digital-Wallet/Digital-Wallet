@@ -126,17 +126,20 @@ namespace Digital_Wallet
             builder.Services.AddScoped<ICardRepository, CardRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
 
             // Services
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IWalletService, WalletService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<IUserService, UserService>(); 
 
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();
             builder.Services.AddScoped<IWalletFactory, WalletFactory>();
             builder.Services.AddScoped<ITransactionFactory, TransactionFactory>();
 
+            
             builder.Services.AddScoped<CardValidation>();
             
 
@@ -173,7 +176,7 @@ namespace Digital_Wallet
         private static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
         {
             // Define roles to be created
-            string[] roleNames = { "Admin", "User" };
+            string[] roleNames = { "Admin", "User", "Blocked" };
 
             foreach (var roleName in roleNames)
             {
