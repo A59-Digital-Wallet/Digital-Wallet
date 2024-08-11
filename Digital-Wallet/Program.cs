@@ -1,3 +1,4 @@
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Wallet.Services.Contracts;
 using Wallet.Services.Factory;
 using Wallet.Services.Factory.Contracts;
 using Wallet.Services.Implementations;
+using Wallet.Services.Models;
 using Wallet.Services.Validation.CardValidation;
 
 namespace Digital_Wallet
@@ -90,6 +92,20 @@ namespace Digital_Wallet
                 var httpClient = sp.GetRequiredService<HttpClient>();
                 return new CurrencyExchangeService(httpClient, apiKey);
             });
+
+            // Configure Cloudinary settings
+            var cloudinaryConfig = builder.Configuration.GetSection("Cloudinary").Get<CloudinarySettings>();
+            var cloudinary = new Cloudinary(new Account(
+                cloudinaryConfig.CloudName,
+                cloudinaryConfig.ApiKey,
+                cloudinaryConfig.ApiSecret
+            ));
+
+            // Register Cloudinary as a singleton
+            builder.Services.AddSingleton(cloudinary);
+
+            // Register CloudinaryService
+            builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             // Add Swagger for API documentation
             builder.Services.AddEndpointsApiExplorer();
