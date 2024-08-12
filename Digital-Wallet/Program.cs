@@ -143,17 +143,20 @@ namespace Digital_Wallet
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IContactsRepository, ContactRepository>();
 
             // Services
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IWalletService, WalletService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IUserService, UserService>(); 
+            builder.Services.AddScoped<IContactService, ContactService>();
 
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();
             builder.Services.AddScoped<IWalletFactory, WalletFactory>();
             builder.Services.AddScoped<ITransactionFactory, TransactionFactory>();
+            builder.Services.AddScoped<IContactsFactory, ContactsFactory>();
 
             
             builder.Services.AddScoped<CardValidation>();

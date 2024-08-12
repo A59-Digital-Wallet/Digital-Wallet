@@ -32,6 +32,7 @@ namespace Wallet.Data.Models
         public string? EmailConfirmationCode { get; set; }
         public DateTime? EmailConfirmationCodeGeneratedAt { get; set; }
         public string? ProfilePictureURL { get; set; }
+        public List<Contact>? Contacts { get; set; }
         
 
     }
