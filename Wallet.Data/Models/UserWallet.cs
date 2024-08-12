@@ -25,13 +25,19 @@ namespace Wallet.Data.Models
             [Required]
             public decimal Balance { get; set; }
 
-            [Required]
-            public string AppUserId { get; set; }
+        [Required]
+        public WalletType WalletType { get; set; } 
 
-            [ForeignKey("AppUserId")]
-            public AppUser AppUser { get; set; }
+        [Required]
+       
+        public string OwnerId { get; set; }
 
+        [ForeignKey("OwnerId")]
+        public AppUser? Owner { get; set; }
 
+        public List<AppUser> AppUserWallets { get; set; }
+
+       
         public List<Transaction> Transactions { get; set; }
         
         

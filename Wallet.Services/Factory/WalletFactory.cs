@@ -17,11 +17,15 @@ namespace Wallet.Services.Factory
             {
                 Name = request.Name,
                 Currency = request.Currency,
-                Balance = 0
+                Balance = 0,
+                AppUserWallets = new List<AppUser>(),
+                WalletType = request.WalletType,
             };
 
             return wallet;
 
         }
+
+       
     }
 }

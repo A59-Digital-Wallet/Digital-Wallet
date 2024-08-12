@@ -15,9 +15,7 @@ namespace Wallet.Data.Db
         }
 
         public DbSet<Card> Cards { get; set; }
-
         public DbSet<Transaction> Transactions { get; set; }
-        
         public DbSet<UserWallet> Wallets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,39 +29,50 @@ namespace Wallet.Data.Db
                 .HasForeignKey(c => c.AppUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Set up relationship between AppUser and Wallets with DeleteBehavior.Restrict
+            // Set up relationship between AppUser and Wallets where the user is the owner with DeleteBehavior.Restrict
             modelBuilder.Entity<AppUser>()
-                .HasMany(u => u.Wallets)
-                .WithOne(w => w.AppUser)
-                .HasForeignKey(w => w.AppUserId)
+                .HasMany(u => u.OwnedWallets)
+                .WithOne(w => w.Owner)
+                .HasForeignKey(w => w.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Ensure Wallet name is unique per AppUser
             modelBuilder.Entity<UserWallet>()
-                .HasIndex(w => new { w.AppUserId, w.Name })
+                .HasIndex(w => new { w.OwnerId, w.Name })
                 .IsUnique();
 
-            // Set up relationship between UserWallet and Transactions with DeleteBehavior.NoAction
+            // Set up relationship between UserWallet and Transactions with DeleteBehavior.Cascade
             modelBuilder.Entity<UserWallet>()
                 .HasMany(w => w.Transactions)
                 .WithOne(t => t.Wallet)
                 .HasForeignKey(t => t.WalletId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Set up many-to-many relationship between UserWallet and AppUser (Associated Users)
+            modelBuilder.Entity<UserWallet>()
+                .HasMany(w => w.AppUserWallets)
+                .WithMany(u => u.JointWallets)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserWalletAssociations",
+                    j => j.HasOne<AppUser>().WithMany().HasForeignKey("OwnerId").OnDelete(DeleteBehavior.Restrict),
+                    j => j.HasOne<UserWallet>().WithMany().HasForeignKey("UserWalletId").OnDelete(DeleteBehavior.Restrict)
+                );
 
             // Set up relationship between Card and Transactions with DeleteBehavior.SetNull
             modelBuilder.Entity<Transaction>()
-             .HasOne(t => t.Card)
-             .WithMany()  // No navigation property on the Card side
-             .HasForeignKey(t => t.CardId)
-             .OnDelete(DeleteBehavior.SetNull);
+                .HasOne(t => t.Card)
+                .WithMany()  // No navigation property on the Card side
+                .HasForeignKey(t => t.CardId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Transaction>()
-              .Property(t => t.CardId)
-              .IsRequired(false);
+                .Property(t => t.CardId)
+                .IsRequired(false);
 
+            // Configure PhoneNumber length for AppUser
             modelBuilder.Entity<AppUser>()
-          .Property(u => u.PhoneNumber)
-          .HasMaxLength(15);
+                .Property(u => u.PhoneNumber)
+                .HasMaxLength(15);
 
             // Configure enum to string conversion for TransactionStatus
             modelBuilder.Entity<Transaction>()

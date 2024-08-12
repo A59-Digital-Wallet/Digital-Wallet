@@ -11,5 +11,6 @@ namespace Wallet.Services.Factory.Contracts
     public interface IWalletFactory
     {
         UserWallet Map(UserWalletRequest request);
+        //AppUserWallet Map(int walletId, string userId, bool canSpend, bool canAddFunds);
     }
 }

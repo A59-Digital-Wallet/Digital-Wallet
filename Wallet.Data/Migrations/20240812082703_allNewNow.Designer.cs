@@ -12,8 +12,8 @@ using Wallet.Data.Db;
 namespace Wallet.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240811111351_Initial")]
-    partial class Initial
+    [Migration("20240812082703_allNewNow")]
+    partial class allNewNow
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,21 @@ namespace Wallet.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("UserWalletAssociations", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("UserWalletId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AppUserId", "UserWalletId");
+
+                    b.HasIndex("UserWalletId");
+
+                    b.ToTable("UserWalletAssociations");
                 });
 
             modelBuilder.Entity("Wallet.Data.Models.AppUser", b =>
@@ -340,7 +355,7 @@ namespace Wallet.Data.Migrations
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
@@ -353,9 +368,16 @@ namespace Wallet.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("WalletType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId", "Name")
+                    b.HasIndex("OwnerId", "Name")
                         .IsUnique();
 
                     b.ToTable("Wallets");
@@ -412,6 +434,21 @@ namespace Wallet.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UserWalletAssociations", b =>
+                {
+                    b.HasOne("Wallet.Data.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Wallet.Data.Models.UserWallet", null)
+                        .WithMany()
+                        .HasForeignKey("UserWalletId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Wallet.Data.Models.Card", b =>
                 {
                     b.HasOne("Wallet.Data.Models.AppUser", "AppUser")
@@ -437,7 +474,7 @@ namespace Wallet.Data.Migrations
                     b.HasOne("Wallet.Data.Models.UserWallet", "Wallet")
                         .WithMany("Transactions")
                         .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Card");
@@ -449,20 +486,20 @@ namespace Wallet.Data.Migrations
 
             modelBuilder.Entity("Wallet.Data.Models.UserWallet", b =>
                 {
-                    b.HasOne("Wallet.Data.Models.AppUser", "AppUser")
-                        .WithMany("Wallets")
-                        .HasForeignKey("AppUserId")
+                    b.HasOne("Wallet.Data.Models.AppUser", "Owner")
+                        .WithMany("OwnedWallets")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("AppUser");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Wallet.Data.Models.AppUser", b =>
                 {
                     b.Navigation("Cards");
 
-                    b.Navigation("Wallets");
+                    b.Navigation("OwnedWallets");
                 });
 
             modelBuilder.Entity("Wallet.Data.Models.UserWallet", b =>

@@ -31,7 +31,7 @@ namespace Wallet.Data.Repositories.Implementations
         {
             return await _context.Transactions
                                  .Include(t => t.Wallet) 
-                                 .ThenInclude(u => u.AppUser)
+                                 .ThenInclude(u => u.OwnerId)
                                  .FirstOrDefaultAsync(t => t.Id == transactionId);
         }
 
@@ -40,13 +40,13 @@ namespace Wallet.Data.Repositories.Implementations
             return await _context.Transactions
                                  .Where(t => t.WalletId == walletId || t.RecipientWalletId == walletId)
                                  .Include(t => t.Wallet)
-                                 .ThenInclude(u => u.AppUser)
+                                 .ThenInclude(u => u.OwnerId)
                                  .ToListAsync();
         }
         public async Task<IList<Transaction>> GetTransactionsByUserId(string userId)
         {
             return await _context.Transactions
-                                 .Where(t => t.Wallet.AppUserId == userId || t.RecipientWallet.AppUserId == userId)
+                                 .Where(t => t.Wallet.OwnerId == userId || t.RecipientWallet.OwnerId== userId || t.Wallet.AppUserWallets.Any(x => x.Id == userId) || t.RecipientWallet.AppUserWallets.Any(x => x.Id == userId))
                                  .Include(t => t.Wallet) 
                                  .ToListAsync();
         }

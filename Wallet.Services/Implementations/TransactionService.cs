@@ -15,6 +15,7 @@ using Wallet.DTO.Response;
 using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Wallet.Services.Implementations
 {
@@ -39,15 +40,17 @@ namespace Wallet.Services.Implementations
         public async Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId )
         {
             var wallet = await _walletRepository.GetWalletAsync(transactionRequest.WalletId);
-            var user = await this.userManager.FindByIdAsync(userId);
-            if (wallet.AppUserId != userId)
+            if (wallet.OwnerId != userId && !wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
                 throw new ArgumentException("Not your wallet!");
             }
-            if (wallet == null)
+          
+            else if (wallet == null)
             {
                 throw new ArgumentException("Wallet does not exist.");
             }
+            var user = await this.userManager.FindByIdAsync(userId);
+           
 
             Transaction transaction = _transactionFactory.Map(transactionRequest);
 
@@ -131,13 +134,14 @@ namespace Wallet.Services.Implementations
         public async Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm)
         {
             var user = await this.userManager.Users
-                .Include(u => u.Wallets)
+                .Include(u => u.OwnedWallets)
+                .Include(u => u.JointWallets)
                 .Where(u => u.UserName.Contains(searchTerm) || u.Email.Contains(searchTerm) || u.PhoneNumber.Contains(searchTerm))
                 .Select(u => new UserWithWalletsDto
                 {
                     UserId = u.Id,
                     UserName = u.UserName,
-                    Wallets = u.Wallets.Select(w => new WalletDto
+                    Wallets = u.OwnedWallets.Select(w => new WalletDto
                     {
                         WalletId = w.Id,
                         Currency = w.Currency,

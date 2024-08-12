@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wallet.Data.Db;
 
@@ -11,9 +12,11 @@ using Wallet.Data.Db;
 namespace Wallet.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240812094324_userWalletFix")]
+    partial class userWalletFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -157,13 +160,13 @@ namespace Wallet.Data.Migrations
 
             modelBuilder.Entity("UserWalletAssociations", b =>
                 {
-                    b.Property<string>("OwnerId")
+                    b.Property<string>("AppUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UserWalletId")
                         .HasColumnType("int");
 
-                    b.HasKey("OwnerId", "UserWalletId");
+                    b.HasKey("AppUserId", "UserWalletId");
 
                     b.HasIndex("UserWalletId");
 
@@ -350,6 +353,9 @@ namespace Wallet.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Balance")
                         .HasColumnType("decimal(18,2)");
 
@@ -431,7 +437,7 @@ namespace Wallet.Data.Migrations
                 {
                     b.HasOne("Wallet.Data.Models.AppUser", null)
                         .WithMany()
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

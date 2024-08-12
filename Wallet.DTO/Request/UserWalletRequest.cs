@@ -11,5 +11,6 @@ namespace Wallet.DTO.Request
     {
         public string Name { get; set; }
         public Currency Currency { get; set; }
+        public WalletType WalletType { get; set; }
     }
 }

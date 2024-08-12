@@ -24,11 +24,15 @@ namespace Wallet.Data.Models
         public string LastName{ get; set; }
 
         public List<Card> Cards { get; set; }
-        
-        public List<UserWallet> Wallets { get; set; }
+
+        public List<UserWallet> OwnedWallets { get; set; } = new List<UserWallet>();
+
+        // Separate navigation property for wallets where the user is an associated user
+        public List<UserWallet> JointWallets { get; set; } = new List<UserWallet>();
         public string? EmailConfirmationCode { get; set; }
         public DateTime? EmailConfirmationCodeGeneratedAt { get; set; }
         public string? ProfilePictureURL { get; set; }
+        
 
     }
 }

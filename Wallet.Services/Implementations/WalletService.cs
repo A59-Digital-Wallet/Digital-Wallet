@@ -29,6 +29,23 @@ namespace Wallet.Services.Implementations
             _walletFactory = walletFactory;
         }
 
+        public async Task AddMemberToJointWalletAsync(int walletId, string userId, bool canSpend, bool canAddFunds, string ownerId)
+        {
+            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            if(wallet.WalletType != WalletType.Joint)
+            {
+                throw new UnauthorizedAccessException("Can't add to wallet that is not joint");
+            }
+            if(wallet.OwnerId != ownerId)
+            {
+                throw new UnauthorizedAccessException("Only owners can do that");
+            }
+            var userWallet = await _userManager.FindByIdAsync(ownerId);
+            var user = await _userManager.FindByIdAsync(userId);
+            user.JointWallets.Add(wallet);
+            await _walletRepository.AddMemberToJointWalletAsync(walletId, userWallet);
+        }
+
         public async Task CreateWallet(UserWalletRequest wallet, string userId)
         {
 
@@ -37,7 +54,7 @@ namespace Wallet.Services.Implementations
                 throw new ArgumentException("Invalid currency selected.");
             }
             var createdWallet = _walletFactory.Map(wallet);
-            createdWallet.AppUserId = userId;
+            createdWallet.OwnerId = userId;
             await _walletRepository.CreateWallet(createdWallet);
         }
 
@@ -48,14 +65,33 @@ namespace Wallet.Services.Implementations
         public async Task<UserWallet> GetWalletAsync(int id, string userId)
         {
             var wallet = await _walletRepository.GetWalletAsync(id);
-            if (wallet == null || wallet.AppUserId != userId)
+            var isOwnerOrMember = wallet.OwnerId == userId || wallet.AppUserWallets.Any(uw => uw.Id == userId);
+
+            if (!isOwnerOrMember)
             {
-                throw new UnauthorizedAccessException("User does not have access to this wallet.");
+                throw new UnauthorizedAccessException("You do not have access to this wallet.");
             }
 
             return wallet;
         }
 
-      
+        public async Task RemoveMemberFromJointWalletAsync(int walletId, string userId, string ownerId)
+        {
+            var wallet = await _walletRepository.GetWalletAsync(walletId);
+            if (wallet.OwnerId != ownerId)
+            {
+                throw new UnauthorizedAccessException("Only owners can do that");
+            }
+            var userWallet = wallet.AppUserWallets.SingleOrDefault(uw => uw.Id == userId);
+
+            if (userWallet == null)
+            {
+                throw new InvalidOperationException("User is not a member of this wallet.");
+            }
+            var user = await _userManager.FindByIdAsync(userId);
+            user.JointWallets.Remove(wallet);
+
+            await _walletRepository.RemoveMemberFromJointWalletAsync(walletId, userWallet);
+        }
     }
 }
