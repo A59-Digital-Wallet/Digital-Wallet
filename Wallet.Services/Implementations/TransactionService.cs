@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Eventing.Reader;
+using Wallet.Services.Extensions;
 
 namespace Wallet.Services.Implementations
 {
@@ -54,6 +55,14 @@ namespace Wallet.Services.Implementations
 
             Transaction transaction = _transactionFactory.Map(transactionRequest);
 
+            if (transactionRequest.IsRecurring)
+            {
+                transaction.IsRecurring = true;
+                transaction.Interval = transactionRequest.RecurrenceInterval;
+                transaction.NextExecutionDate = DateTime.UtcNow.AddInterval(transactionRequest.RecurrenceInterval);
+                transaction.IsActive = true;
+            }
+
             if (transactionRequest.CardId != 0)
             {
                 var card = await _cardRepository.GetCardAsync(transactionRequest.CardId);
@@ -68,6 +77,10 @@ namespace Wallet.Services.Implementations
             switch (transactionRequest.TransactionType)
             {
                 case TransactionType.Transfer:
+                    if(wallet.WalletType == WalletType.Savings)
+                    {
+                        throw new InvalidOperationException("Can't from savings wallet");
+                    }
                     if (await this.userManager.IsInRoleAsync(user, "Blocked"))
                     {
                         throw new InvalidOperationException("Blocked users are not allowed to transfer money to other users.");
@@ -156,6 +169,72 @@ namespace Wallet.Services.Implementations
             }
 
             return user;
+        }
+
+        public async Task ProcessRecurringTransactionsAsync()
+        {
+            var now = DateTime.UtcNow;
+            var recurringTransactions = await _transactionRepository.GetRecurringTransactionsDueAsync(now);
+
+            foreach (var transaction in recurringTransactions)
+            {
+                try
+                {
+                    var wallet = await _walletRepository.GetWalletAsync(transaction.WalletId);
+                    if (wallet.Balance < transaction.Amount)
+                    {
+                        // Notify user about insufficient funds and deactivate recurring transaction
+                        transaction.IsActive = false;
+                        await _transactionRepository.UpdateTransactionAsync(transaction);
+                        // Notify user logic here (email, push notification, etc.)
+                        continue;
+                    }
+
+                    if (transaction.RecipientWalletId.HasValue)
+                    {
+                        var recipientWallet = await _walletRepository.GetWalletAsync(transaction.RecipientWalletId.Value);
+                        recipientWallet.Balance += transaction.Amount;
+                        await _walletRepository.UpdateWalletAsync(recipientWallet);
+                    }
+
+                    wallet.Balance -= transaction.Amount;
+                    await _walletRepository.UpdateWalletAsync(wallet);
+
+                    transaction.LastExecutedDate = now;
+                    transaction.NextExecutionDate = now.AddInterval(transaction.Interval);
+                    await _transactionRepository.UpdateTransactionAsync(transaction);
+                }
+                catch (Exception ex)
+                {
+                    // Log the error and handle exceptions
+                    // You might want to deactivate the transaction or retry later
+                }
+            }
+        }
+
+        public async Task CancelRecurringTransactionAsync(int transactionId, string userId)
+        {
+            var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
+
+            if (transaction == null)
+            {
+                throw new ArgumentException("Transaction not found.");
+            }
+
+            if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
+            {
+                throw new UnauthorizedAccessException("You do not have permission to cancel this transaction.");
+            }
+
+            if (!transaction.IsRecurring)
+            {
+                throw new InvalidOperationException("This transaction is not a recurring transaction.");
+            }
+
+            transaction.IsActive = false;
+            transaction.NextExecutionDate = null;
+
+            await _transactionRepository.UpdateTransactionAsync(transaction);
         }
 
 

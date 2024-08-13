@@ -16,5 +16,8 @@ namespace Wallet.DTO.Request
         public TransactionType TransactionType { get; set; }
         public int CardId { get; set; }
         public int RecepientWalletId { get; set; }
+
+        public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
+        public RecurrenceInterval? RecurrenceInterval { get; set; }
     }
 }

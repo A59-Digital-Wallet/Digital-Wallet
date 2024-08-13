@@ -21,6 +21,18 @@ namespace Wallet.Data.Repositories.Implementations
         {
             this._context = applicationContext;
         }
+        public async Task UpdateTransactionAsync(Transaction transaction) // Add this method
+        {
+            _context.Transactions.Update(transaction);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<ICollection<Transaction>> GetRecurringTransactionsDueAsync(DateTime dueDate)
+        {
+            return await _context.Transactions
+                .Where(t => t.IsRecurring && t.IsActive && t.NextExecutionDate <= dueDate)
+                .ToListAsync();
+        }
 
         public async Task CreateTransactionAsync(Transaction transaction)
         {

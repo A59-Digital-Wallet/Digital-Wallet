@@ -45,5 +45,13 @@ namespace Wallet.Data.Models.Transactions
         public Card? Card { get; set; }
 
 
+        public bool IsRecurring { get; set; } // Indicates if this is a recurring transaction
+        public RecurrenceInterval? Interval { get; set; } // Daily, Weekly, etc.
+        public DateTime? NextExecutionDate { get; set; } // Date for the next recurrence
+        public bool IsActive { get; set; } // Indicates if the recurrence is still active
+        public DateTime? LastExecutedDate { get; set; }
+
+
+
     }
 }

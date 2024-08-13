@@ -14,6 +14,7 @@ using Wallet.Data.Repositories.Implementations;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory;
 using Wallet.Services.Factory.Contracts;
+using Wallet.Services.HostedServices;
 using Wallet.Services.Implementations;
 using Wallet.Services.Models;
 using Wallet.Services.Validation.CardValidation;
@@ -160,7 +161,9 @@ namespace Digital_Wallet
 
             
             builder.Services.AddScoped<CardValidation>();
-            
+            builder.Services.AddScoped<SavingsInterestService>();
+            builder.Services.AddHostedService<InterestHostedService>();
+            builder.Services.AddHostedService<RecurringTransactionHostedService>();
 
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())

@@ -20,7 +20,7 @@ namespace Wallet.Data.Repositories.Contracts
         Task AddMemberToJointWalletAsync(int walletId, AppUser userWallet);
         Task RemoveMemberFromJointWalletAsync(int walletId, AppUser userWallet);
 
-
+        Task<List<UserWallet>> GetSavingsWalletsAsync();
 
 
     }

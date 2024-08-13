@@ -23,7 +23,10 @@ namespace Wallet.Services.Factory
                 Description = transactionRequest.Description,
                 TransactionType = transactionRequest.TransactionType,
                 Date = DateTime.UtcNow,
-                Status = TransactionStatus.Pending
+                Status = TransactionStatus.Pending,
+                IsRecurring = transactionRequest.IsRecurring,
+                Interval = transactionRequest.RecurrenceInterval,
+                
             };
 
             // Set the recipient wallet ID if it's a transfer

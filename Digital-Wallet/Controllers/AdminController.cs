@@ -22,6 +22,7 @@ namespace Digital_Wallet.Controllers
 
         // GET: api/admin/users
         [HttpGet("users")]
+       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers(string? searchTerm, int page = 1, int pageSize = 10)
         {
             var result = await _userService.SearchUsersAsync(searchTerm, page, pageSize);
@@ -30,6 +31,7 @@ namespace Digital_Wallet.Controllers
 
         // GET: api/admin/users/{id}
         [HttpGet("users/{id}")]
+       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -41,6 +43,7 @@ namespace Digital_Wallet.Controllers
         }
 
         [HttpPost]
+       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageRole(string userId, string action)
         {
             var user = await this.userManager.FindByIdAsync(userId);

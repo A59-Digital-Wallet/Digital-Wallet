@@ -100,5 +100,30 @@ namespace Wallet.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
             }
         }
+
+        [HttpPost("cancel-recurring-transaction/{transactionId}")]
+        [Authorize]
+        public async Task<IActionResult> CancelRecurringTransaction(int transactionId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            try
+            {
+                await _transactionService.CancelRecurringTransactionAsync(transactionId, userId);
+                return Ok("Recurring transaction canceled successfully.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

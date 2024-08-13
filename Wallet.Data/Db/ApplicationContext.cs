@@ -117,6 +117,22 @@ namespace Wallet.Data.Db
             modelBuilder.Entity<UserWallet>()
                 .Property(w => w.Balance)
                 .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Transaction>()
+      .Property(t => t.IsRecurring)
+      .HasDefaultValue(false);
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.Interval)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.NextExecutionDate)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.IsActive)
+                .HasDefaultValue(true);
         }
     }
 }

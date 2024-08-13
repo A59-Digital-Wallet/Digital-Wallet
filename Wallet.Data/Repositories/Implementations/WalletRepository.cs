@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Wallet.Data.Db;
 using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 
 using Wallet.Data.Repositories.Contracts;
@@ -23,8 +24,13 @@ namespace Wallet.Data.Repositories.Implementations
             this.applicationContext = applicationContext;
         }
 
-      
 
+        public async Task<List<UserWallet>> GetSavingsWalletsAsync()
+        {
+            return await applicationContext.Wallets
+                                 .Where(w => w.WalletType == WalletType.Savings)
+                                 .ToListAsync();
+        }
         public async Task AddMemberToJointWalletAsync(int walletId, AppUser userWallet)
         {
             var wallet = await GetWalletAsync(walletId);          

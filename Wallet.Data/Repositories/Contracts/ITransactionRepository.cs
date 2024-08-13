@@ -15,7 +15,8 @@ namespace Wallet.Data.Repositories.Contracts
         Task<IList<Transaction>> GetTransactionsByUserId(string userId);
         Task<ICollection<Transaction>> FilterBy(int page, int pageSize, TransactionRequestFilter filterParameters, string userId);
 
+        Task<ICollection<Transaction>> GetRecurringTransactionsDueAsync(DateTime dueDate);
+        Task UpdateTransactionAsync(Transaction transaction);
 
-    
     }
 }
