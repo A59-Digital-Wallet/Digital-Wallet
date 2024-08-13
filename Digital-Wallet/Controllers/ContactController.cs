@@ -22,7 +22,7 @@ namespace Digital_Wallet.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet()]
         public async Task<IActionResult> GetContactsAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);

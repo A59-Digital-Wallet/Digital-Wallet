@@ -212,7 +212,45 @@ namespace Digital_Wallet.Controllers
             }
         }
 
+        [HttpPost("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserProfile(UpdateUserModel model)
+        {
+            // Find the user by their ID
+            string userId = User.FindFirstValue(ClaimTypes.UserData);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
 
+            // If the phone number is being changed, initiate verification
+            if (user.PhoneNumber != model.PhoneNumber)
+            {
+                user.PhoneNumber = model.PhoneNumber;
+                user.PhoneNumberConfirmed = false;  // Mark phone number as unconfirmed
+
+                // Send verification code via SMS
+                var phoneVerificationSent = await _verifyService.SendVerificationCodeAsync(model.PhoneNumber);
+                if (!phoneVerificationSent)
+                {
+                    return BadRequest("Failed to send phone verification code.");
+                }
+            }
+
+            // Update other user properties
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            // Update the user in the database
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("User profile updated successfully. Please verify your new phone number.");
+            }
+
+            return BadRequest(result.Errors);
+        }
 
 
 
