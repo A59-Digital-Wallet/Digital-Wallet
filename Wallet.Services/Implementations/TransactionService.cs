@@ -134,8 +134,11 @@ namespace Wallet.Services.Implementations
             transaction.RecipientWalletId = recipientWallet.Id;
 
             // Save recipient wallet changes
-            await _walletRepository.UpdateWalletAsync(wallet);
-            await _walletRepository.UpdateWalletAsync(recipientWallet);
+            bool response = await _walletRepository.UpdateWalletAsync(wallet);
+            if (!response)
+            {
+                throw new InvalidOperationException();
+            }
         }
 
         public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)

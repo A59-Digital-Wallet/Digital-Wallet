@@ -67,10 +67,10 @@ namespace Wallet.Data.Repositories.Implementations
             await UpdateWalletAsync(wallet);
         }
 
-        public async Task UpdateWalletAsync(UserWallet wallet)
+        public async Task<bool> UpdateWalletAsync(UserWallet wallet)
         {
-            applicationContext.Wallets.Update(wallet);
-            await applicationContext.SaveChangesAsync();
+            //applicationContext.Wallets.Update(wallet);
+            return await applicationContext.SaveChangesAsync() > 0;
         }
 
 
