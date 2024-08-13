@@ -32,16 +32,19 @@ namespace Digital_Wallet.Controllers
         }
 
         [Authorize]
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCard(int id)
+        [HttpGet("{cardId}")]
+        public async Task<IActionResult> GetCard(int cardId)
         {
             var userID = User.FindFirstValue(ClaimTypes.UserData);
-            var card = await _cardService.GetCardAsync(id);
-            if (userID != card.AppUserId)
+            try
             {
-                return BadRequest();
+                var card = await _cardService.GetCardAsync(cardId, userID);
+                return Ok(card);
             }
-            return Ok();
+            catch (AuthorizationException ex)
+            {
+                return Forbid(ex.Message);
+            }
         }
 
         [Authorize]

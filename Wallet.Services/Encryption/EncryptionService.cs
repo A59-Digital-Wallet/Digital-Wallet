@@ -1,8 +1,6 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,28 +10,21 @@ namespace Wallet.Services.Encryption
 {
     public class EncryptionService : IEncryptionService
     {
-        private readonly SecretClient _secretClient;
+        private readonly byte[] _key;
+        private readonly byte[] _iv;
 
-        public EncryptionService(string keyVaultUrl)
+        public EncryptionService(IConfiguration configuration)
         {
-            _secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
-        }
-
-        private async Task<byte[]> GetSecretAsync(string name)
-        {
-            KeyVaultSecret secret = await _secretClient.GetSecretAsync(name);
-            return Encoding.UTF8.GetBytes(secret.Value);
+            _key = Convert.FromBase64String(configuration["Encryption:Key"]);
+            _iv = Convert.FromBase64String(configuration["Encryption:IV"]);
         }
 
         public async Task<string> EncryptAsync(string plainText)
         {
-            byte[] key = await GetSecretAsync("encryption-key");
-            byte[] iv = await GetSecretAsync("encryption-iv");
-
             using (var aes = Aes.Create())
             {
-                aes.Key = key;
-                aes.IV = iv;
+                aes.Key = _key;
+                aes.IV = _iv;
                 var encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
                 using (var ms = new MemoryStream())
                 {
@@ -41,7 +32,7 @@ namespace Wallet.Services.Encryption
                     {
                         using (var sw = new StreamWriter(cs))
                         {
-                            sw.Write(plainText);
+                            await sw.WriteAsync(plainText);
                         }
                     }
                     return Convert.ToBase64String(ms.ToArray());
@@ -51,13 +42,10 @@ namespace Wallet.Services.Encryption
 
         public async Task<string> DecryptAsync(string cipherText)
         {
-            byte[] key = await GetSecretAsync("encryption-key");
-            byte[] iv = await GetSecretAsync("encryption-iv");
-
             using (var aes = Aes.Create())
             {
-                aes.Key = key;
-                aes.IV = iv;
+                aes.Key = _key;
+                aes.IV = _iv;
                 var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
                 using (var ms = new MemoryStream(Convert.FromBase64String(cipherText)))
                 {
@@ -65,7 +53,7 @@ namespace Wallet.Services.Encryption
                     {
                         using (var sr = new StreamReader(cs))
                         {
-                            return sr.ReadToEnd();
+                            return await sr.ReadToEndAsync();
                         }
                     }
                 }

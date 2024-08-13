@@ -149,6 +149,17 @@ namespace Wallet.Services.Validation.CardValidation
 
         private bool ValidateCVV(string cvv, CardNetwork cardNetwork)
         {
+            if (string.IsNullOrWhiteSpace(cvv))
+            {
+                return false;
+            }
+
+            // Ensure CVV is numeric
+            if (!cvv.All(char.IsDigit))
+            {
+                return false;
+            }
+
             switch (cardNetwork)
             {
                 case CardNetwork.AmericanExpress:

@@ -11,6 +11,8 @@ namespace Wallet.Data.Repositories.Contracts
     {
         Task AddCardAsync(Card card);
         Task<Card> GetCardAsync(int cardId);
+
+        Task<bool> CardExistsAsync(string userId, string encryptedCardNumber);
         Task DeleteCardAsync(Card card);
 
     }

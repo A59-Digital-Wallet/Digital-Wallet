@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Twilio.Clients;
@@ -12,6 +13,7 @@ using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Data.Repositories.Implementations;
 using Wallet.Services.Contracts;
+using Wallet.Services.Encryption;
 using Wallet.Services.Factory;
 using Wallet.Services.Factory.Contracts;
 using Wallet.Services.HostedServices;
@@ -152,6 +154,7 @@ namespace Digital_Wallet
             builder.Services.AddScoped<ITransactionService, TransactionService>();
             builder.Services.AddScoped<IUserService, UserService>(); 
             builder.Services.AddScoped<IContactService, ContactService>();
+            builder.Services.AddScoped<IEncryptionService, EncryptionService>();
 
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();

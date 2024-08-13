@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,11 @@ namespace Wallet.Data.Repositories.Implementations
         {
             var card = await _context.Cards.FindAsync(cardId);
             return card;
+        }
+
+        public async Task<bool> CardExistsAsync(string userId, string encryptedCardNumber)
+        {
+            return await _context.Cards.AnyAsync(c => c.AppUserId == userId && c.CardNumber == encryptedCardNumber);
         }
 
         public async Task DeleteCardAsync(Card card)

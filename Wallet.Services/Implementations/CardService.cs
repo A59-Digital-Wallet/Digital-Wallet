@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wallet.Common.Exceptions;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory.Contracts;
 using Wallet.Services.Validation.CardValidation;
@@ -17,17 +19,17 @@ namespace Wallet.Services.Implementations
         private readonly ICardRepository _cardRepository;
         private readonly ICardFactory _cardFactory;
         private readonly CardValidation _cardValidation;
-        //private readonly IEncryptionService _encryptionService;
+        private readonly IEncryptionService _encryptionService;
 
-        public CardService(ICardRepository cardRepository, ICardFactory cardFactory, CardValidation cardValidation)
+        public CardService(ICardRepository cardRepository, ICardFactory cardFactory, CardValidation cardValidation, IEncryptionService encryptionService)
         {
             _cardRepository = cardRepository;
             _cardFactory = cardFactory;
             _cardValidation = cardValidation;
-            //_encryptionService = encryptionService;
+            _encryptionService = encryptionService;
         }
 
-        
+
 
         public async Task AddCardAsync(CardRequest cardRequest, string userID)
         {
@@ -35,28 +37,39 @@ namespace Wallet.Services.Implementations
 
             if (!validationResult.IsValid)
             {
-                // Handle validation errors
                 throw new ArgumentException(string.Join("; ", validationResult.Errors));
             }
 
+            string encryptedCardNumber = await _encryptionService.EncryptAsync(cardRequest.CardNumber);
+
+            bool isDuplicate = await _cardRepository.CardExistsAsync(userID, encryptedCardNumber);
+            if (isDuplicate)
+            {
+                throw new InvalidOperationException("This card has already been added.");
+            }
+
             var card = _cardFactory.Map(cardRequest, userID, validationResult.CardNetwork);
-            //Uncomment when encryption is fully set up.
-            //card.CardNumber = await _encryptionService.EncryptAsync(card.CardNumber);
-            //card.CVV = await _encryptionService.EncryptAsync(card.CVV);
+            card.CardNumber = encryptedCardNumber;
+            card.CVV = await _encryptionService.EncryptAsync(card.CVV);
             await _cardRepository.AddCardAsync(card);
         }
 
-        public async Task<Card> GetCardAsync(int cardId)
+        public async Task<CardResponseDTO> GetCardAsync(int cardId, string userID)
         {
             var card = await _cardRepository.GetCardAsync(cardId);
-            
-            //Uncomment when encryption is fully set up.
-            //if (card != null)
-            //{
-            //    card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
-            //    card.CVV = await _encryptionService.DecryptAsync(card.CVV);
-            //}
-            return card;
+
+            if (userID != card.AppUserId)
+            {
+                throw new AuthorizationException("You cannot access this card!");
+            }
+
+            if (card != null)
+            {
+                card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
+                card.CVV = await _encryptionService.DecryptAsync(card.CVV);
+            }
+            var cardDTO = _cardFactory.Map(card);
+            return cardDTO;
         }
 
         public async Task<bool> DeleteCardAsync(int cardId, string userId)
