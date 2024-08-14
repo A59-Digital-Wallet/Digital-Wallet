@@ -171,6 +171,10 @@ namespace Wallet.Services.Validation.CardValidation
 
         private bool ValidateCardHolderName(string cardHolderName)
         {
+            if (cardHolderName.Any(char.IsDigit))
+            {
+                return false;
+            }
             return !string.IsNullOrWhiteSpace(cardHolderName);
         }
     }
