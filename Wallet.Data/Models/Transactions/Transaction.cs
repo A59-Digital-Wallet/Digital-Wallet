@@ -44,6 +44,9 @@ namespace Wallet.Data.Models.Transactions
         [ForeignKey("CardId")]
         public Card? Card { get; set; }
 
+        public int? CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category? Category { get; set; }
 
         public bool IsRecurring { get; set; } // Indicates if this is a recurring transaction
         public RecurrenceInterval? Interval { get; set; } // Daily, Weekly, etc.

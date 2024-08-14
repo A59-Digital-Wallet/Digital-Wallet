@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Wallet.Data.Db
 {
@@ -18,6 +19,7 @@ namespace Wallet.Data.Db
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<UserWallet> Wallets { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,17 +70,31 @@ namespace Wallet.Data.Db
 
             // Set up one-to-many relationship between User and Contacts
             modelBuilder.Entity<Contact>()
-                 .HasOne(c => c.User)             
-                 .WithMany(u => u.Contacts)       
-                 .HasForeignKey(c => c.UserId)    
+                 .HasOne(c => c.User)
+                 .WithMany(u => u.Contacts)
+                 .HasForeignKey(c => c.UserId)
                  .OnDelete(DeleteBehavior.Restrict);
 
             // One contact user can be in many contact lists
             modelBuilder.Entity<Contact>()
-                .HasOne(c => c.ContactUser)      
-                .WithMany()                      
-                .HasForeignKey(c => c.ContactUserId) 
+                .HasOne(c => c.ContactUser)
+                .WithMany()
+                .HasForeignKey(c => c.ContactUserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure one - to - many relationship between AppUser and Category
+            modelBuilder.Entity<AppUser>()
+                .HasMany(u => u.Categories)
+                .WithOne(c => c.User)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade); // If a user is deleted, categories will be removed too
+
+            // Configure one-to-many relationship between Category and Transaction
+            modelBuilder.Entity<Category>()
+                .HasMany(c => c.Transactions)
+                .WithOne(t => t.Category)
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull); // Set to null instead of deleting transactions
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.CardId)

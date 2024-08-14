@@ -9,7 +9,7 @@ using Wallet.Services.Factory.Contracts;
 
 namespace Wallet.Services.Factory
 {
-    public class ContactsFactory : IContactsFactory
+    public class ContactFactory : IContactFactory
     {
         public ICollection<ContactResponseDTO> Map(ICollection<Contact> contacts)
         {

@@ -33,7 +33,6 @@ namespace Wallet.Data.Models
         public DateTime? EmailConfirmationCodeGeneratedAt { get; set; }
         public string? ProfilePictureURL { get; set; }
         public List<Contact>? Contacts { get; set; }
-        
-
+        public ICollection<Category>? Categories { get; set; }
     }
 }

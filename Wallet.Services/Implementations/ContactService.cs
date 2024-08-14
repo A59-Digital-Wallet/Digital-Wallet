@@ -17,10 +17,10 @@ namespace Wallet.Services.Implementations
     public class ContactService : IContactService
     {
         private readonly IContactsRepository _contactsRepository;
-        private readonly IContactsFactory _contactsFactory;
+        private readonly IContactFactory _contactsFactory;
         private readonly IUserRepository _userRepository;
 
-        public ContactService(IContactsRepository contactsRepository, IContactsFactory contactsFactory, IUserRepository userRepository)
+        public ContactService(IContactsRepository contactsRepository, IContactFactory contactsFactory, IUserRepository userRepository)
         {
             _contactsRepository = contactsRepository;
             _contactsFactory = contactsFactory;
