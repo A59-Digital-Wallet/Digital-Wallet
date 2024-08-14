@@ -181,5 +181,26 @@ namespace Wallet.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize]
+        [HttpPost("add-to-category")]
+        public async Task<IActionResult> AddTransactionToCategory (int categoryId, int transactionId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            try
+            {
+                await _transactionService.AddTransactionToCategoryAsync(transactionId, categoryId, userId);
+                return Ok(new { message = "Transaction successfully added to category." });
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
+            }
+        }
     }
 }

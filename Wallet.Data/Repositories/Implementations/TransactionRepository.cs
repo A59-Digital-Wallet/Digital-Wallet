@@ -24,7 +24,7 @@ namespace Wallet.Data.Repositories.Implementations
         public async Task UpdateTransactionAsync(Transaction transaction) // Add this method
         {
             _context.Transactions.Update(transaction);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync() ;
         }
 
         public async Task<ICollection<Transaction>> GetRecurringTransactionsDueAsync(DateTime dueDate)
@@ -43,7 +43,7 @@ namespace Wallet.Data.Repositories.Implementations
         {
             return await _context.Transactions
                                  .Include(t => t.Wallet) 
-                                 .ThenInclude(u => u.OwnerId)
+                                 .ThenInclude(u => u.Owner)
                                  .FirstOrDefaultAsync(t => t.Id == transactionId);
         }
 

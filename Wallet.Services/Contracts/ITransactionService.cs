@@ -18,6 +18,7 @@ namespace Wallet.Services.Contracts
         Task ProcessRecurringTransactionsAsync();
         Task CancelRecurringTransactionAsync(int transactionId, string userId);
         Task<bool> VerifyTransactionAsync(string transactionToken, string verificationCode);
+        Task AddTransactionToCategoryAsync(int transactionId, int categoryId, string userId);
     }
 
 }

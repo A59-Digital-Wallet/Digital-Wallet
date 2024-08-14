@@ -22,6 +22,7 @@ namespace Wallet.Data.Repositories.Implementations
         {
             Task<List<Category>> categories = _context.Categories
                 .Where(c => c.UserId == userId)
+                .Include(t => t.Transactions)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

@@ -23,7 +23,7 @@ namespace Wallet.Services.Factory
                     Date = transaction.Date,
                     Description = transaction.Description,
                     Status = transaction.Status,
-                    WalletName = transaction.Wallet.Name,
+                    WalletName = transaction.Wallet?.Name ?? "Unknown Wallet",
                     TransactionType = transaction.TransactionType
                 }).ToList() ?? new List<TransactionDto>()
             }).ToList();

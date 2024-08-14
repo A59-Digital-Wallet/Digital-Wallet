@@ -68,7 +68,7 @@ namespace Wallet.Services.Implementations
             }
 
             var user = await this.userManager.FindByIdAsync(userId);
-            bool isHighValue = transactionRequest.Amount >= wallet.Balance * 0.8m || transactionRequest.Amount > 20000 && transactionRequest.TransactionType != TransactionType.Deposit;
+            bool isHighValue = (transactionRequest.Amount >= wallet.Balance * 0.8m || transactionRequest.Amount > 20000) && transactionRequest.TransactionType != TransactionType.Deposit;
 
             if (isHighValue && verificationCode == null)
             {
@@ -351,7 +351,22 @@ namespace Wallet.Services.Implementations
             await _transactionRepository.UpdateTransactionAsync(transaction);
         }
 
+        public async Task AddTransactionToCategoryAsync(int transactionId, int categoryId, string userId)
+        {
+            var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
+            if (transaction == null)
+            {
+                throw new EntityNotFoundException("Transaction not found.");
+            }
 
+            if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
+            {
+                throw new UnauthorizedAccessException("You do not have permission to modify this transaction.");
+            }
+
+            transaction.CategoryId = categoryId;
+
+            await _transactionRepository.UpdateTransactionAsync(transaction);
+        }
     }
-
 }
