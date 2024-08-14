@@ -79,11 +79,11 @@ namespace Digital_Wallet.Controllers
                     $"Hello, please confirm your email by entering the following code: {confirmationCode}"
                 );
 
-                var phoneVerificationSent = await _verifyService.SendVerificationCodeAsync(user.PhoneNumber);
-                if (!phoneVerificationSent)
-                {
-                    return BadRequest("Failed to send phone verification code.");
-                }
+               // var phoneVerificationSent = await _verifyService.SendVerificationCodeAsync(user.PhoneNumber);
+                //if (!phoneVerificationSent)
+                //{
+                //    return BadRequest("Failed to send phone verification code.");
+                //}
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {

@@ -6,6 +6,8 @@ using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Data.Models.Transactions;
 using Wallet.Data.Models;
+using Wallet.Common.Exceptions;
+using Wallet.DTO.Response;
 
 namespace Wallet.API.Controllers
 {
@@ -38,9 +40,18 @@ namespace Wallet.API.Controllers
 
             try
             {
-                // Assuming CreateTransactionAsync can accept the user ID as part of the transaction creation
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId);
                 return Ok(new { message = "Transaction created successfully." });
+            }
+            catch (VerificationRequiredException ex)
+            {
+                // Return a response indicating that verification is required
+                var response = new VerificationRequiredResponse
+                {
+                    TransactionToken = ex.TransactionToken,
+                    Message = "Transaction requires verification."
+                };
+                return Ok(response); // Return an OK status with the verification information
             }
             catch (ArgumentException ex)
             {
@@ -55,6 +66,8 @@ namespace Wallet.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
             }
         }
+
+
 
         // GET: api/transactions
         [HttpGet]
@@ -81,6 +94,49 @@ namespace Wallet.API.Controllers
                 return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("verify-transaction")]
+        public async Task<IActionResult> VerifyTransaction([FromBody] VerifyTransactionRequestModel verifyRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { error = "User ID is missing from the token." });
+            }
+
+            try
+            {
+                // Attempt to verify the transaction
+                bool result = await _transactionService.VerifyTransactionAsync(verifyRequest.Token, verifyRequest.VerificationCode);
+
+                if (result)
+                {
+                    return Ok(new { message = "Transaction verified and completed successfully." });
+                }
+                else
+                {
+                    return BadRequest(new { error = "Verification failed. Invalid code." });
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+            }
+        }
+
 
         [HttpGet("search-user")]
         [Authorize]

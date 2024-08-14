@@ -164,7 +164,8 @@ namespace Digital_Wallet
             builder.Services.AddScoped<SavingsInterestService>();
             builder.Services.AddHostedService<InterestHostedService>();
             builder.Services.AddHostedService<RecurringTransactionHostedService>();
-
+            builder.Services.AddMemoryCache();
+            builder.Services.AddScoped<VerifyEmailService>();
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

@@ -19,5 +19,7 @@ namespace Wallet.DTO.Request
 
         public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
         public RecurrenceInterval? RecurrenceInterval { get; set; }
+
+        public string Token { get; set; }
     }
 }
