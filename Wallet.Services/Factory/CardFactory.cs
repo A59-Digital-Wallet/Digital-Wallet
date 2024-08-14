@@ -37,12 +37,24 @@ namespace Wallet.Services.Factory
             };
         }
 
+        public List<CardResponseDTO> Map(List<Card> cards)
+        {
+            return cards.Select(card => new CardResponseDTO()
+            {
+                CardNumber = MeshCardNumber(card.CardNumber),
+                CardHolderName = card.CardHolderName,
+                ExpiryDate = card.ExpiryDate,
+                CardType = card.CardType,
+                CardNetwork = card.CardNetwork,
+            }).ToList();
+        }
+
         private static string MeshCardNumber(string cardNumber)
         {
             string firstPart = cardNumber.Substring(0, 4); // First 4 digits
             string lastPart = cardNumber.Substring(cardNumber.Length - 4, 4); // Last 4 digits
 
-            return $"{firstPart}****{lastPart}";
+            return $"{firstPart} **** **** {lastPart}";
         }
     }
 }

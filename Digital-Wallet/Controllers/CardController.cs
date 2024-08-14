@@ -23,12 +23,19 @@ namespace Digital_Wallet.Controllers
         }
 
         [Authorize]
-        [HttpPost("add")]
-        public async Task<IActionResult> AddCard([FromBody] CardRequest cardRequest)
+        [HttpGet]
+        public async Task<IActionResult> GetCards()
         {
             var userID = User.FindFirstValue(ClaimTypes.UserData);
-            await _cardService.AddCardAsync(cardRequest, userID);
-            return Ok();
+            try
+            {
+                var cards = await _cardService.GetCardsAsync(userID);
+                return Ok(cards);
+            }
+            catch(EntityNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize]
@@ -45,6 +52,15 @@ namespace Digital_Wallet.Controllers
             {
                 return Forbid(ex.Message);
             }
+        }
+
+        [Authorize]
+        [HttpPost("add")]
+        public async Task<IActionResult> AddCard([FromBody] CardRequest cardRequest)
+        {
+            var userID = User.FindFirstValue(ClaimTypes.UserData);
+            await _cardService.AddCardAsync(cardRequest, userID);
+            return Ok();
         }
 
         [Authorize]

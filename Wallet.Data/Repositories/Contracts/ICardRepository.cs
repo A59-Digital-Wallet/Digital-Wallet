@@ -9,9 +9,9 @@ namespace Wallet.Data.Repositories.Contracts
 {
     public interface ICardRepository
     {
-        Task AddCardAsync(Card card);
         Task<Card> GetCardAsync(int cardId);
-
+        Task<List<Card>> GetCardsAsync(string userId);
+        Task AddCardAsync(Card card);
         Task<bool> CardExistsAsync(string userId, string encryptedCardNumber);
         Task DeleteCardAsync(Card card);
 

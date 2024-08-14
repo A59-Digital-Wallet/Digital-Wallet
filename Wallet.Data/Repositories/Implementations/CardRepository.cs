@@ -18,16 +18,23 @@ namespace Wallet.Data.Repositories.Implementations
             _context = context;
         }
 
-        public async Task AddCardAsync(Card card)
+        public async Task<List<Card>> GetCardsAsync(string userId)
         {
-            _context.Cards.Add(card);
-            await _context.SaveChangesAsync();
+            return await _context.Cards
+                .Where(c => c.AppUserId == userId) 
+                .ToListAsync(); 
         }
 
         public async Task<Card> GetCardAsync(int cardId)
         {
             var card = await _context.Cards.FindAsync(cardId);
             return card;
+        }
+
+        public async Task AddCardAsync(Card card)
+        {
+            _context.Cards.Add(card);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> CardExistsAsync(string userId, string encryptedCardNumber)

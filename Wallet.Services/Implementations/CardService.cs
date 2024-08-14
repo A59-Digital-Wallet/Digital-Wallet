@@ -29,7 +29,24 @@ namespace Wallet.Services.Implementations
             _encryptionService = encryptionService;
         }
 
+        public async Task<List<CardResponseDTO>> GetCardsAsync(string userId)
+        {
+            List<Card> cards = await _cardRepository.GetCardsAsync(userId);
 
+            if(cards == null)
+            {
+                throw new EntityNotFoundException("No card were found");
+            }
+
+            foreach (var card in cards)
+            {
+                card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
+                //card.CVV = await _encryptionService.DecryptAsync(card.CVV);
+            }
+
+            List<CardResponseDTO> cardResponseDTOs = _cardFactory.Map(cards);
+            return cardResponseDTOs;
+        }
 
         public async Task AddCardAsync(CardRequest cardRequest, string userID)
         {
@@ -50,7 +67,7 @@ namespace Wallet.Services.Implementations
 
             var card = _cardFactory.Map(cardRequest, userID, validationResult.CardNetwork);
             card.CardNumber = encryptedCardNumber;
-            card.CVV = await _encryptionService.EncryptAsync(card.CVV);
+            //card.CVV = await _encryptionService.EncryptAsync(card.CVV);
             await _cardRepository.AddCardAsync(card);
         }
 

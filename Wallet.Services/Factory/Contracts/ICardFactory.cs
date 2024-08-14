@@ -9,5 +9,6 @@ namespace Wallet.Services.Factory.Contracts
     {
         Card Map(CardRequest cardRequest, string userId, CardNetwork cardNetwork);
         CardResponseDTO Map(Card card);
+        List<CardResponseDTO> Map(List<Card> cards);
     }
 }
