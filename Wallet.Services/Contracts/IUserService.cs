@@ -22,6 +22,7 @@ namespace Wallet.Services.Contracts
 
         Task<IdentityResult> ManageRoleAsync(string userId, string action);
         Task<IdentityResult> UpdateUserProfileAsync(UpdateUserModel model, string userId);
-        Task<AppUser> LoginAsync(LoginModel model);
+        Task<(AppUser user, bool requiresTwoFactor)> LoginAsync(LoginModel model);
+        Task<bool> VerifyTwoFactorCodeAsync(AppUser user, string code);
     }
 }

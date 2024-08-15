@@ -175,6 +175,9 @@ namespace Digital_Wallet
             builder.Services.AddMemoryCache();
             builder.Services.AddScoped<VerifyEmailService>();
             builder.Services.AddScoped<IAuthManager, AuthManager>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
+
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

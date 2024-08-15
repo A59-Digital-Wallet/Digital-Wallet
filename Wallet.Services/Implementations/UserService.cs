@@ -25,8 +25,9 @@ namespace Wallet.Services.Implementations
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly TwilioVerifyService _verifyService;
+        private readonly ITwoFactorAuthService _twoFactorAuthService;
 
-        public UserService(IUserRepository userRepository, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, SignInManager<AppUser> signInManager, IEmailSender emailSender, TwilioVerifyService verifyService)
+        public UserService(IUserRepository userRepository, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, SignInManager<AppUser> signInManager, IEmailSender emailSender, TwilioVerifyService verifyService, ITwoFactorAuthService twoFactorAuthService)
         {
             _userRepository = userRepository;
             _userManager = userManager;
@@ -34,6 +35,7 @@ namespace Wallet.Services.Implementations
             _signInManager = signInManager;
             _emailSender = emailSender;
             _verifyService = verifyService;
+            _twoFactorAuthService = twoFactorAuthService;
         }
         public async Task<IdentityResult> RegisterUserAsync(RegisterModel model)
         {
@@ -277,17 +279,25 @@ namespace Wallet.Services.Implementations
 
             return await _userManager.UpdateAsync(user);
         }
-        public async Task<AppUser> LoginAsync(LoginModel model)
+        public async Task<(AppUser user, bool requiresTwoFactor)> LoginAsync(LoginModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                // Optionally, you can add any additional logic here, such as updating the last login time
+                if (await _userManager.GetTwoFactorEnabledAsync(user))
+                {
+                    return (user, true);
+                }
 
-                return user; // Return the user if login is successful
+                return (user, false);
             }
 
-            return null; // Return null if authentication fails
+            return (null, false);
+        }
+
+        public async Task<bool> VerifyTwoFactorCodeAsync(AppUser user, string code)
+        {
+            return await _twoFactorAuthService.VerifyTwoFactorCodeAsync(user, code);
         }
     }
 }

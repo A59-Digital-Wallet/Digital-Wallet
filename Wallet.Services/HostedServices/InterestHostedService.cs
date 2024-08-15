@@ -31,7 +31,9 @@ namespace Wallet.Services.HostedServices
             using (var scope = _serviceProvider.CreateScope())
             {
                 var savingsInterestService = scope.ServiceProvider.GetRequiredService<SavingsInterestService>();
-                savingsInterestService.ApplyMonthlyInterestAsync().Wait(); // Run your interest application logic here
+                
+                    
+                    savingsInterestService.ApplyMonthlyInterestAsync().Wait(); // Run your interest application logic here
             }
         }
 

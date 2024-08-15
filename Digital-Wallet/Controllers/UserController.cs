@@ -36,11 +36,15 @@ namespace Digital_Wallet.Controllers
         {
             private readonly IUserService _userService;
             private readonly IAuthManager _authManager;
+            private readonly IAccountService _accountService;
+            private readonly ITwoFactorAuthService _twoFactorAuthService;
 
-            public UserController(IUserService userService, IAuthManager authManager)
+            public UserController(IUserService userService, IAuthManager authManager, IAccountService accountService, ITwoFactorAuthService twoFactorAuthService)
             {
                 _userService = userService;
                 _authManager = authManager;
+                _accountService = accountService;
+                _twoFactorAuthService = twoFactorAuthService;
             }
 
             [HttpPost("add-user")]
@@ -70,15 +74,24 @@ namespace Digital_Wallet.Controllers
             [HttpPost("login")]
             public async Task<IActionResult> Login([FromBody] LoginModel model)
             {
-                var user = await _userService.LoginAsync(model);
-                if (user != null)
+                var (user, requiresTwoFactor) = await _userService.LoginAsync(model);
+
+                if (user == null)
                 {
-                    var token = await _authManager.GenerateJwtToken(user);
-                    return Ok(new { token });
+                    return Unauthorized("Invalid email or password.");
                 }
 
-                return Unauthorized("Invalid email or password.");
+                if (requiresTwoFactor)
+                {
+                    // 2FA is required, so return a response indicating this
+                    return Ok(new { TwoFactorRequired = true, userId = user.Id });
+                }
+
+                // Generate the token if login is successful without 2FA
+                var authToken = await _authManager.GenerateJwtToken(user);
+                return Ok(new { token = authToken });
             }
+
 
             [HttpPost("verify-phone")]
             public async Task<IActionResult> VerifyPhone(string phoneNumber, string code)
@@ -130,6 +143,79 @@ namespace Digital_Wallet.Controllers
                 }
 
                 return BadRequest(result.Errors);
+            }
+
+            [HttpGet("enable-2fa")]
+            [Authorize]
+            [Produces("image/png")]
+            public async Task<IActionResult> Enable2FA()
+            {
+                string userId = User.FindFirstValue(ClaimTypes.UserData);
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var qrCodeImage = await _twoFactorAuthService.GenerateQrCodeImageAsync(user);
+                return File(qrCodeImage, "image/png");
+            }
+
+            [HttpPost("verify-2fa")]
+            [Authorize]
+            public async Task<IActionResult> Verify2FA([FromBody] Verify2FAModel model)
+            {
+                string userId = User.FindFirstValue(ClaimTypes.UserData);
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                var is2faTokenValid = await _twoFactorAuthService.VerifyTwoFactorCodeAsync(user, model.Code);
+
+                if (!is2faTokenValid)
+                {
+                    return BadRequest("Invalid verification code.");
+                }
+
+                await _twoFactorAuthService.EnableTwoFactorAuthenticationAsync(user);
+
+                return Ok("2FA has been enabled.");
+            }
+
+            [HttpPost("login-2fa")]
+            public async Task<IActionResult> Login2FA([FromBody] Login2FAModel model)
+            {
+                var user = await _userService.GetUserByIdAsync(model.UserId);
+                if (user == null)
+                {
+                    return Unauthorized("Invalid user.");
+                }
+
+                var is2faTokenValid = await _userService.VerifyTwoFactorCodeAsync(user, model.Code);
+                if (!is2faTokenValid)
+                {
+                    return Unauthorized("Invalid 2FA code.");
+                }
+
+                var authToken = await _authManager.GenerateJwtToken(user);
+                return Ok(new { token = authToken });
+            }
+
+            [HttpPost("disable-2fa")]
+            [Authorize]
+            public async Task<IActionResult> Disable2FA()
+            {
+                string userId = User.FindFirstValue(ClaimTypes.UserData);
+                var user = await _userService.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound("User not found.");
+                }
+
+                await _twoFactorAuthService.DisableTwoFactorAuthenticationAsync(user);
+                return Ok("2FA has been disabled.");
             }
         }
     }
