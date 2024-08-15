@@ -9,6 +9,8 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Twilio.Clients;
 using Wallet.Data.Db;
+using Wallet.Data.Helpers;
+using Wallet.Data.Helpers.Contracts;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Data.Repositories.Implementations;
@@ -172,6 +174,7 @@ namespace Digital_Wallet
             builder.Services.AddHostedService<RecurringTransactionHostedService>();
             builder.Services.AddMemoryCache();
             builder.Services.AddScoped<VerifyEmailService>();
+            builder.Services.AddScoped<IAuthManager, AuthManager>();
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

@@ -43,68 +43,33 @@ namespace Digital_Wallet.Controllers
         }
 
         [HttpPost]
-       // [Authorize(Roles = "Admin")]
+        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageRole(string userId, string action)
         {
-            var user = await this.userManager.FindByIdAsync(userId);
-            if (user == null)
+            try
             {
-                return NotFound("User not found.");
-            }
+                var result = await _userService.ManageRoleAsync(userId, action);
 
-            IdentityResult result = null;
-
-            switch (action.ToLower())
-            {
-                case "block":
-                    if (await this.userManager.IsInRoleAsync(user, "Admin"))
-                    {
-                        return BadRequest("Admin users cannot be blocked.");
-                    }
-                    result = await AssignRole(user, "Blocked");
-                    break;
-                case "unblock":
-                    result = await UnassignRole(user, "Blocked");
-                    break;
-                case "makeadmin":
-                    result = await AssignRole(user, "Admin");
-                    break;
-                default:
-                    return BadRequest("Invalid action. Use 'block', 'unblock', or 'makeadmin'.");
-            }
-
-            if (result.Succeeded)
-            {
-                return Ok($"Action '{action}' was successfully performed on user {user.UserName}.");
-            }
-
-            return BadRequest($"Failed to perform '{action}' action on user {user.UserName}.");
-        }
-
-        private async Task<IdentityResult> AssignRole(AppUser user, string role)
-        {
-            if (await this.userManager.IsInRoleAsync(user, role))
-            {
-                return IdentityResult.Failed(new IdentityError
+                if (result.Succeeded)
                 {
-                    Description = $"User is already in the '{role}' role."
-                });
+                    return Ok($"Action '{action}' was successfully performed on the user.");
+                }
+
+                return BadRequest($"Failed to perform '{action}' action on the user. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
             }
-
-            return await this.userManager.AddToRoleAsync(user, role);
-        }
-
-        private async Task<IdentityResult> UnassignRole(AppUser user, string role)
-        {
-            if (!await this.userManager.IsInRoleAsync(user, role))
+            catch (KeyNotFoundException ex)
             {
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Description = $"User is not in the '{role}' role."
-                });
+                return NotFound(ex.Message);
             }
-
-            return await this.userManager.RemoveFromRoleAsync(user, role);
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (not shown here for simplicity)
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
     }
 

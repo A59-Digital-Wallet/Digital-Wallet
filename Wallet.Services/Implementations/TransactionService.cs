@@ -57,7 +57,34 @@ namespace Wallet.Services.Implementations
 
         public async Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId, string verificationCode = null)
         {
-            var wallet = await _walletRepository.GetWalletAsync(transactionRequest.WalletId);
+            var wallet = await ValidateWalletOwnershipAsync(transactionRequest.WalletId, userId);
+
+            var user = await userManager.FindByIdAsync(userId);
+            bool isHighValue = IsHighValueTransaction(transactionRequest, wallet);
+
+            if (isHighValue)
+            {
+                if (verificationCode == null)
+                {
+                    await HandleHighValueTransactionAsync(transactionRequest, user, wallet);
+                    throw new VerificationRequiredException(transactionRequest.Token);
+                }
+                else
+                {
+                    await VerifyHighValueTransactionAsync(transactionRequest, user, verificationCode);
+                }
+            }
+
+            var transaction = await PrepareTransactionAsync(transactionRequest, wallet);
+
+            await ProcessTransactionAsync(transactionRequest, transaction, wallet);
+
+            await SaveTransactionAsync(wallet, transaction);
+        }
+
+        private async Task<UserWallet> ValidateWalletOwnershipAsync(int walletId, string userId)
+        {
+            var wallet = await _walletRepository.GetWalletAsync(walletId);
             if (wallet == null)
             {
                 throw new ArgumentException("Wallet does not exist.");
@@ -67,65 +94,92 @@ namespace Wallet.Services.Implementations
                 throw new ArgumentException("Not your wallet!");
             }
 
-            var user = await this.userManager.FindByIdAsync(userId);
-            bool isHighValue = (transactionRequest.Amount >= wallet.Balance * 0.8m || transactionRequest.Amount > 20000) && transactionRequest.TransactionType != TransactionType.Deposit;
+            return wallet;
+        }
 
-            if (isHighValue && verificationCode == null)
+        private bool IsHighValueTransaction(TransactionRequestModel transactionRequest, UserWallet wallet)
+        {
+            return (transactionRequest.Amount >= wallet.Balance * 0.8m || transactionRequest.Amount > 20000) && transactionRequest.TransactionType != TransactionType.Deposit;
+        }
+
+        private async Task HandleHighValueTransactionAsync(TransactionRequestModel transactionRequest, AppUser user, UserWallet wallet)
+        {
+            var code = GenerateVerificationCode();
+            await StoreVerificationCodeAsync(user, code);
+            await SendVerificationEmailAsync(user, code);
+
+            var transactionToken = GenerateTransactionToken();
+            transactionRequest.Token = transactionToken;
+
+            StorePendingTransaction(transactionRequest, wallet, user.Id, code);
+        }
+
+        private string GenerateVerificationCode()
+        {
+            return new Random().Next(100000, 999999).ToString();
+        }
+
+        private async Task StoreVerificationCodeAsync(AppUser user, string code)
+        {
+            user.EmailConfirmationCode = code;
+            user.EmailConfirmationCodeGeneratedAt = DateTime.UtcNow;
+            await userManager.UpdateAsync(user);
+        }
+
+        private async Task SendVerificationEmailAsync(AppUser user, string code)
+        {
+            var subject = "Your Transaction Verification Code";
+            var message = $"Hello {user.UserName},\n\nYour verification code is: {code}\n\nPlease enter this code to complete your transaction.";
+            await _emailSender.SendEmail(subject, user.Email, user.UserName, message);
+        }
+
+        private string GenerateTransactionToken()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        private void StorePendingTransaction(TransactionRequestModel transactionRequest, UserWallet wallet, string userId, string code)
+        {
+            var pendingTransaction = new PendingTransaction
             {
-                // Generate and send verification code via email
-                var code = new Random().Next(100000, 999999).ToString();
-                user.EmailConfirmationCode = code;
-                user.EmailConfirmationCodeGeneratedAt = DateTime.UtcNow;
+                TransactionRequest = transactionRequest,
+                Wallet = wallet,
+                UserId = userId,
+                VerificationCode = code
+            };
 
-                await this.userManager.UpdateAsync(user);
+            _transactionCache.Set(transactionRequest.Token, pendingTransaction, TimeSpan.FromMinutes(10));
+        }
 
-                var subject = "Your Transaction Verification Code";
-                var message = $"Hello {user.UserName},\n\nYour verification code is: {code}\n\nPlease enter this code to complete your transaction.";
-                await _emailSender.SendEmail(subject, user.Email, user.UserName, message);
-
-                // Create a unique token for this transaction
-                var transactionToken = Guid.NewGuid().ToString();
-                transactionRequest.Token = transactionToken;
-                // Store the transaction details temporarily in cache
-                var pendingTransaction = new PendingTransaction
-                {
-                    TransactionRequest = transactionRequest,
-                    Wallet = wallet,
-                    UserId = userId,
-                    VerificationCode = code // Store the generated code
-                };
-
-                _transactionCache.Set(transactionToken, pendingTransaction, TimeSpan.FromMinutes(10)); // Token expires in 10 minutes
-
-                // Throw an exception to indicate that verification is required
-                throw new VerificationRequiredException(transactionToken);
+        private async Task VerifyHighValueTransactionAsync(TransactionRequestModel transactionRequest, AppUser user, string verificationCode)
+        {
+            if (user.EmailConfirmationCode != verificationCode ||
+                !user.EmailConfirmationCodeGeneratedAt.HasValue ||
+                (DateTime.UtcNow - user.EmailConfirmationCodeGeneratedAt.Value).TotalMinutes > 10)
+            {
+                throw new ArgumentException("Invalid or expired verification code.");
             }
 
-            if (isHighValue && verificationCode != null)
+            ClearVerificationCode(user);
+
+            if (!_transactionCache.TryGetValue(transactionRequest.Token, out PendingTransaction pendingTransaction))
             {
-                // Verify the code using the stored values in the user entity
-               
-
-                // Mark email as confirmed if this is part of your logic
-               
-                user.EmailConfirmationCode = null;
-                user.EmailConfirmationCodeGeneratedAt = null;
-                await this.userManager.UpdateAsync(user);
-
-                // Proceed with the transaction
-                if (!_transactionCache.TryGetValue(transactionRequest.Token, out PendingTransaction pendingTransaction))
-                {
-                    throw new InvalidOperationException("Transaction token is invalid or has expired.");
-                }
-
-                
-
-                // Remove the transaction from cache after successful verification
-                _transactionCache.Remove(transactionRequest.Token);
+                throw new InvalidOperationException("Transaction token is invalid or has expired.");
             }
 
-            // Map and save the transaction
-            Transaction transaction = _transactionFactory.Map(transactionRequest);
+            _transactionCache.Remove(transactionRequest.Token);
+        }
+
+        private async Task ClearVerificationCode(AppUser user)
+        {
+            user.EmailConfirmationCode = null;
+            user.EmailConfirmationCodeGeneratedAt = null;
+            await userManager.UpdateAsync(user);
+        }
+
+        private async Task<Transaction> PrepareTransactionAsync(TransactionRequestModel transactionRequest, UserWallet wallet)
+        {
+            var transaction = _transactionFactory.Map(transactionRequest);
 
             if (transactionRequest.IsRecurring)
             {
@@ -145,17 +199,14 @@ namespace Wallet.Services.Implementations
                 transaction.CardId = card.Id;
             }
 
+            return transaction;
+        }
+
+        private async Task ProcessTransactionAsync(TransactionRequestModel transactionRequest, Transaction transaction, UserWallet wallet)
+        {
             switch (transactionRequest.TransactionType)
             {
                 case TransactionType.Transfer:
-                    if (wallet.WalletType == WalletType.Savings)
-                    {
-                        throw new InvalidOperationException("Can't transfer from savings wallet");
-                    }
-                    if (await this.userManager.IsInRoleAsync(wallet.Owner, "Blocked"))
-                    {
-                        throw new InvalidOperationException("Blocked users are not allowed to transfer money to other users.");
-                    }
                     await HandleTransferAsync(transactionRequest, transaction, wallet);
                     break;
 
@@ -171,7 +222,10 @@ namespace Wallet.Services.Implementations
                     wallet.Balance += transactionRequest.Amount;
                     break;
             }
+        }
 
+        private async Task SaveTransactionAsync(UserWallet wallet, Transaction transaction)
+        {
             try
             {
                 await _walletRepository.UpdateWalletAsync(wallet);
@@ -182,6 +236,7 @@ namespace Wallet.Services.Implementations
                 throw new InvalidOperationException("Transaction conflict detected. Please try again.");
             }
         }
+
 
         public async Task<bool> VerifyTransactionAsync(string transactionToken, string verificationCode)
         {
