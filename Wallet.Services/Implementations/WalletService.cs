@@ -58,10 +58,6 @@ namespace Wallet.Services.Implementations
             await _walletRepository.CreateWallet(createdWallet);
         }
 
-      
-
-      
-
         public async Task<UserWallet> GetWalletAsync(int id, string userId)
         {
             var wallet = await _walletRepository.GetWalletAsync(id);
@@ -92,6 +88,30 @@ namespace Wallet.Services.Implementations
             user.JointWallets.Remove(wallet);
 
             await _walletRepository.RemoveMemberFromJointWalletAsync(walletId, userWallet);
+        }
+
+        public async Task ToggleOverdraftAsync(int walletId, string userId)
+        {
+            var wallet = await _walletRepository.GetWalletAsync(walletId);
+
+            if (wallet == null)
+            {
+                throw new ArgumentException("Wallet not found");
+            }
+
+            if (wallet.OwnerId != userId || wallet.WalletType != WalletType.Personal)
+            {
+                throw new InvalidOperationException("Overdraft can only be enabled/disabled for personal wallets by the owner.");
+            }
+
+            wallet.IsOverdraftEnabled = !wallet.IsOverdraftEnabled;
+
+            bool result = await _walletRepository.UpdateWalletAsync(wallet);
+
+            if (!result)
+            {
+                throw new Exception("Failed to update the wallet.");
+            }
         }
     }
 }

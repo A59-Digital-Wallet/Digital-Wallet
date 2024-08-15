@@ -85,5 +85,21 @@ namespace Wallet.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        [HttpPost("{walletId}/toggle-overdraft")]
+        public async Task<IActionResult> ToggleOverdraft(int walletId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            try
+            {
+                await _walletService.ToggleOverdraftAsync(walletId, userId);
+                return Ok(new { success = true, message = "Overdraft setting updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
     }
 }

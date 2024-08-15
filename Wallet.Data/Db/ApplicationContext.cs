@@ -134,9 +134,17 @@ namespace Wallet.Data.Db
                 .Property(w => w.Balance)
                 .HasColumnType("decimal(18,2)");
 
+            modelBuilder.Entity<UserWallet>()
+                .Property(w => w.InterestRate)
+                .HasColumnType("decimal(18,4)"); 
+
+            modelBuilder.Entity<UserWallet>()
+                .Property(w => w.OverdraftLimit)
+                .HasColumnType("decimal(18,2)"); 
+
             modelBuilder.Entity<Transaction>()
-      .Property(t => t.IsRecurring)
-      .HasDefaultValue(false);
+              .Property(t => t.IsRecurring)
+              .HasDefaultValue(false);
 
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Interval)
@@ -149,6 +157,7 @@ namespace Wallet.Data.Db
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.IsActive)
                 .HasDefaultValue(true);
+
         }
     }
 }

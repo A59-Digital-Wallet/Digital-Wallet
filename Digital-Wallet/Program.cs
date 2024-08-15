@@ -22,6 +22,7 @@ using Wallet.Services.HostedServices;
 using Wallet.Services.Implementations;
 using Wallet.Services.Models;
 using Wallet.Services.Validation.CardValidation;
+using Wallet.Services.Validation.TransactionValidation;
 
 namespace Digital_Wallet
 {
@@ -169,6 +170,7 @@ namespace Digital_Wallet
 
             
             builder.Services.AddScoped<CardValidation>();
+            builder.Services.AddScoped<ITransactionValidator, TransactionValidator>();
             builder.Services.AddScoped<SavingsInterestService>();
             builder.Services.AddHostedService<InterestHostedService>();
             builder.Services.AddHostedService<RecurringTransactionHostedService>();

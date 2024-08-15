@@ -19,6 +19,7 @@ using System.Diagnostics.Eventing.Reader;
 using Wallet.Services.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Wallet.Common.Exceptions;
+using Wallet.Services.Validation.TransactionValidation;
 
 namespace Wallet.Services.Implementations
 {
@@ -33,15 +34,17 @@ namespace Wallet.Services.Implementations
         private readonly VerifyEmailService _verifyEmailService;
         private readonly IMemoryCache _transactionCache;
         private readonly IEmailSender _emailSender;
+        private readonly ITransactionValidator _transactionValidator;
         public TransactionService(ITransactionRepository transactionRepository, 
             IWalletRepository walletRepository, 
             ICurrencyExchangeService currencyExchangeService, 
             ICardRepository cardRepository, 
             ITransactionFactory transactionFactory, 
             UserManager<AppUser> userManager,
-             VerifyEmailService verifyEmailService
-            , 
-            IMemoryCache transactionCache, IEmailSender emailSender)
+            VerifyEmailService verifyEmailService, 
+            IMemoryCache transactionCache,
+            IEmailSender emailSender,
+            ITransactionValidator transactionValidator )
             
         {
             _transactionRepository = transactionRepository;
@@ -53,14 +56,21 @@ namespace Wallet.Services.Implementations
             _verifyEmailService = verifyEmailService;
             _transactionCache = transactionCache;
             _emailSender = emailSender;
+            _transactionValidator = transactionValidator;
         }
 
         public async Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId, string verificationCode = null)
         {
             var wallet = await ValidateWalletOwnershipAsync(transactionRequest.WalletId, userId);
 
+            if (transactionRequest.TransactionType == TransactionType.Withdraw || transactionRequest.TransactionType == TransactionType.Transfer)
+            {
+                _transactionValidator.ValidateOverdraftAndBalance(wallet, transactionRequest.Amount);
+            }
+
             var user = await userManager.FindByIdAsync(userId);
-            bool isHighValue = IsHighValueTransaction(transactionRequest, wallet);
+
+            bool isHighValue = _transactionValidator.IsHighValueTransaction(transactionRequest, wallet);
 
             if (isHighValue)
             {
@@ -95,11 +105,6 @@ namespace Wallet.Services.Implementations
             }
 
             return wallet;
-        }
-
-        private bool IsHighValueTransaction(TransactionRequestModel transactionRequest, UserWallet wallet)
-        {
-            return (transactionRequest.Amount >= wallet.Balance * 0.8m || transactionRequest.Amount > 20000) && transactionRequest.TransactionType != TransactionType.Deposit;
         }
 
         private async Task HandleHighValueTransactionAsync(TransactionRequestModel transactionRequest, AppUser user, UserWallet wallet)
@@ -211,10 +216,6 @@ namespace Wallet.Services.Implementations
                     break;
 
                 case TransactionType.Withdraw:
-                    if (wallet.Balance < transactionRequest.Amount)
-                    {
-                        throw new InvalidOperationException("Insufficient funds.");
-                    }
                     wallet.Balance -= transactionRequest.Amount;
                     break;
 
@@ -280,11 +281,6 @@ namespace Wallet.Services.Implementations
             if (wallet.Currency != recipientWallet.Currency)
             {
                 transaction.Amount = await _currencyExchangeService.ConvertAsync(transactionRequest.Amount, wallet.Currency, recipientWallet.Currency);
-            }
-
-            if (wallet.Balance < transactionRequest.Amount)
-            {
-                throw new InvalidOperationException("Insufficient funds.");
             }
 
             wallet.Balance -= transactionRequest.Amount;

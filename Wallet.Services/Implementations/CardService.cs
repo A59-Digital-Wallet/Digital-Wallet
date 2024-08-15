@@ -35,7 +35,7 @@ namespace Wallet.Services.Implementations
 
             if(cards == null)
             {
-                throw new EntityNotFoundException("No card were found");
+                throw new EntityNotFoundException("No cards were found");
             }
 
             foreach (var card in cards)
