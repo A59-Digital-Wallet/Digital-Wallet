@@ -139,122 +139,145 @@
 
 <body>
     <div class="container mt-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 sidebar">
-                <div class="text-center mb-4">
-                    <img src="https://via.placeholder.com/150" alt="Card Image" class="img-fluid rounded mb-3">
-                    <h5 class="fw-bold">Jelly Grande</h5>
-                    <p>0123 4567 8910</p>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-lg-3 sidebar">
+                    <div class="text-center mb-4">
+                        <img src="https://via.placeholder.com/150" alt="User Image" class="img-fluid rounded mb-3">
+                        <h5 class="fw-bold">@User.Identity.Name</h5>
+                        <p>@User.Identity.Name's Dashboard</p>
+                    </div>
+                    <ul class="list-unstyled">
+                        <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Show Card Details</button></li>
+                        <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Your PIN</button></li>
+                        <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Security Code</button></li>
+                        <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Edit Limits</button></li>
+                        <li class="mb-3"><button class="btn btn-remove w-100">Remove</button></li>
+                    </ul>
+                    <div class="text-center mt-4">
+                        <p>You have USD 1,000 pending money. It will be ready in 2 business days.</p>
+                        <button class="btn btn-primary-custom w-100">Get your money now</button>
+                    </div>
                 </div>
-                <ul class="list-unstyled">
-                    <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Show Card Details</button></li>
-                    <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Your PIN</button></li>
-                    <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Security Code</button></li>
-                    <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Edit Limits</button></li>
-                    <li class="mb-3"><button class="btn btn-remove w-100">Remove</button></li>
-                </ul>
-                <div class="text-center mt-4">
-                    <p>You have USD 1,000 pending money. It will be ready in 2 business days.</p>
-                    <button class="btn btn-primary-custom w-100">Get your money now</button>
-                </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="col-lg-9 main-content">
-                <!-- Balance Card -->
-                <div class="balance-card mb-4">
+                <!-- Main Content -->
+                <div class="col-lg-9 main-content">
+                    <!-- Welcome Message -->
+                    <div class="alert alert-success" role="alert">
+                        Welcome back, @User.Identity.Name!
+                    </div>
+
+                    <!-- Balance Card -->
+                    <div class="balance-card mb-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="balance">29,475.00 USD</div>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button class="btn btn-primary-custom btn-custom">Send</button>
+                                <button class="btn btn-outline-custom btn-custom">Request</button>
+                                <button class="btn btn-outline-secondary btn-custom">Top Up</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Contacts & Invite -->
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="balance">29,475.00 USD</div>
+                        <div class="col-md-8">
+                            <div class="card-details mb-4">
+                                <h5 class="fw-bold mb-3">Recent Contacts</h5>
+                                <div class="d-flex flex-wrap">
+                                    <div class="text-center">
+                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                        <p class="small">Alina S</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                        <p class="small">Cathrine</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                        <p class="small">Bella P</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                        <p class="small">Corbyn</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                        <p class="small">Edward</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button class="btn btn-primary-custom btn-custom">Send</button>
-                            <button class="btn btn-outline-custom btn-custom">Request</button>
-                            <button class="btn btn-outline-secondary btn-custom">Top Up</button>
+                        <div class="col-md-4">
+                            <div class="invite-card text-center">
+                                <p>Invite a friend with code below and redeem a special bonus of USD 15 from us!</p>
+                                <div class="input-group mt-2">
+                                    <input type="text" class="form-control" value="JELLYPOENYA-SEP2023" readonly>
+                                    <button class="btn-copy">Copy</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Recent Contacts & Invite -->
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card-details mb-4">
-                            <h5 class="fw-bold mb-3">Recent Contacts</h5>
-                            <div class="d-flex flex-wrap">
-                                <div class="text-center">
-                                    <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                    <p class="small">Alina S</p>
+                    <!-- Transaction History -->
+                    <div class="balance-card">
+                        <h5 class="fw-bold mb-3">Transaction History</h5>
+                        <div class="transaction-history">
+                            <div class="row">
+                                <div class="col-8">
+                                    <p class="mb-1">Alina Sooela</p>
+                                    <small>Wed, 27 September 2023 - 1:05 PM</small>
                                 </div>
-                                <div class="text-center">
-                                    <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                    <p class="small">Cathrine</p>
+                                <div class="col-4 text-end">
+                                    <p class="text-danger transaction-amount mb-0">USD 275.00</p>
                                 </div>
-                                <div class="text-center">
-                                    <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                    <p class="small">Bella P</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <p class="mb-1">Justin Bieber</p>
+                                    <small>Tue, 26 September 2023 - 9:00 AM</small>
                                 </div>
-                                <div class="text-center">
-                                    <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                    <p class="small">Corbyn</p>
+                                <div class="col-4 text-end">
+                                    <p class="text-success transaction-amount mb-0">USD 1,500.00</p>
                                 </div>
-                                <div class="text-center">
-                                    <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                    <p class="small">Edward</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <p class="mb-1">Steam</p>
+                                    <small>Mon, 25 September 2023 - 3:15 PM</small>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <p class="text-danger transaction-amount mb-0">USD 39.99</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="invite-card text-center">
-                            <p>Invite a friend with code below and redeem special bonus USD 15 from us!</p>
-                            <div class="input-group mt-2">
-                                <input type="text" class="form-control" value="JELLYPOENYA-SEP2023" readonly>
-                                <button class="btn-copy">Copy</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Transaction History -->
-                <div class="balance-card">
-                    <h5 class="fw-bold mb-3">Transaction History</h5>
-                    <div class="transaction-history">
-                        <div class="row">
-                            <div class="col-8">
-                                <p class="mb-1">Alina Sooela</p>
-                                <small>Wed, 27 September 2023 - 1:05 PM</small>
-                            </div>
-                            <div class="col-4 text-end">
-                                <p class="text-danger transaction-amount mb-0">USD 275.00</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <p class="mb-1">Justin Bieber</p>
-                                <small>Tue, 26 September 2023 - 9:00 AM</small>
-                            </div>
-                            <div class="col-4 text-end">
-                                <p class="text-success transaction-amount mb-0">USD 1,500.00</p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <p class="mb-1">Steam</p>
-                                <small>Mon, 25 September 2023 - 3:15 PM</small>
-                            </div>
-                            <div class="col-4 text-end">
-                                <p class="text-danger transaction-amount mb-0">USD 39.99</p>
-                            </div>
-                        </div>
+                    <!-- Logout Button -->
+                    <div class="text-center mt-4">
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-custom">Log Out</button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="text-center">
+                <h2>Please log in to access your dashboard.</h2>
+                <a href="@Url.Action("Login", "Account")" class="btn btn-primary-custom">Log In</a>
+                <a href="@Url.Action("Register", "Account")" class="btn btn-outline-custom">Register</a>
+            </div>
+        }
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
-

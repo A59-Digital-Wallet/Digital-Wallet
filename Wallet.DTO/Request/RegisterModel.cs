@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wallet.Data.Models
+namespace Wallet.DTO.Request
 {
     public class RegisterModel
     {

@@ -6,15 +6,15 @@ namespace Wallet.MVC.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+       
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+       
 
-        public IActionResult Index()
+        public ActionResult Index()
         {
+            // Check if the user is authenticated
+           
+
             return View();
         }
 

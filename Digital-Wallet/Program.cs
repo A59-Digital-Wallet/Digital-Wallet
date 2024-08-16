@@ -144,6 +144,7 @@ namespace Digital_Wallet
             });
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<TwilioVerifyService>();
+
             // Repositories
             builder.Services.AddScoped<ICardRepository, CardRepository>();
             builder.Services.AddScoped<IWalletRepository, WalletRepository>();
