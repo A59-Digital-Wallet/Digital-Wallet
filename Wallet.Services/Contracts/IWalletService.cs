@@ -17,5 +17,6 @@ namespace Wallet.Services.Contracts
         Task AddMemberToJointWalletAsync(int walletId, string userId, bool canSpend, bool canAddFunds, string ownerId);
         Task RemoveMemberFromJointWalletAsync(int walletId, string userId, string ownerId);
         Task ToggleOverdraftAsync(int walletId, string userId);
+        Task<List<UserWallet>> GetUserWalletsAsync(string userId);
     }
 }

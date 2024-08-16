@@ -31,6 +31,14 @@ namespace Wallet.Data.Repositories.Implementations
                                  .Where(w => w.WalletType == WalletType.Savings)
                                  .ToListAsync();
         }
+        public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)
+        {
+            // Fetch wallets where the user is the owner or a member
+            return await applicationContext.Wallets
+                .Where(w => w.OwnerId == userId || w.AppUserWallets.Any(uw => uw.Id == userId))
+                .Include(w => w.AppUserWallets)
+                .ToListAsync();
+        }
         public async Task AddMemberToJointWalletAsync(int walletId, AppUser userWallet)
         {
             var wallet = await GetWalletAsync(walletId);          

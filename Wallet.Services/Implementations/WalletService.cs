@@ -71,6 +71,11 @@ namespace Wallet.Services.Implementations
             return wallet;
         }
 
+        public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)
+        {
+            return await _walletRepository.GetUserWalletsAsync(userId);
+        }
+
         public async Task RemoveMemberFromJointWalletAsync(int walletId, string userId, string ownerId)
         {
             var wallet = await _walletRepository.GetWalletAsync(walletId);

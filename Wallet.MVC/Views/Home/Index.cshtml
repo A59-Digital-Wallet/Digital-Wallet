@@ -1,4 +1,5 @@
-﻿@{
+﻿@model HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -163,96 +164,120 @@
                 </div>
 
                 <!-- Main Content -->
-                <div class="col-lg-9 main-content">
-                    <!-- Welcome Message -->
-                    <div class="alert alert-success" role="alert">
-                        Welcome back, @User.Identity.Name!
-                    </div>
-
-                    <!-- Balance Card -->
-                    <div class="balance-card mb-4">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="balance">29,475.00 USD</div>
-                            </div>
-                            <div class="col-md-6 text-end">
-                                <button class="btn btn-primary-custom btn-custom">Send</button>
-                                <button class="btn btn-outline-custom btn-custom">Request</button>
-                                <button class="btn btn-outline-secondary btn-custom">Top Up</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Contacts & Invite -->
+                <div class="col-lg-9">
                     <div class="row">
-                        <div class="col-md-8">
-                            <div class="card-details mb-4">
-                                <h5 class="fw-bold mb-3">Recent Contacts</h5>
-                                <div class="d-flex flex-wrap">
-                                    <div class="text-center">
-                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                        <p class="small">Alina S</p>
-                                    </div>
-                                    <div class="text-center">
-                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                        <p class="small">Cathrine</p>
-                                    </div>
-                                    <div class="text-center">
-                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                        <p class="small">Bella P</p>
-                                    </div>
-                                    <div class="text-center">
-                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                        <p class="small">Corbyn</p>
-                                    </div>
-                                    <div class="text-center">
-                                        <img src="https://via.placeholder.com/40" class="contact-img mb-1">
-                                        <p class="small">Edward</p>
-                                    </div>
-                                </div>
+                        <!-- Left Column: Welcome Message, Balance, Contacts, Transaction History -->
+                        <div class="col-lg-8">
+                            <div class="alert alert-success" role="alert">
+                                Welcome back, @User.Identity.Name!
                             </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="invite-card text-center">
-                                <p>Invite a friend with code below and redeem a special bonus of USD 15 from us!</p>
-                                <div class="input-group mt-2">
-                                    <input type="text" class="form-control" value="JELLYPOENYA-SEP2023" readonly>
-                                    <button class="btn-copy">Copy</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Transaction History -->
-                    <div class="balance-card">
-                        <h5 class="fw-bold mb-3">Transaction History</h5>
-                        <div class="transaction-history">
-                            <div class="row">
-                                <div class="col-8">
-                                    <p class="mb-1">Alina Sooela</p>
-                                    <small>Wed, 27 September 2023 - 1:05 PM</small>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <p class="text-danger transaction-amount mb-0">USD 275.00</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-8">
-                                    <p class="mb-1">Justin Bieber</p>
-                                    <small>Tue, 26 September 2023 - 9:00 AM</small>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <p class="text-success transaction-amount mb-0">USD 1,500.00</p>
+                            <div class="balance-card mb-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="balance">29,475.00 USD</div>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <button class="btn btn-primary-custom btn-custom">Send</button>
+                                        <button class="btn btn-outline-custom btn-custom">Request</button>
+                                        <button class="btn btn-outline-secondary btn-custom">Top Up</button>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Recent Contacts & Invite -->
                             <div class="row">
-                                <div class="col-8">
-                                    <p class="mb-1">Steam</p>
-                                    <small>Mon, 25 September 2023 - 3:15 PM</small>
+                                <div class="col-md-8">
+                                    <div class="card-details mb-4">
+                                        <h5 class="fw-bold mb-3">Recent Contacts</h5>
+                                        <div class="d-flex flex-wrap">
+                                            <div class="text-center">
+                                                <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                                <p class="small">Alina S</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                                <p class="small">Cathrine</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                                <p class="small">Bella P</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                                <p class="small">Corbyn</p>
+                                            </div>
+                                            <div class="text-center">
+                                                <img src="https://via.placeholder.com/40" class="contact-img mb-1">
+                                                <p class="small">Edward</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-4 text-end">
-                                    <p class="text-danger transaction-amount mb-0">USD 39.99</p>
+                                <div class="col-md-4">
+                                    <div class="invite-card text-center">
+                                        <p>Invite a friend with code below and redeem a special bonus of USD 15 from us!</p>
+                                        <div class="input-group mt-2">
+                                            <input type="text" class="form-control" value="JELLYPOENYA-SEP2023" readonly>
+                                            <button class="btn-copy">Copy</button>
+                                        </div>
+                                    </div>
                                 </div>
+                            </div>
+
+                            <!-- Transaction History -->
+                            <div class="balance-card">
+                                <h5 class="fw-bold mb-3">Transaction History</h5>
+                                <div class="transaction-history">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p class="mb-1">Alina Sooela</p>
+                                            <small>Wed, 27 September 2023 - 1:05 PM</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <p class="text-danger transaction-amount mb-0">USD 275.00</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p class="mb-1">Justin Bieber</p>
+                                            <small>Tue, 26 September 2023 - 9:00 AM</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <p class="text-success transaction-amount mb-0">USD 1,500.00</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <p class="mb-1">Steam</p>
+                                            <small>Mon, 25 September 2023 - 3:15 PM</small>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <p class="text-danger transaction-amount mb-0">USD 39.99</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Wallets List -->
+                        <div class="col-lg-4">
+                            <div class="balance-card mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-3">Your Wallets</h5>
+                                    <a href="@Url.Action("Create", "Wallet")" class="btn btn-outline-primary btn-sm" title="Create a new wallet">
+                                        <i class="bi bi-plus-lg"></i> <!-- Plus sign icon -->
+                                    </a>
+                                </div>
+                                <ul class="list-group">
+                                    @foreach (var wallet in Model.Wallets)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>@wallet.Name</span>
+                                            <span class="badge bg-primary rounded-pill">@wallet.Balance.ToString("C")</span>
+                                        </li>
+                                    }
+                                </ul>
                             </div>
                         </div>
                     </div>
