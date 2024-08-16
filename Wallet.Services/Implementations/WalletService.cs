@@ -9,6 +9,7 @@ using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 using Wallet.Data.Repositories.Contracts;
+using Wallet.Data.Repositories.Implementations;
 using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory.Contracts;
@@ -20,13 +21,15 @@ namespace Wallet.Services.Implementations
         private readonly IWalletRepository _walletRepository;
         private readonly UserManager<AppUser> _userManager;
         private readonly IWalletFactory _walletFactory;
+        private readonly IOverdraftSettingsRepository _overdraftSettingsRepository;
         
 
-        public WalletService(IWalletRepository walletRepository, UserManager<AppUser> userManager, IWalletFactory walletFactory)
+        public WalletService(IWalletRepository walletRepository, UserManager<AppUser> userManager, IWalletFactory walletFactory, IOverdraftSettingsRepository overdraftSettingsRepository)
         {
             _walletRepository = walletRepository;
             _userManager = userManager;
             _walletFactory = walletFactory;
+            _overdraftSettingsRepository = overdraftSettingsRepository;
         }
 
         public async Task AddMemberToJointWalletAsync(int walletId, string userId, bool canSpend, bool canAddFunds, string ownerId)
@@ -48,12 +51,13 @@ namespace Wallet.Services.Implementations
 
         public async Task CreateWallet(UserWalletRequest wallet, string userId)
         {
+            var overdraftSettings = await _overdraftSettingsRepository.GetSettingsAsync();
 
             if (wallet.Currency == Currency.None)
             {
                 throw new ArgumentException("Invalid currency selected.");
             }
-            var createdWallet = _walletFactory.Map(wallet);
+            var createdWallet = _walletFactory.Map(wallet, overdraftSettings);
             createdWallet.OwnerId = userId;
             await _walletRepository.CreateWallet(createdWallet);
         }

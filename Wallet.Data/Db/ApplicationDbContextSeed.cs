@@ -12,10 +12,12 @@ namespace Wallet.Data.Db
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-
+            var context = serviceProvider.GetRequiredService<ApplicationContext>();
 
             // Seed default users
             await SeedUsersAsync(userManager);
+            // Seed overdraft settings
+            await SeedOverdraftSettingsAsync(context);
         }
 
         private static async Task SeedUsersAsync(UserManager<AppUser> userManager)
@@ -54,6 +56,22 @@ namespace Wallet.Data.Db
             {
                 await userManager.CreateAsync(regularUser, "User@123"); // Password will be hashed internally
                 await userManager.AddToRoleAsync(regularUser, "User");
+            }
+        }
+
+        private static async Task SeedOverdraftSettingsAsync(ApplicationContext context)
+        {
+            if (!context.OverdraftSettings.Any())
+            {
+                var defaultSettings = new OverdraftSettings
+                {
+                    DefaultInterestRate = 0.05m,
+                    DefaultOverdraftLimit = 500m,
+                    DefaultConsecutiveNegativeMonths = 3
+                };
+
+                context.OverdraftSettings.Add(defaultSettings);
+                await context.SaveChangesAsync();
             }
         }
     }

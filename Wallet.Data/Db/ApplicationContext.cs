@@ -20,6 +20,7 @@ namespace Wallet.Data.Db
         public DbSet<UserWallet> Wallets { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<OverdraftSettings> OverdraftSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -125,6 +126,25 @@ namespace Wallet.Data.Db
                 .Property(w => w.Currency)
                 .HasConversion<string>();
 
+            // Configure GlobalSettings entity
+            modelBuilder.Entity<OverdraftSettings>(entity =>
+            {
+                entity.Property(e => e.DefaultInterestRate)
+                      .HasColumnType("decimal(18,4)")
+                      .HasDefaultValue(0.05m);
+
+                entity.Property(e => e.DefaultOverdraftLimit)
+                      .HasColumnType("decimal(18,2)")
+                      .HasDefaultValue(500m);
+
+                entity.Property(e => e.DefaultConsecutiveNegativeMonths)
+                      .HasDefaultValue(3);
+
+                // Ensure there's only one row in the table
+                entity.HasIndex(e => e.Id).IsUnique();
+            });
+
+
             // Configure decimal properties
             modelBuilder.Entity<Transaction>()
                 .Property(t => t.Amount)
@@ -158,6 +178,16 @@ namespace Wallet.Data.Db
                 .Property(t => t.IsActive)
                 .HasDefaultValue(true);
 
+            // Seed initial OverdraftSettings data
+            modelBuilder.Entity<OverdraftSettings>().HasData(
+                new OverdraftSettings
+                {
+                    Id = 1, // Ensure that you set the primary key
+                    DefaultInterestRate = 0.05m,
+                    DefaultOverdraftLimit = 500m,
+                    DefaultConsecutiveNegativeMonths = 3
+                }
+            );
         }
     }
 }

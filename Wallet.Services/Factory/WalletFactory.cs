@@ -11,7 +11,7 @@ namespace Wallet.Services.Factory
 {
     public class WalletFactory : IWalletFactory
     {
-        public UserWallet Map(UserWalletRequest request)
+        public UserWallet Map(UserWalletRequest request, OverdraftSettings overdraft)
         {
             var wallet = new UserWallet
             {
@@ -20,12 +20,10 @@ namespace Wallet.Services.Factory
                 Balance = 0,
                 AppUserWallets = new List<AppUser>(),
                 WalletType = request.WalletType,
+                InterestRate = overdraft.DefaultInterestRate,
+                OverdraftLimit = overdraft.DefaultOverdraftLimit,
             };
-
             return wallet;
-
-        }
-
-       
+        }     
     }
 }

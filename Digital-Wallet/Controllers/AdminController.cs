@@ -14,15 +14,16 @@ namespace Digital_Wallet.Controllers
     {
         private readonly IUserService _userService;
         private readonly UserManager<AppUser> userManager;
-        public AdminController(IUserService userService, UserManager<AppUser> userManager)
+        private readonly IOverdraftSettingsService _overdraftSettingsService;
+        public AdminController(IUserService userService, UserManager<AppUser> userManager, IOverdraftSettingsService overdraftSettingsService)
         {
             _userService = userService;
             this.userManager = userManager;
+            _overdraftSettingsService = overdraftSettingsService;
         }
 
         // GET: api/admin/users
         [HttpGet("users")]
-       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers(string? searchTerm, int page = 1, int pageSize = 10)
         {
             var result = await _userService.SearchUsersAsync(searchTerm, page, pageSize);
@@ -31,7 +32,6 @@ namespace Digital_Wallet.Controllers
 
         // GET: api/admin/users/{id}
         [HttpGet("users/{id}")]
-       // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await _userService.GetUserByIdAsync(id);
@@ -43,7 +43,6 @@ namespace Digital_Wallet.Controllers
         }
 
         [HttpPost]
-        // [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageRole(string userId, string action)
         {
             try
@@ -70,6 +69,39 @@ namespace Digital_Wallet.Controllers
                 // Log the exception (not shown here for simplicity)
                 return StatusCode(500, "An unexpected error occurred.");
             }
+        }
+
+        [HttpPut("default-interest-rate")]
+        public async Task<IActionResult> SetInterestRate(decimal newRate)
+        {
+            bool isSuccessful = await _overdraftSettingsService.SetInterestRateAsync(newRate);
+            if (isSuccessful)
+            {
+                return Ok($"Default interest rate updated to {newRate}%");
+            }
+            return BadRequest("Failed to update the default interest rate.");
+        }
+
+        [HttpPut("default-overdraft-limit")]
+        public async Task<IActionResult> SetOverdraftLimit(decimal newLimit)
+        {
+            bool isSuccessful = await _overdraftSettingsService.SetOverdraftLimitAsync(newLimit);
+            if (isSuccessful)
+            {
+                return Ok($"Default overdraft limit updated to {newLimit}.");
+            }
+            return BadRequest("Failed to update the default overdraft limit.");
+        }
+
+        [HttpPut("default-consecutive-negative-months")]
+        public async Task<IActionResult> SetConsecutiveNegativeMonths(int months)
+        {
+            bool isSuccessful = await _overdraftSettingsService.SetConsecutiveNegativeMonthsAsync(months);
+            if (isSuccessful)
+            {
+                return Ok($"Default consecutive negative months updated to {months} months.");
+            }
+            return BadRequest("Failed to update the default consecutive negative months.");
         }
     }
 
