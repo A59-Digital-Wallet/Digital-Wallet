@@ -112,11 +112,13 @@ namespace Wallet.MVC
 
             // Register services and dependencies
             ConfigureServices(builder.Services, builder.Configuration);
+            builder.Services.AddScoped<IOverdraftSettingsRepository, OverdraftSettingsRepository>();
+            builder.Services.AddScoped<IOverdraftSettingsService, OverdraftSettingsService>();
 
-            
+
 
             // Seed roles and users
-           
+
 
             var apiKey = builder.Configuration["CurrencyLayer:ApiKey"];
 

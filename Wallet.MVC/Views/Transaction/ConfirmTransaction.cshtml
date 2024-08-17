@@ -1,0 +1,62 @@
+﻿@model TransactionConfirmationViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Transaction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Confirm Transaction</h2>
+        <div class="alert alert-warning" role="alert">
+            You are about to initiate a high-value transaction. Please confirm to proceed.
+        </div>
+        <form asp-action="ProcessConfirmTransaction" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="WalletId" />
+            <input type="hidden" asp-for="CardId" />
+            <input type="hidden" asp-for="Amount" />
+            <input type="hidden" asp-for="Description" />
+            <input type="hidden" asp-for="TransactionType" />
+            <input type="hidden" asp-for="TransactionToken" />
+
+            <div class="mb-3">
+                <label>Wallet ID:</label>
+                <span>@Model.WalletId</span>
+            </div>
+
+            <div class="mb-3">
+                <label>Card ID:</label>
+                <span>@Model.CardId</span>
+            </div>
+
+            <div class="mb-3">
+                <label>Amount:</label>
+                <span>@Model.Amount.ToString("C")</span>
+            </div>
+
+            <div class="mb-3">
+                <label>Description:</label>
+                <span>@Model.Description</span>
+            </div>
+
+            <div class="mb-3">
+                <label for="VerificationCode" class="form-label">Verification Code</label>
+                <input type="text" asp-for="VerificationCode" class="form-control" required />
+                <span asp-validation-for="VerificationCode" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 text-center">
+                <button type="submit" class="btn btn-primary">Confirm and Proceed</button>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
