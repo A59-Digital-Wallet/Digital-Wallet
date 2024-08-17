@@ -18,6 +18,8 @@ namespace Wallet.DTO.Response
         public int WalletId { get; set; }
         public string WalletName { get; set; } // Optional, if you want to include wallet info
         public TransactionType TransactionType { get; set; }
+        public int? RecepientWalledId { get; set; }
+        public string? RecepientWalledName { get;set; }
     }
 
 }

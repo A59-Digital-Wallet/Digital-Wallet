@@ -60,6 +60,33 @@
             border-color: #6c63ff;
         }
 
+        .btn-deposit {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            margin-right: 10px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+            .btn-deposit:hover {
+                background-color: #218838;
+            }
+
+        .btn-withdraw {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+            .btn-withdraw:hover {
+                background-color: #c82333;
+            }
+
         .contact-img {
             width: 40px;
             height: 40px;
@@ -273,11 +300,17 @@
                                     @foreach (var wallet in Model.Wallets)
                                     {
                                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <span>@wallet.Name</span>
+                                            <a href="@Url.Action("Details", "Wallet", new { id = wallet.Id })">@wallet.Name</a>
                                             <span class="badge bg-primary rounded-pill">@wallet.Balance.ToString("C")</span>
                                         </li>
                                     }
                                 </ul>
+                            </div>
+
+                            <!-- Deposit and Withdraw Buttons -->
+                            <div class="text-center">
+                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn btn-deposit btn-custom">Deposit</a>
+                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn btn-withdraw btn-custom">Withdraw</a>
                             </div>
                         </div>
                     </div>

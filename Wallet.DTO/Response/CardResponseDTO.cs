@@ -13,6 +13,7 @@ namespace Wallet.DTO.Response
 {
     public class CardResponseDTO
     {
+        public int Id {  get; set; }
         public string CardNumber { get; set; }
 
         public string CardHolderName { get; set; }
