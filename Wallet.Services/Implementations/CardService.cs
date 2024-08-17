@@ -41,7 +41,7 @@ namespace Wallet.Services.Implementations
             foreach (var card in cards)
             {
                 card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
-                //card.CVV = await _encryptionService.DecryptAsync(card.CVV);
+                card.CVV = await _encryptionService.DecryptAsync(card.CVV);
             }
 
             List<CardResponseDTO> cardResponseDTOs = _cardFactory.Map(cards);
@@ -67,7 +67,7 @@ namespace Wallet.Services.Implementations
 
             var card = _cardFactory.Map(cardRequest, userID, validationResult.CardNetwork);
             card.CardNumber = encryptedCardNumber;
-            //card.CVV = await _encryptionService.EncryptAsync(card.CVV);
+            card.CVV = await _encryptionService.EncryptAsync(card.CVV);
             await _cardRepository.AddCardAsync(card);
         }
 

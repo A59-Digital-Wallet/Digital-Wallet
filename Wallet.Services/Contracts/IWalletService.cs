@@ -19,5 +19,7 @@ namespace Wallet.Services.Contracts
         Task RemoveMemberFromJointWalletAsync(int walletId, string userId, string ownerId);
         Task ToggleOverdraftAsync(int walletId, string userId);
         Task<List<UserWallet>> GetUserWalletsAsync(string userId);
+        Task<List<UserWallet>> GetWalletsForProcessingAsync();
+        Task UpdateWalletAsync(UserWallet wallet);
     }
 }

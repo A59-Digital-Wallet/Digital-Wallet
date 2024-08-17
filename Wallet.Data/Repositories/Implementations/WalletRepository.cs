@@ -31,6 +31,13 @@ namespace Wallet.Data.Repositories.Implementations
                                  .Where(w => w.WalletType == WalletType.Savings)
                                  .ToListAsync();
         }
+
+        public async Task<List<UserWallet>> GetWalletsForProcessingAsync()
+        {
+            return await applicationContext.Wallets
+                .Where(w => w.IsOverdraftEnabled && w.Balance < 0)
+                .ToListAsync();
+        }
         public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)
         {
             // Fetch wallets where the user is the owner or a member

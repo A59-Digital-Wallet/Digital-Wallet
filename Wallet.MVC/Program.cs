@@ -213,6 +213,7 @@ namespace Wallet.MVC
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IContactsRepository, ContactRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IOverdraftSettingsRepository, OverdraftSettingsRepository>();
 
             // Services
             services.AddScoped<ICardService, CardService>();
@@ -222,6 +223,7 @@ namespace Wallet.MVC
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IOverdraftSettingsService, OverdraftSettingsService>();
 
             // Factories
             services.AddScoped<ICardFactory, CardFactory>();
@@ -235,8 +237,8 @@ namespace Wallet.MVC
             services.AddScoped<ITransactionValidator, TransactionValidator>();
 
             // Hosted services
-            services.AddHostedService<InterestHostedService>();
             services.AddHostedService<RecurringTransactionHostedService>();
+            services.AddHostedService<UserBlockUnblockService>();
 
             // Caching
             services.AddMemoryCache();
@@ -244,7 +246,7 @@ namespace Wallet.MVC
             services.AddScoped<IAuthManager, AuthManager>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
-            services.AddScoped<SavingsInterestService>();
+
         }
 
         private static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)

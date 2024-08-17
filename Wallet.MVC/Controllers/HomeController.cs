@@ -10,10 +10,12 @@ namespace Wallet.MVC.Controllers
     {
 
         private readonly IWalletService _walletService;
+        private readonly ICardService _cardService;
 
-        public HomeController(IWalletService walletService)
+        public HomeController(IWalletService walletService, ICardService cardService)
         {
             _walletService = walletService;
+            _cardService = cardService;
         }
 
 
@@ -22,6 +24,7 @@ namespace Wallet.MVC.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             var wallets = await _walletService.GetUserWalletsAsync(userId);
+            var cards = await _cardService.GetCardsAsync(userId);
 
             var model = new HomeViewModel
             {
@@ -31,7 +34,8 @@ namespace Wallet.MVC.Controllers
                     Name = wallet.Name,
                     Balance = wallet.Balance,
                     Currency = wallet.Currency.ToString()
-                }).ToList()
+                }).ToList(),
+                Card = cards.FirstOrDefault()
             };
 
             return View(model);

@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Wallet.DTO.Response.CardResponseDTO>
+
+@{
+    ViewData["Title"] = "All Cards";
+}
+<style>
+    body {
+        background-color: #f7f7f7;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .card-container {
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: 20px auto;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .credit-card {
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #000000, #333);
+        border-radius: 15px;
+        color: white;
+        padding: 15px;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    }
+
+        .credit-card h6 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .credit-card p {
+            font-size: 16px;
+            margin-bottom: 0;
+            letter-spacing: 2px;
+        }
+
+        .credit-card img {
+            width: 40px;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .credit-card .cvv {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .btn-add-card,
+    .btn-remove-card {
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
+
+    .btn-add-card {
+        background-color: #6c63ff;
+        border-color: #6c63ff;
+        color: #fff;
+    }
+
+    .btn-remove-card {
+        background-color: #ff6b6b;
+        border-color: #ff6b6b;
+        color: #fff;
+    }
+
+    .btn-add-card:hover {
+        background-color: #5a53e1;
+        border-color: #5a53e1;
+    }
+
+    .btn-remove-card:hover {
+        background-color: #ff4a4a;
+        border-color: #ff4a4a;
+    }
+</style>
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">All Cards</h2>
+
+    @foreach (var card in Model)
+    {
+        <div class="card-container mb-4">
+            <div class="credit-card">
+                <h6>@card.CardHolderName</h6>
+                <p>@card.CardNumber</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1158px-Mastercard-logo.svg.png" alt="Card Network Logo">
+            </div>
+
+            <div class="button-group">
+                <form asp-action="RemoveCard" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="cardId" value="@card.Id" />
+                    <button type="submit" class="btn btn-remove-card">
+                        <i class="fas fa-minus"></i> Remove
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("AddCard", "Card")" class="btn btn-add-card">
+            <i class="fas fa-plus"></i> Add Card
+        </a>
+    </div>
+</div>

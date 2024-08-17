@@ -162,6 +162,118 @@
             color: #6c63ff;
             border-color: #ddd;
         }
+
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+            .card-header h5 {
+                font-size: 18px;
+                color: #333;
+                margin: 0;
+            }
+
+            .card-header a {
+                font-size: 14px;
+                color: #6c63ff;
+                text-decoration: none;
+            }
+
+        .credit-card {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #000000, #333);
+            border-radius: 15px;
+            color: white;
+            padding: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+            .credit-card h6 {
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+
+            .credit-card p {
+                font-size: 16px;
+                margin-bottom: 0;
+                letter-spacing: 2px;
+            }
+
+            .credit-card img {
+                width: 40px;
+                position: absolute;
+                top: 15px;
+                right: 15px;
+            }
+
+            .credit-card .cvv {
+                position: absolute;
+                bottom: 15px;
+                right: 15px;
+                background: rgba(0, 0, 0, 0.7);
+                padding: 5px 10px;
+                border-radius: 5px;
+                font-size: 14px;
+                letter-spacing: 1px;
+            }
+
+        .list-group-item {
+            border: none;
+            padding-left: 0;
+            padding-right: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+            .list-group-item i {
+                font-size: 18px;
+                margin-right: 15px;
+                color: #6c63ff;
+            }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .btn-add-card {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+            color: #fff;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+        .btn-remove-card {
+            background-color: #ff6b6b;
+            border-color: #ff6b6b;
+            color: #fff;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
     </style>
 </head>
 
@@ -177,18 +289,49 @@
                         <h5 class="fw-bold">@User.Identity.Name</h5>
                         <p>@User.Identity.Name's Dashboard</p>
                     </div>
-                    <ul class="list-unstyled">
+                    
+@*                     <ul class="list-unstyled">
                         <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Show Card Details</button></li>
                         <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Your PIN</button></li>
                         <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Security Code</button></li>
                         <li class="mb-3"><button class="btn btn-outline-secondary-custom w-100">Edit Limits</button></li>
                         <li class="mb-3"><button class="btn btn-remove w-100">Remove</button></li>
-                    </ul>
+                    </ul> *@
                     <div class="text-center mt-4">
                         <p>You have USD 1,000 pending money. It will be ready in 2 business days.</p>
                         <button class="btn btn-primary-custom w-100">Get your money now</button>
                     </div>
+                    <!-- Cards Section -->
+                    <div class="card-container">
+                        <div class="card-header">
+                            <h5>Cards</h5>
+                            <a href="@Url.Action("ShowAll", "Card")">Show All</a>
+                        </div>
+
+                        @if (Model.Card != null)
+                        {
+                            var firstCard = Model.Card;
+                            <div class="credit-card">
+                                <h6>@firstCard.CardHolderName</h6>
+                                <p>@firstCard.CardNumber</p>
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1158px-Mastercard-logo.svg.png" alt="Card Network Logo">
+                                <div class="cvv">CVV</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>No cards available. <a href="@Url.Action("AddCard", "Card")">Add a card</a>.</p>
+                        }
+
+                        <div class="button-group">
+                            <a href="@Url.Action("AddCard", "Card")" class="btn btn-add-card">
+                                <i class="fas fa-plus"></i> Add Card
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+
 
                 <!-- Main Content -->
                 <div class="col-lg-9">
@@ -335,6 +478,7 @@
         }
     </div>
 
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
