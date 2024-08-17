@@ -55,7 +55,10 @@ namespace Wallet.Services.Factory
                 Status = transaction.Status,
                 WalletId = transaction.WalletId,
                 WalletName = transaction.Wallet?.Name, // Optional
-                TransactionType = transaction.TransactionType
+                TransactionType = transaction.TransactionType,
+                RecepientWalledId = transaction.RecipientWalletId,
+                RecepientWalledName = transaction.RecipientWallet?.Name
+
             };
         }
     }

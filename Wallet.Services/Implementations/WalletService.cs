@@ -11,6 +11,7 @@ using Wallet.Data.Models.Transactions;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Data.Repositories.Implementations;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory.Contracts;
 
@@ -62,7 +63,7 @@ namespace Wallet.Services.Implementations
             await _walletRepository.CreateWallet(createdWallet);
         }
 
-        public async Task<UserWallet> GetWalletAsync(int id, string userId)
+        public async Task<WalletResponseDTO> GetWalletAsync(int id, string userId)
         {
             var wallet = await _walletRepository.GetWalletAsync(id);
             var isOwnerOrMember = wallet.OwnerId == userId || wallet.AppUserWallets.Any(uw => uw.Id == userId);
@@ -72,7 +73,17 @@ namespace Wallet.Services.Implementations
                 throw new UnauthorizedAccessException("You do not have access to this wallet.");
             }
 
-            return wallet;
+            var walletToReturn = new WalletResponseDTO
+            {
+                Balance = wallet.Balance,
+                Currency = wallet.Currency,
+                Name = wallet.Name,
+
+
+
+            };
+
+            return walletToReturn;
         }
 
         public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)

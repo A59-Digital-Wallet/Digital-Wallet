@@ -41,6 +41,7 @@ namespace Wallet.Services.Factory
         {
             return cards.Select(card => new CardResponseDTO()
             {
+                Id = card.Id,
                 CardNumber = MeshCardNumber(card.CardNumber),
                 CardHolderName = card.CardHolderName,
                 ExpiryDate = card.ExpiryDate,
