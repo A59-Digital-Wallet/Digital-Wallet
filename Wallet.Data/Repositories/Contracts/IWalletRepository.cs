@@ -21,6 +21,7 @@ namespace Wallet.Data.Repositories.Contracts
         Task RemoveMemberFromJointWalletAsync(int walletId, AppUser userWallet);
         Task<List<UserWallet>> GetUserWalletsAsync(string userId);
         Task<List<UserWallet>> GetSavingsWalletsAsync();
+        Task<List<UserWallet>> GetWalletsForProcessingAsync();
 
 
     }

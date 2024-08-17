@@ -18,6 +18,11 @@ namespace Wallet.Services.Implementations
             _repository = repository;
         }
 
+        public async Task<OverdraftSettings> GetSettingsAsync()
+        {
+            return await _repository.GetSettingsAsync();
+        }
+
         public async Task<bool> SetInterestRateAsync(decimal newRate)
         {
             OverdraftSettings settings = await _repository.GetSettingsAsync();

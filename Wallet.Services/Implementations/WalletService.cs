@@ -22,7 +22,7 @@ namespace Wallet.Services.Implementations
         private readonly UserManager<AppUser> _userManager;
         private readonly IWalletFactory _walletFactory;
         private readonly IOverdraftSettingsRepository _overdraftSettingsRepository;
-        
+
 
         public WalletService(IWalletRepository walletRepository, UserManager<AppUser> userManager, IWalletFactory walletFactory, IOverdraftSettingsRepository overdraftSettingsRepository)
         {
@@ -35,11 +35,11 @@ namespace Wallet.Services.Implementations
         public async Task AddMemberToJointWalletAsync(int walletId, string userId, bool canSpend, bool canAddFunds, string ownerId)
         {
             var wallet = await _walletRepository.GetWalletAsync(walletId);
-            if(wallet.WalletType != WalletType.Joint)
+            if (wallet.WalletType != WalletType.Joint)
             {
                 throw new UnauthorizedAccessException("Can't add to wallet that is not joint");
             }
-            if(wallet.OwnerId != ownerId)
+            if (wallet.OwnerId != ownerId)
             {
                 throw new UnauthorizedAccessException("Only owners can do that");
             }
@@ -78,6 +78,10 @@ namespace Wallet.Services.Implementations
         public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)
         {
             return await _walletRepository.GetUserWalletsAsync(userId);
+        }
+        public async Task<List<UserWallet>> GetWalletsForProcessingAsync()
+        {
+            return await _walletRepository.GetWalletsForProcessingAsync();
         }
 
         public async Task RemoveMemberFromJointWalletAsync(int walletId, string userId, string ownerId)
@@ -121,6 +125,11 @@ namespace Wallet.Services.Implementations
             {
                 throw new Exception("Failed to update the wallet.");
             }
+        }
+
+        public async Task UpdateWalletAsync(UserWallet wallet)
+        {
+            await _walletRepository.UpdateWalletAsync(wallet);
         }
     }
 }
