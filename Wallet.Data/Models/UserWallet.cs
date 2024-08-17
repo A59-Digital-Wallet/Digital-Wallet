@@ -38,10 +38,10 @@ namespace Wallet.Data.Models
 
         public List<Transaction> Transactions { get; set; }
 
-        public bool IsOverdraftEnabled  { get; set; } = false;
-        public decimal OverdraftLimit { get; set; } = 500m; 
-        public int ConsecutiveNegativeMonths { get; set; } = 0;
-        public decimal InterestRate { get; set; } = 0.05m; //Default rate is 5%
+        public bool IsOverdraftEnabled { get; set; } = false;
+        public decimal OverdraftLimit { get; set; }
+        public int ConsecutiveNegativeMonths { get; set; }
+        public decimal InterestRate { get; set; }
 
 
 

@@ -152,6 +152,7 @@ namespace Digital_Wallet
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IContactsRepository, ContactRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IOverdraftSettingsRepository, OverdraftSettingsRepository>();
 
             // Services
             builder.Services.AddScoped<ICardService, CardService>();
@@ -161,6 +162,7 @@ namespace Digital_Wallet
             builder.Services.AddScoped<IContactService, ContactService>();
             builder.Services.AddScoped<IEncryptionService, EncryptionService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IOverdraftSettingsService, OverdraftSettingsService>();
 
             // Factories
             builder.Services.AddScoped<ICardFactory, CardFactory>();
