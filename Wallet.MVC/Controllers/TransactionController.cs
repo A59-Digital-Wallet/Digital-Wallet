@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
+using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
 
@@ -127,6 +129,51 @@ namespace Wallet.MVC.Controllers
 
             // If verification fails, redisplay the form with an error message
             return View("ConfirmTransaction", model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 100)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            // Apply filters
+            var transactions = await _transactionService.FilterTransactionsAsync(page, pageSize, filter, userId);
+
+            // Group transactions by month
+            var groupedTransactions = transactions
+                .GroupBy(t => t.Date.ToString("MMMM yyyy"))
+                .Select(g => new MonthlyTransactionViewModel
+                {
+                    MonthYear = g.Key,
+                    Transactions = g.Select(t => new TransactionViewModel
+                    {
+                        Date = t.Date,
+                        Amount = t.Amount,
+                        Description = t.Description,
+                        Type = t.TransactionType.ToString(),
+                        Direction = DetermineDirection(t, t.WalletId)
+                    }).ToList()
+                }).ToList();
+
+            var model = new TransactionHistoryViewModel
+            {
+                MonthlyTransactions = groupedTransactions,
+                Filter = filter
+            };
+
+            return View(model);
+        }
+        private string DetermineDirection(TransactionDto transaction, int walletId)
+        {
+            // Incoming if it's a deposit or a transfer to this wallet
+            if (transaction.TransactionType == TransactionType.Deposit ||
+                (transaction.TransactionType == TransactionType.Transfer && transaction.RecepientWalledId == walletId))
+            {
+                return "Incoming";
+            }
+
+            // Outgoing if it's a withdrawal or a transfer from this wallet
+            return "Outgoing";
         }
 
 
