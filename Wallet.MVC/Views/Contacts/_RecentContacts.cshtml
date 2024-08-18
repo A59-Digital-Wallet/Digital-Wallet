@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Wallet.DTO.Response.ContactResponseDTO>
+
+<style>
+    .card-container {
+        background-color: #ffffff;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 150px;
+        margin: 10px;
+    }
+
+    .contact-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    .btn-primary-custom {
+        background-color: #6c63ff;
+        border-color: #6c63ff;
+        color: #fff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+        .btn-primary-custom:hover {
+            background-color: #594ad5;
+            border-color: #594ad5;
+        }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex flex-wrap justify-content-center">
+        @foreach (var contact in Model)
+        {
+            string name = $"{contact.FirstName} {contact.LastName}";
+            <div class="card-container text-center m-2">
+                <img src="@contact.ProfilePictureURL" class="contact-img mb-1" alt="@contact.FirstName's Profile Picture">
+                <p class="small">@name</p>
+            </div>
+        }
+    </div>
+    <div class="text-center mt-3">
+        <a href="@Url.Action("Index", "Contacts")" class="btn btn-primary-custom">Show All</a>
+    </div>
+</div>
+
+
+

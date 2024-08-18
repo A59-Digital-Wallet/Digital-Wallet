@@ -14,7 +14,8 @@ namespace Wallet.Services.Factory
         public ICollection<ContactResponseDTO> Map(ICollection<Contact> contacts)
         {
             ICollection<ContactResponseDTO> contactResponseDTO = contacts.Select(c => new ContactResponseDTO
-            {
+            {   
+                Id = c.ContactUser.Id,
                 FirstName = c.ContactUser.FirstName,
                 LastName = c.ContactUser.LastName,
                 ProfilePictureURL = c.ContactUser.ProfilePictureURL

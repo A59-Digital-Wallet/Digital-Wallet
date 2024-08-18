@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
+using Wallet.Data.Migrations;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Response;
@@ -16,12 +17,14 @@ namespace Wallet.MVC.Controllers
         private readonly IWalletService _walletService;
         private readonly ICardService _cardService;
         private readonly ITransactionService _transactionService;
+        private readonly IContactService _contactService;
 
-        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService)
+        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService)
         {
             _walletService = walletService;
             _cardService = cardService;
             _transactionService = transactionService;
+            _contactService = contactService;
         }
 
 
@@ -33,7 +36,8 @@ namespace Wallet.MVC.Controllers
             var cards = await _cardService.GetCardsAsync(userId);
             var transactionRequest = new TransactionRequestFilter();
             var transactions = await _transactionService.FilterTransactionsAsync(1, 3, transactionRequest, userId);
-
+            var contacts = await _contactService.GetContactsAsync(userId);
+            var recentContacts = contacts.Take(5).ToList();
 
             var model = new HomeViewModel
             {
@@ -52,7 +56,8 @@ namespace Wallet.MVC.Controllers
                     Description = transaction.Description,
                     Type = transaction.TransactionType.ToString(),
                     Direction = DetermineDirection(transaction, transaction.WalletId)
-                }).ToList()
+                }).ToList(),
+                Contacts = recentContacts
 
             };
 

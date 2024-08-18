@@ -56,6 +56,7 @@ namespace Digital_Wallet.Controllers
             }
         }
 
+
         [Authorize]
         [HttpDelete("delete")]
         public async Task<IActionResult> RemoveContatctAsync(string contactId)

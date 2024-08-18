@@ -31,10 +31,10 @@ namespace Wallet.Services.Implementations
         {
             ICollection<Contact> contacts = await _contactsRepository.GetContactsAsync(userId);
 
-            if(contacts.IsNullOrEmpty())
+/*            if(contacts.IsNullOrEmpty())
             {
                 throw new EntityNotFoundException("Contacts list is empty");
-            }
+            }*/
 
             ICollection<ContactResponseDTO> contactsResponse = _contactsFactory.Map(contacts);
             return contactsResponse;
