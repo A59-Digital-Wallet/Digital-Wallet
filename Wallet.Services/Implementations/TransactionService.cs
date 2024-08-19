@@ -288,9 +288,10 @@ namespace Wallet.Services.Implementations
 
             // Save the recipient wallet in the transaction
             transaction.RecipientWalletId = recipientWallet.Id;
-
+            
            
                 bool response = await _walletRepository.UpdateWalletAsync(wallet);
+           
                 if (!response)
                 {
                     throw new InvalidOperationException();
@@ -306,8 +307,19 @@ namespace Wallet.Services.Implementations
         public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
         {
             var transactions = await _transactionRepository.FilterBy(page, pageSize, filterParameters, userId);
-            return transactions.Select(t => _transactionFactory.Map(t)).ToList();
+            var userWalletIds = (await _walletRepository.GetUserWalletsAsync(userId)).Select(w => w.Id).ToList();
+
+            return transactions.Select(t =>
+            {
+                var transactionDto = _transactionFactory.Map(t);
+                // Determine direction for each transaction based on user's wallet involvement
+                transactionDto.Direction = userWalletIds.Contains(t.WalletId)
+                    ? DetermineDirection(transactionDto, t.WalletId)
+                    : DetermineDirection(transactionDto, t.RecipientWalletId);
+                return transactionDto;
+            }).ToList();
         }
+
 
         public async Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm)
         {
@@ -419,5 +431,19 @@ namespace Wallet.Services.Implementations
 
             await _transactionRepository.UpdateTransactionAsync(transaction);
         }
+
+        private string DetermineDirection(TransactionDto transaction, int? walletId)
+        {
+            // Incoming if it's a deposit or a transfer to this wallet
+            if (transaction.TransactionType == TransactionType.Deposit ||
+                (transaction.TransactionType == TransactionType.Transfer && transaction.RecepientWalledId == walletId))
+            {
+                return "Incoming";
+            }
+
+            // Outgoing if it's a withdrawal or a transfer from this wallet
+            return "Outgoing";
+        }
+
     }
 }

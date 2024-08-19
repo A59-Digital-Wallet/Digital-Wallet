@@ -274,6 +274,21 @@
             border-radius: 50px;
             padding: 10px 20px;
         }
+
+        .btn-transfer {
+            background-color: #17a2b8;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+            .btn-transfer:hover {
+                background-color: #138496;
+            }
+
     </style>
 </head>
 
@@ -418,6 +433,7 @@
                             <div class="text-center">
                                 <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn btn-deposit btn-custom">Deposit</a>
                                 <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn btn-withdraw btn-custom">Withdraw</a>
+                                <a href="@Url.Action("InitiateTransfer", "Transaction")" class="btn btn-transfer btn-custom">Transfer</a>
                             </div>
                         </div>
                     </div>

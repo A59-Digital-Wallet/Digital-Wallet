@@ -71,9 +71,17 @@
                     <ul class="list-unstyled">
                         @foreach (var member in Model.Members)
                         {
-                            <li>@member</li>
+                            <li>@member.UserName</li>
                         }
                     </ul>
+                </div>
+            }
+
+            <!-- Add Users to Joint Wallet Button -->
+            @if (Model.WalletType == "Joint")
+            {
+                <div class="text-center mb-4">
+                    <a href="@Url.Action("AddUsersToJointWallet", new { walletId = Model.Id })" class="btn btn-custom">Add Users to Joint Wallet</a>
                 </div>
             }
 

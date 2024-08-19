@@ -130,7 +130,7 @@ namespace Wallet.Data.Repositories.Implementations
         {
             if (walletId > 0)
             {
-                return transactions.Where(t => t.WalletId == walletId).ToList();
+                return transactions.Where(t => t.WalletId == walletId || t.RecipientWalletId == walletId).ToList();
             }
             return transactions;
         }

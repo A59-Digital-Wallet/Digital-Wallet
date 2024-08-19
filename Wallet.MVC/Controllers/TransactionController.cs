@@ -131,15 +131,12 @@ namespace Wallet.MVC.Controllers
             return View("ConfirmTransaction", model);
         }
 
-        [HttpGet]
         public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 100)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
 
-            // Apply filters
             var transactions = await _transactionService.FilterTransactionsAsync(page, pageSize, filter, userId);
 
-            // Group transactions by month
             var groupedTransactions = transactions
                 .GroupBy(t => t.Date.ToString("MMMM yyyy"))
                 .Select(g => new MonthlyTransactionViewModel
@@ -151,7 +148,7 @@ namespace Wallet.MVC.Controllers
                         Amount = t.Amount,
                         Description = t.Description,
                         Type = t.TransactionType.ToString(),
-                        Direction = DetermineDirection(t, t.WalletId)
+                        Direction = t.Direction // Direction determined by the service
                     }).ToList()
                 }).ToList();
 
@@ -163,18 +160,122 @@ namespace Wallet.MVC.Controllers
 
             return View(model);
         }
-        private string DetermineDirection(TransactionDto transaction, int walletId)
+
+        [HttpGet]
+        public async Task<IActionResult> InitiateTransfer()
         {
-            // Incoming if it's a deposit or a transfer to this wallet
-            if (transaction.TransactionType == TransactionType.Deposit ||
-                (transaction.TransactionType == TransactionType.Transfer && transaction.RecepientWalledId == walletId))
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            // Fetch user wallets to populate the dropdown
+            var wallets = await _walletService.GetUserWalletsAsync(userId);
+
+            var model = new TransferViewModel
             {
-                return "Incoming";
+                Wallets = wallets.Select(w => new SelectListItem
+                {
+                    Value = w.Id.ToString(),
+                    Text = $"{w.Name} - {w.Balance.ToString("C")}"
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InitiateTransfer(TransferViewModel model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            if (ModelState.IsValid && !string.IsNullOrEmpty(model.RecipientUsername))
+            {
+                try
+                {
+                    var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(model.RecipientUsername);
+                    model.RecipientWallets = userWithWallets.Wallets.Select(w => new SelectListItem
+                    {
+                        Value = w.WalletId.ToString(),
+                        Text = $"{w.Currency} - {w.Balance:N2}"
+                    }).ToList();
+                }
+                catch (ArgumentException ex)
+                {
+                    ModelState.AddModelError("RecipientUsername", ex.Message);
+                }
             }
 
-            // Outgoing if it's a withdrawal or a transfer from this wallet
-            return "Outgoing";
+            // Reload the user's wallets for the dropdown
+            var wallets = await _walletService.GetUserWalletsAsync(userId);
+            model.Wallets = wallets.Select(w => new SelectListItem
+            {
+                Value = w.Id.ToString(),
+                Text = $"{w.Name} - {w.Balance.ToString("C")}"
+            }).ToList();
+
+            return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.UserData);
+                var wallets = await _walletService.GetUserWalletsAsync(userId);
+                model.Wallets = wallets.Select(w => new SelectListItem
+                {
+                    Value = w.Id.ToString(),
+                    Text = $"{w.Name} - {w.Balance.ToString("C")}"
+                }).ToList();
+                return View("InitiateTransfer", model);
+            }
+
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+                // Create a transaction request model for the transfer
+                var transactionRequest = new TransactionRequestModel
+                {
+                    WalletId = model.FromWalletId,
+                    Amount = model.Amount,
+                    Description = $"Transfer to Wallet ID {model.ToWalletId}",
+                    TransactionType = TransactionType.Transfer,
+                    RecepientWalletId = model.ToWalletId,
+                    Token = null // Initially null; will be generated if needed
+                };
+
+                // Execute the transaction
+                await _transactionService.CreateTransactionAsync(transactionRequest, userId);
+
+                return RedirectToAction("TransactionHistory");
+            }
+            catch (VerificationRequiredException ex)
+            {
+                // Handle the case where a verification is required for high-value transactions
+                return RedirectToAction("ConfirmTransaction", "Transaction", new { token = ex });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("InitiateTransfer", model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchRecipientWallets(string searchTerm)
+        {
+            try
+            {
+                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(searchTerm);
+                return Json(userWithWallets);
+            }
+            catch (ArgumentException ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+      
 
 
 

@@ -11,7 +11,7 @@ namespace Wallet.Data.Models.Enums
         None,
         BGN,
         GBP,
-        EURO,
+        EUR,
         USD
     }
 }

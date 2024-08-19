@@ -7,7 +7,7 @@
         public decimal Balance { get; set; }
         public string Currency { get; set; }
         public string WalletType { get; set; }
-        public List<string> Members { get; set; }
+        public List<MemberViewModel> Members { get; set; }
         public List<TransactionViewModel> Transactions { get; set; }
     }
 }

@@ -78,8 +78,9 @@ namespace Wallet.Services.Implementations
                 Balance = wallet.Balance,
                 Currency = wallet.Currency,
                 Name = wallet.Name,
-
-
+                WalletType = wallet.WalletType,
+                Id = wallet.Id,
+                AppUserWallets = wallet.AppUserWallets,
 
             };
 

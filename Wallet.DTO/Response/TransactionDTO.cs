@@ -20,6 +20,7 @@ namespace Wallet.DTO.Response
         public TransactionType TransactionType { get; set; }
         public int? RecepientWalledId { get; set; }
         public string? RecepientWalledName { get;set; }
+        public string Direction { get; set; }
     }
 
 }

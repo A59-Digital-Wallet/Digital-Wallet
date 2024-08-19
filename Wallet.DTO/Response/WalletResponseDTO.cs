@@ -15,6 +15,6 @@ namespace Wallet.DTO.Response
         public decimal Balance { get; set; }
         public Currency Currency { get; set; }
         public WalletType WalletType { get; set; }
-        public List<AppUser> AppUserWallets { get; set; }
+        public List<AppUser> AppUserWallets { get; set; } = new List<AppUser>();
     }
 }

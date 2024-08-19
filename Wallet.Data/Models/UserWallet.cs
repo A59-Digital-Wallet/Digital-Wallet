@@ -38,6 +38,8 @@ namespace Wallet.Data.Models
 
         public List<Transaction> Transactions { get; set; }
 
+
+
         public bool IsOverdraftEnabled { get; set; } = false;
         public decimal OverdraftLimit { get; set; }
         public int ConsecutiveNegativeMonths { get; set; }

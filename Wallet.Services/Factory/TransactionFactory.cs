@@ -47,6 +47,7 @@ namespace Wallet.Services.Factory
 
         public TransactionDto Map(Transaction transaction)
         {
+            
             return new TransactionDto
             {               
                 Amount = (decimal)transaction.Amount,
@@ -60,6 +61,9 @@ namespace Wallet.Services.Factory
                 RecepientWalledName = transaction.RecipientWallet?.Name
 
             };
+
+
+
         }
     }
 }

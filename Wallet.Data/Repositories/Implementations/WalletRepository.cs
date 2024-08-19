@@ -70,6 +70,7 @@ namespace Wallet.Data.Repositories.Implementations
             var wallet = await this.applicationContext.Wallets
                 .Include(wallet => wallet.Owner)
                 .Include(wallet => wallet.AppUserWallets)
+               
                 .FirstOrDefaultAsync(w => w.Id == id);
                 
             return wallet;
