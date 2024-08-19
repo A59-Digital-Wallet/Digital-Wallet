@@ -104,6 +104,23 @@
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
+                <!-- Recurring Transaction Option -->
+                <div class="form-group mb-3">
+                    <label asp-for="IsRecurring" class="form-label">Make Recurring</label>
+                    <input asp-for="IsRecurring" type="checkbox" id="IsRecurring" class="form-check-input" />
+                </div>
+
+                <!-- Recurrence Interval Selection (only shown if recurring) -->
+                <div class="form-group mb-3" id="recurrenceIntervalGroup" style="display: none;">
+                    <label asp-for="RecurrenceInterval" class="form-label">Recurrence Interval</label>
+                    <select asp-for="RecurrenceInterval" class="form-control">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
+                    <span asp-validation-for="RecurrenceInterval" class="text-danger"></span>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="text-center">
                     <button type="submit" class="btn btn-custom">@Model.TransactionType</button>
@@ -111,6 +128,17 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.getElementById('IsRecurring').addEventListener('change', function () {
+            var intervalGroup = document.getElementById('recurrenceIntervalGroup');
+            if (this.checked) {
+                intervalGroup.style.display = 'block';
+            } else {
+                intervalGroup.style.display = 'none';
+            }
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

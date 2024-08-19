@@ -64,7 +64,9 @@ namespace Wallet.MVC.Controllers
                     Amount = model.Amount,
                     Description = model.Description,
                     TransactionType = model.TransactionType == "Deposit" ? TransactionType.Deposit : TransactionType.Withdraw,
-                    CardId = int.Parse(model.SelectedCardId)
+                    CardId = int.Parse(model.SelectedCardId),
+                    IsRecurring = model.IsRecurring,
+                    RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null
                 };
 
                 try
@@ -91,6 +93,24 @@ namespace Wallet.MVC.Controllers
 
             return View("SelectWalletAndCard", model);
         }
+        [HttpPost]
+        public async Task<IActionResult> CancelRecurringTransaction(int transactionId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            try
+            {
+                await _transactionService.CancelRecurringTransactionAsync(transactionId, userId);
+                TempData["SuccessMessage"] = "Recurring transaction has been successfully canceled.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+
+            return RedirectToAction("TransactionHistory");
+        }
+
 
         // GET method to show the confirmation view
         [HttpGet]
@@ -148,7 +168,9 @@ namespace Wallet.MVC.Controllers
                         Amount = t.Amount,
                         Description = t.Description,
                         Type = t.TransactionType.ToString(),
-                        Direction = t.Direction // Direction determined by the service
+                        Direction = t.Direction, // Direction determined by the service,
+                         FromWallet = t.WalletName,  // Pass the From wallet name
+                        ToWallet = t.RecepientWalledName
                     }).ToList()
                 }).ToList();
 

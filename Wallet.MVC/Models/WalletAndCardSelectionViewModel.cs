@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Wallet.Data.Models.Enums;
 
 namespace Wallet.MVC.Models
 {
@@ -12,6 +13,8 @@ namespace Wallet.MVC.Models
 
         public List<SelectListItem>? Wallets { get; set; }
         public List<SelectListItem>? Cards { get; set; }
+        public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
+        public RecurrenceInterval? RecurrenceInterval { get; set; }
     }
 
 }

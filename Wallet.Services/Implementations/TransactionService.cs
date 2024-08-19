@@ -373,8 +373,15 @@ namespace Wallet.Services.Implementations
                         recipientWallet.Balance += transaction.Amount;
                         await _walletRepository.UpdateWalletAsync(recipientWallet);
                     }
-
-                    wallet.Balance -= transaction.Amount;
+                    if(transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer) 
+                    {
+                        wallet.Balance -= transaction.Amount;
+                    }
+                    else
+                    {
+                        wallet.Balance += transaction.Amount;
+                    }
+                    
                     await _walletRepository.UpdateWalletAsync(wallet);
 
                     transaction.LastExecutedDate = now;
