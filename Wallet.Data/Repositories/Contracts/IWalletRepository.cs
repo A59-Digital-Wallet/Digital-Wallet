@@ -15,7 +15,7 @@ namespace Wallet.Data.Repositories.Contracts
     {
         Task CreateWallet(UserWallet wallet);
         Task<UserWallet> GetWalletAsync(int id);
-        Task<bool> UpdateWalletAsync(UserWallet wallet);
+        Task<bool> UpdateWalletAsync();
         Task<AppUser> GetUserWalletAsync(int walletId, string userId);
         Task AddMemberToJointWalletAsync(int walletId, AppUser userWallet);
         Task RemoveMemberFromJointWalletAsync(int walletId, AppUser userWallet);

@@ -51,7 +51,7 @@ namespace Wallet.Data.Repositories.Implementations
             var wallet = await GetWalletAsync(walletId);          
 
             wallet.AppUserWallets.Add(userWallet);
-            await UpdateWalletAsync(wallet);
+            await applicationContext.SaveChangesAsync(); // Save changes
         }
 
         public async Task CreateWallet(UserWallet wallet)
@@ -80,10 +80,10 @@ namespace Wallet.Data.Repositories.Implementations
         {
             var wallet = await GetWalletAsync(walletId);                       
             wallet.AppUserWallets.Remove(userWallet);
-            await UpdateWalletAsync(wallet);
+            await applicationContext.SaveChangesAsync(); // Save changes
         }
 
-        public async Task<bool> UpdateWalletAsync(UserWallet wallet)
+        public async Task<bool> UpdateWalletAsync()
         {
             //applicationContext.Wallets.Update(wallet);
             return await applicationContext.SaveChangesAsync() > 0;

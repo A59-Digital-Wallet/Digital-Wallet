@@ -20,6 +20,6 @@ namespace Wallet.Services.Contracts
         Task ToggleOverdraftAsync(int walletId, string userId);
         Task<List<UserWallet>> GetUserWalletsAsync(string userId);
         Task<List<UserWallet>> GetWalletsForProcessingAsync();
-        Task UpdateWalletAsync(UserWallet wallet);
+        Task UpdateWalletAsync();
     }
 }

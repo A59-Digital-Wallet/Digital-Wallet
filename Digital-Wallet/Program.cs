@@ -174,13 +174,15 @@ namespace Digital_Wallet
             
             builder.Services.AddScoped<CardValidation>();
             builder.Services.AddScoped<ITransactionValidator, TransactionValidator>();
-            builder.Services.AddHostedService<RecurringTransactionHostedService>();
-            builder.Services.AddHostedService<UserBlockUnblockService>();
-            builder.Services.AddMemoryCache();
             builder.Services.AddScoped<VerifyEmailService>();
             builder.Services.AddScoped<IAuthManager, AuthManager>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
+
+            builder.Services.AddHostedService<RecurringTransactionHostedService>();
+            builder.Services.AddHostedService<UserBlockUnblockService>();
+
+            builder.Services.AddMemoryCache();
 
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())

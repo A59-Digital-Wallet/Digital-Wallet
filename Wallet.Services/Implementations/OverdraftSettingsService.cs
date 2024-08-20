@@ -27,10 +27,10 @@ namespace Wallet.Services.Implementations
         {
             OverdraftSettings settings = await _repository.GetSettingsAsync();
 
-            newRate = newRate / 100;
 
             if (settings != null)
             {
+                newRate = newRate / 100;    
                 settings.DefaultInterestRate = newRate;
                 return await _repository.UpdateSettings(settings);
             }

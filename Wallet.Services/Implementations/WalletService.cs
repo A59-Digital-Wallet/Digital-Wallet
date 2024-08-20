@@ -131,7 +131,7 @@ namespace Wallet.Services.Implementations
 
             wallet.IsOverdraftEnabled = !wallet.IsOverdraftEnabled;
 
-            bool result = await _walletRepository.UpdateWalletAsync(wallet);
+            bool result = await _walletRepository.UpdateWalletAsync();
 
             if (!result)
             {
@@ -139,9 +139,9 @@ namespace Wallet.Services.Implementations
             }
         }
 
-        public async Task UpdateWalletAsync(UserWallet wallet)
+        public async Task UpdateWalletAsync()
         {
-            await _walletRepository.UpdateWalletAsync(wallet);
+            await _walletRepository.UpdateWalletAsync();
         }
     }
 }

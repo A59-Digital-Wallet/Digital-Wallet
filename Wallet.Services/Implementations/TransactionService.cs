@@ -229,7 +229,7 @@ namespace Wallet.Services.Implementations
         {
             try
             {
-                await _walletRepository.UpdateWalletAsync(wallet);
+                await _walletRepository.UpdateWalletAsync();
                 await _transactionRepository.CreateTransactionAsync(transaction);
             }
             catch (DbUpdateConcurrencyException)
@@ -290,7 +290,7 @@ namespace Wallet.Services.Implementations
             transaction.RecipientWalletId = recipientWallet.Id;
             
            
-                bool response = await _walletRepository.UpdateWalletAsync(wallet);
+                bool response = await _walletRepository.UpdateWalletAsync();
            
                 if (!response)
                 {
@@ -371,7 +371,7 @@ namespace Wallet.Services.Implementations
                     {
                         var recipientWallet = await _walletRepository.GetWalletAsync(transaction.RecipientWalletId.Value);
                         recipientWallet.Balance += transaction.Amount;
-                        await _walletRepository.UpdateWalletAsync(recipientWallet);
+                        await _walletRepository.UpdateWalletAsync();
                     }
                     if(transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer) 
                     {
@@ -382,7 +382,7 @@ namespace Wallet.Services.Implementations
                         wallet.Balance += transaction.Amount;
                     }
                     
-                    await _walletRepository.UpdateWalletAsync(wallet);
+                    await _walletRepository.UpdateWalletAsync();
 
                     transaction.LastExecutedDate = now;
                     transaction.NextExecutionDate = now.AddInterval(transaction.Interval);

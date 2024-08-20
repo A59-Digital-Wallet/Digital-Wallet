@@ -53,7 +53,7 @@ namespace Wallet.Services.HostedServices
                         }
 
                         // Save changes to the wallet
-                        await walletService.UpdateWalletAsync(wallet);
+                        await walletService.UpdateWalletAsync();
                     }
                     else if (wallet.Balance >= 0 && wallet.ConsecutiveNegativeMonths > 0)
                     {
@@ -62,7 +62,7 @@ namespace Wallet.Services.HostedServices
 
                         // Reset the ConsecutiveNegativeMonths count after unblocking
                         wallet.ConsecutiveNegativeMonths = 0;
-                        await walletService.UpdateWalletAsync(wallet);
+                        await walletService.UpdateWalletAsync();
                     }
                 }
             }
