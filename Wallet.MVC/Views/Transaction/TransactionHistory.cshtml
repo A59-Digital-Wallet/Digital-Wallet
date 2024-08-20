@@ -86,7 +86,7 @@
     <div class="mt-5">
         @foreach (var monthlyGroup in Model.MonthlyTransactions)
         {
-            <h3 class="text-2xl font-bold text-gray-700 mt-4">@monthlyGroup.MonthYear</h3>
+            <h3 class="text-xl font-bold text-gray-700 mt-4">@monthlyGroup.MonthYear</h3>
             <table class="table-auto w-full mt-2 border-collapse">
                 <thead>
                     <tr class="border-b text-left">
@@ -95,7 +95,7 @@
                         <th class="p-2 text-sm font-semibold text-gray-700">Amount</th>
                         <th class="p-2 text-sm font-semibold text-gray-700">Type</th>
                         <th class="p-2 text-sm font-semibold text-gray-700">Direction</th>
-                       
+                        <th class="p-2 text-sm font-semibold text-gray-700">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -126,6 +126,15 @@
                             <td class="p-2 text-sm text-gray-800">@transaction.Amount.ToString("C")</td>
                             <td class="p-2 text-sm text-gray-800">@transaction.Type</td>
                             <td class="p-2 text-sm font-medium @(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500")">@transaction.Direction</td>
+                            <td class="p-2 text-sm text-gray-800">
+                                @if (transaction.IsRecurring)
+                                {
+                                    <form asp-action="CancelRecurringTransaction" method="post" onsubmit="return confirm('Are you sure you want to cancel this recurring transaction?');">
+                                        <input type="hidden" name="transactionId" value="@transaction.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Cancel Recurring</button>
+                                    </form>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

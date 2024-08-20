@@ -75,11 +75,14 @@ namespace Wallet.MVC.Controllers
                     : null,
                 Transactions = transactions.Select(t => new TransactionViewModel
                 {
+                    Id = t.Id,
                     Date = t.Date,
                     Amount = t.Amount,
                     Description = t.Description,
                     Type = t.TransactionType.ToString(),
-                    Direction = t.Direction // Assuming this is determined by the service
+                    Direction = t.Direction,
+                    IsRecurring = t.IsReccuring,
+                    RecurrenceInterval = t.RecurrenceInterval
                 }).ToList()
             };
 

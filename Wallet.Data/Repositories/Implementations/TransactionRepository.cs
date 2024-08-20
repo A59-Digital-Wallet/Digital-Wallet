@@ -33,7 +33,7 @@ namespace Wallet.Data.Repositories.Implementations
                 .Where(t => t.IsRecurring && t.IsActive && t.NextExecutionDate <= dueDate)
                 .ToListAsync();
         }
-
+             
         public async Task CreateTransactionAsync(Transaction transaction)
         {
             _context.Transactions.Add(transaction);
@@ -44,6 +44,8 @@ namespace Wallet.Data.Repositories.Implementations
             return await _context.Transactions
                                  .Include(t => t.Wallet) 
                                  .ThenInclude(u => u.Owner)
+                                 .Include(t => t.Wallet)
+                                 .ThenInclude( u => u.AppUserWallets)
                                  .FirstOrDefaultAsync(t => t.Id == transactionId);
         }
 

@@ -49,7 +49,8 @@ namespace Wallet.Services.Factory
         {
             
             return new TransactionDto
-            {               
+            {           
+                Id = transaction.Id,
                 Amount = (decimal)transaction.Amount,
                 Date = transaction.Date,
                 Description = transaction.Description,
@@ -59,7 +60,8 @@ namespace Wallet.Services.Factory
                 TransactionType = transaction.TransactionType,
                 RecepientWalledId = transaction.RecipientWalletId,
                 RecepientWalledName = transaction.RecipientWallet?.Name,
-
+                IsReccuring = transaction.IsRecurring,
+                RecurrenceInterval = transaction.Interval,
 
             };
 
