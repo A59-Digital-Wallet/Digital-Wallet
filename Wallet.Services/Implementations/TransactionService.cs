@@ -387,6 +387,22 @@ namespace Wallet.Services.Implementations
                     transaction.LastExecutedDate = now;
                     transaction.NextExecutionDate = now.AddInterval(transaction.Interval);
                     await _transactionRepository.UpdateTransactionAsync(transaction);
+
+                    var newTransaction = new Transaction
+                    {
+                        WalletId = transaction.WalletId,
+                        Amount = transaction.Amount,
+                        Description = transaction.Description,
+                        TransactionType = transaction.TransactionType,
+                        Date = now,
+                        RecipientWalletId = transaction.RecipientWalletId,
+                        IsRecurring = true,
+                        Interval = transaction.Interval// The actual record of the transaction is not recurring
+                    };
+                    transaction.IsRecurring = false;
+                    transaction.Interval = default;
+                    await _transactionRepository.CreateTransactionAsync(newTransaction);
+
                 }
                 catch (Exception ex)
                 {

@@ -21,7 +21,7 @@ namespace Wallet.Services.HostedServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(ProcessRecurringTransactions, null, TimeSpan.Zero, TimeSpan.FromMinutes(30));
+            _timer = new Timer(ProcessRecurringTransactions, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
             return Task.CompletedTask;
         }
 
