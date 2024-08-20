@@ -14,5 +14,7 @@ namespace Wallet.MVC.Models
         public List<SelectListItem> RecipientWallets { get; set; } = new List<SelectListItem>(); // To hold the recipient's wallets
         public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
         public RecurrenceInterval? RecurrenceInterval { get; set; }
+        public int? SelectedCategoryId { get; set; } // Optional category selection
+        public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>(); // List of available categories
     }
 }

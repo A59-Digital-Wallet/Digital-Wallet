@@ -16,9 +16,11 @@ namespace Wallet.Services.Factory
         {
             List<CategoryResponseDTO> response = categories.Select(category => new CategoryResponseDTO
             {
+                Id = category.Id,
                 Name = category.Name,
                 Transactions = category.Transactions?.Select(transaction => new TransactionDto
                 {
+                    Id = transaction.Id,
                     Amount = transaction.Amount,
                     Date = transaction.Date,
                     Description = transaction.Description,

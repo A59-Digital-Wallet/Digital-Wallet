@@ -8,6 +8,7 @@ using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
+using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
@@ -16,12 +17,14 @@ namespace Wallet.MVC.Controllers
         private readonly IWalletService _walletService;
         private readonly ICardService _cardService;
         private readonly ITransactionService _transactionService;
+        private readonly ICategoryService _categoryService;
 
-        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService)
+        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService)
         {
             _walletService = walletService;
             _cardService = cardService;
             _transactionService = transactionService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -196,12 +199,20 @@ namespace Wallet.MVC.Controllers
             // Fetch user wallets to populate the dropdown
             var wallets = await _walletService.GetUserWalletsAsync(userId);
 
+            // Load the categories for selection
+            var categories = await _categoryService.GetUserCategoriesAsync(userId, 1, int.MaxValue);
+
             var model = new TransferViewModel
             {
                 Wallets = wallets.Select(w => new SelectListItem
                 {
                     Value = w.Id.ToString(),
                     Text = $"{w.Name} - {w.Balance.ToString("C")}"
+                }).ToList(),
+                Categories = categories.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
                 }).ToList()
             };
 

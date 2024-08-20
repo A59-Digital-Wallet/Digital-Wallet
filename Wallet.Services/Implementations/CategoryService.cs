@@ -24,6 +24,11 @@ namespace Wallet.Services.Implementations
             _categoryFactory = categoryFactory;
         }
 
+        public async Task<Category> GetCategoryAsync(int categoryId)
+        {
+            return await _categoryRepository.GetCategoryByIdAsync(categoryId);
+        }
+
         public async Task<List<CategoryResponseDTO>> GetUserCategoriesAsync(string userId, int pageNumber, int pageSize)
         {
             List<Category> categories = await _categoryRepository.GetUserCategoriesAsync(userId, pageNumber, pageSize);
@@ -62,7 +67,7 @@ namespace Wallet.Services.Implementations
                 throw new ArgumentNullException("Name of category cannot be empty!");
             }
 
-            Category categoryExists = await _categoryRepository.GetCategoryById(categoryId);
+            Category categoryExists = await _categoryRepository.GetCategoryByIdAsync(categoryId);
 
             if (categoryExists == null)
             {
@@ -84,7 +89,7 @@ namespace Wallet.Services.Implementations
 
         public async Task DeleteCategoryAsync(string userId, int categoryId)
         {
-            Category category = await _categoryRepository.GetCategoryById(categoryId);
+            Category category = await _categoryRepository.GetCategoryByIdAsync(categoryId);
 
             if (category == null)
             {

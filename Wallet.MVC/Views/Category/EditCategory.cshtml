@@ -1,0 +1,68 @@
+﻿@model Wallet.DTO.Request.CategoryRequestDTO
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Category</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .card-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .btn-primary-custom {
+            background-color: #6c63ff;
+            border-color: #6c63ff;
+            color: #fff;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+            .btn-primary-custom:hover {
+                background-color: #594ad5;
+                border-color: #594ad5;
+            }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="card-container">
+            <h2 class="mb-4">Edit Category</h2>
+
+            <form method="post" asp-action="EditCategory">
+                <div class="form-group mb-3">
+                    <label for="Name" class="font-semibold text-gray-700">Category Name</label>
+                    <input type="text" id="Name" name="Name" value="@Model.Name" class="form-control p-2 rounded-lg border-gray-300" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom">Save Changes</button>
+                <a href="@Url.Action("Index", "Category")" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
