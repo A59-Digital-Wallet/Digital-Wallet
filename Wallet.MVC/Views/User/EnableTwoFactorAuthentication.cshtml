@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Enable Two-Factor Authentication";
+}
+
+<div class="container mt-4">
+    <div class="text-center">
+        <h2>Enable Two-Factor Authentication</h2>
+        <p>Scan the QR code below with your authenticator app and enter the generated code to enable two-factor authentication.</p>
+        <img src="data:image/png;base64,@ViewBag.QrCodeImage" alt="QR Code" class="mb-4" />
+        <form method="post" asp-action="EnableTwoFactorAuthentication">
+            <div class="form-group mb-3">
+                <label for="code" class="form-label">Authentication Code</label>
+                <input type="text" name="code" id="code" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Verify and Enable</button>
+        </form>
+    </div>
+</div>

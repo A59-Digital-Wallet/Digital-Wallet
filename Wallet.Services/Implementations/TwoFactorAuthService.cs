@@ -41,7 +41,7 @@ namespace Wallet.Services.Implementations
             using (QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrCodeUri, QRCodeGenerator.ECCLevel.Q))
             using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
             {
-                return qrCode.GetGraphic(20);
+                return qrCode.GetGraphic(5);
             }
         }
      
