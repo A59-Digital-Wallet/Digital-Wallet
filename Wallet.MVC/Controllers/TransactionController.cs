@@ -84,6 +84,7 @@ namespace Wallet.MVC.Controllers
                         Description = model.Description,
                         TransactionType = model.TransactionType,
                         TransactionToken = ex.TransactionToken,
+                        
                     };
                     // Redirect to the confirmation page
                     return RedirectToAction("ConfirmTransaction", transactionConfig);
@@ -93,6 +94,7 @@ namespace Wallet.MVC.Controllers
 
             return View("SelectWalletAndCard", model);
         }
+
         [HttpPost]
         public async Task<IActionResult> CancelRecurringTransaction(int transactionId)
         {
@@ -134,7 +136,7 @@ namespace Wallet.MVC.Controllers
                     Description = model.Description,
                     TransactionType = model.TransactionType == "Deposit" ? TransactionType.Deposit : TransactionType.Withdraw,
                     CardId = model.CardId,
-                    Token = model.TransactionToken // Pass the token to finalize the transaction
+                    Token = model.TransactionToken, // Pass the token to finalize the transaction
                 };
 
                 // Verify the code and complete the transaction
@@ -164,13 +166,16 @@ namespace Wallet.MVC.Controllers
                     MonthYear = g.Key,
                     Transactions = g.Select(t => new TransactionViewModel
                     {
+                        Id= t.Id,
                         Date = t.Date,
                         Amount = t.Amount,
                         Description = t.Description,
                         Type = t.TransactionType.ToString(),
                         Direction = t.Direction, // Direction determined by the service,
                          FromWallet = t.WalletName,  // Pass the From wallet name
-                        ToWallet = t.RecepientWalledName
+                        ToWallet = t.RecepientWalledName,
+                        IsRecurring = t.IsReccuring,
+                        RecurrenceInterval = t.RecurrenceInterval,
                     }).ToList()
                 }).ToList();
 

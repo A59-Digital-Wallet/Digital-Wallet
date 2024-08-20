@@ -54,11 +54,15 @@ namespace Wallet.MVC.Controllers
                 Card = cards.FirstOrDefault(),
                 Transactions = transactions.Select(transaction => new TransactionViewModel
                 {
+                    Id = transaction.Id,
                     Date = transaction.Date,
                     Amount = transaction.Amount,
                     Description = transaction.Description,
                     Type = transaction.TransactionType.ToString(),
-                    Direction = transaction.Direction // Direction now determined by the service
+                    Direction = transaction.Direction, // Direction now determined by the service
+                    IsRecurring = transaction.IsReccuring,
+                    RecurrenceInterval = transaction.RecurrenceInterval,
+                    
                 }).ToList(),
                 Contacts = recentContacts
             };

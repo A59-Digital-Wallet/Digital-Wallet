@@ -415,6 +415,7 @@ namespace Wallet.Services.Implementations
                 throw new InvalidOperationException("This transaction is not a recurring transaction.");
             }
 
+            transaction.IsRecurring = false;
             transaction.IsActive = false;
             transaction.NextExecutionDate = null;
 

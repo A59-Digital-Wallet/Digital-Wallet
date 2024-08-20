@@ -11,6 +11,7 @@ namespace Wallet.DTO.Response
     public class TransactionDto
     {
         
+        public int Id { get; set; } 
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
@@ -21,6 +22,8 @@ namespace Wallet.DTO.Response
         public int? RecepientWalledId { get; set; }
         public string? RecepientWalledName { get;set; }
         public string Direction { get; set; }
+        public bool IsReccuring { get; set; }
+        public RecurrenceInterval? RecurrenceInterval { get; set; }
     }
 
 }
