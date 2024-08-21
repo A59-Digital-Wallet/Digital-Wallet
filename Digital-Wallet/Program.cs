@@ -178,9 +178,11 @@ namespace Digital_Wallet
             builder.Services.AddScoped<IAuthManager, AuthManager>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITwoFactorAuthService, TwoFactorAuthService>();
+            builder.Services.AddScoped<SavingsInterestService>();
 
             builder.Services.AddHostedService<RecurringTransactionHostedService>();
             builder.Services.AddHostedService<UserBlockUnblockService>();
+            builder.Services.AddHostedService<InterestHostedService>();
 
             builder.Services.AddMemoryCache();
 
