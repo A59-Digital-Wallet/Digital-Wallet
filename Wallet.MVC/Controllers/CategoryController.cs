@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using Wallet.DTO.Request;
+using Wallet.Common.Exceptions;
 
 namespace Wallet.MVC.Controllers
 {
@@ -21,24 +22,34 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> Index()
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
-            var categories = await _categoryService.GetUserCategoriesAsync(userId, pageNumber: 1, pageSize: 10);
 
-            var model = categories.Select(c => new CategoryViewModel
+            List<CategoryViewModel> model = new List<CategoryViewModel>();
+
+            try
             {
-                Id = c.Id,
-                Name = c.Name,
-                Transactions = c.Transactions?.Select(t => new TransactionViewModel
+                var categories = await _categoryService.GetUserCategoriesAsync(userId, pageNumber: 1, pageSize: 10);
+
+                model = categories.Select(c => new CategoryViewModel
                 {
-                    Id = t.Id,
-                    Date = t.Date,
-                    Amount = t.Amount,
-                    Description = t.Description,
-                    Type = t.TransactionType.ToString(),
-                    FromWallet = t.WalletName,
-                    Direction = t.Status.ToString(),
-                    RecurrenceInterval = t.RecurrenceInterval
-                }).ToList()
-            }).ToList();
+                    Id = c.Id,
+                    Name = c.Name,
+                    Transactions = c.Transactions?.Select(t => new TransactionViewModel
+                    {
+                        Id = t.Id,
+                        Date = t.Date,
+                        Amount = t.Amount,
+                        Description = t.Description,
+                        Type = t.TransactionType.ToString(),
+                        FromWallet = t.WalletName,
+                        Direction = t.Status.ToString(),
+                        RecurrenceInterval = t.RecurrenceInterval
+                    }).ToList()
+                }).ToList();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message; // Pass the error message to the view
+            }
 
             return View(model);
         }
@@ -46,15 +57,10 @@ namespace Wallet.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> CategoryTransactions(int categoryId)
         {
-            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
+            string userId = User.FindFirst(ClaimTypes.UserData)?.Value;
             var categories = await _categoryService.GetUserCategoriesAsync(userId, pageNumber: 1, pageSize: 10);
 
             var category = categories.FirstOrDefault(c => c.Id == categoryId);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
 
             // Display transactions related to the selected category
             var transactions = category.Transactions.Select(t => new TransactionViewModel
@@ -70,6 +76,24 @@ namespace Wallet.MVC.Controllers
             }).ToList();
 
             return View(transactions);
+        }
+
+        [HttpGet]
+        public IActionResult CreateCategory()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(CategoryRequestDTO categoryRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                string userId = User.FindFirst(ClaimTypes.UserData)?.Value;
+                await _categoryService.AddCategoryAsync(userId, categoryRequest); 
+                return RedirectToAction("Index");
+            }
+            return View(categoryRequest);
         }
 
         [HttpGet]

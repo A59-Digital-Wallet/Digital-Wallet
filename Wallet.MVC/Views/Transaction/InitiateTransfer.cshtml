@@ -59,10 +59,17 @@
             <div class="form-group mb-3">
                 <label for="SelectedCategoryId" class="font-semibold text-gray-700">Category (optional)</label>
                 <select id="SelectedCategoryId" name="SelectedCategoryId" class="form-control p-2 rounded-lg border-gray-300">
-                    <option value="" disabled selected>Select category</option>
-                    @foreach (var category in Model.Categories)
+                    <option value="" selected="@(Model.SelectedCategoryId == null ? "selected" : "")">No category selected</option>
+                    @if (Model.Categories != null && Model.Categories.Any())
                     {
-                        <option value="@category.Value" selected=@(Model.SelectedCategoryId == int.Parse(category.Value) ? "selected" : "")>@category.Text</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Value" deselected = "@(Model.SelectedCategoryId == int.Parse(category.Value) ? "selected" : "")">@category.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="" disabled>No categories available</option>
                     }
                 </select>
             </div>
@@ -114,9 +121,9 @@
         color: #fff;
     }
 
-    .btn-primary:hover {
-        background-color: #5753d3;
-    }
+        .btn-primary:hover {
+            background-color: #5753d3;
+        }
 </style>
 
 <script>

@@ -20,6 +20,7 @@ using Wallet.Services.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Wallet.Common.Exceptions;
 using Wallet.Services.Validation.TransactionValidation;
+using Wallet.Data.Migrations;
 
 namespace Wallet.Services.Implementations
 {
@@ -90,6 +91,12 @@ namespace Wallet.Services.Implementations
             await ProcessTransactionAsync(transactionRequest, transaction, wallet);
 
             await SaveTransactionAsync(wallet, transaction);
+
+            // If a category is selected, associate the transaction with it
+            if (transactionRequest.CategoryId.HasValue)
+            {
+                await AddTransactionToCategoryAsync(transaction.Id, transactionRequest.CategoryId.Value, userId);
+            }
         }
 
         private async Task<UserWallet> ValidateWalletOwnershipAsync(int walletId, string userId)
@@ -326,6 +333,7 @@ namespace Wallet.Services.Implementations
             var user = await this.userManager.Users
                 .Include(u => u.OwnedWallets)
                 .Include(u => u.JointWallets)
+                .Include(u => u.Categories)
                 .Where(u => u.UserName.Contains(searchTerm) || u.Email.Contains(searchTerm) || u.PhoneNumber.Contains(searchTerm))
                 .Select(u => new UserWithWalletsDto
                 {
@@ -336,7 +344,8 @@ namespace Wallet.Services.Implementations
                         WalletId = w.Id,
                         Currency = w.Currency,
                         Balance = w.Balance
-                    }).ToList()
+                    }).ToList(),
+                    Categories = u.Categories.ToList(),
                 })
                 .FirstOrDefaultAsync();
 
