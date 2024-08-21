@@ -8,6 +8,7 @@ using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
+using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
@@ -16,12 +17,14 @@ namespace Wallet.MVC.Controllers
         private readonly IWalletService _walletService;
         private readonly ICardService _cardService;
         private readonly ITransactionService _transactionService;
+        private readonly ICategoryService _categoryService;
 
-        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService)
+        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService)
         {
             _walletService = walletService;
             _cardService = cardService;
             _transactionService = transactionService;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -196,17 +199,37 @@ namespace Wallet.MVC.Controllers
             // Fetch user wallets to populate the dropdown
             var wallets = await _walletService.GetUserWalletsAsync(userId);
 
+            List<SelectListItem> categories = new List<SelectListItem>();
+
+            try
+            {
+                // Load the categories for selection
+                var categoryList = await _categoryService.GetUserCategoriesAsync(userId, 1, int.MaxValue);
+                categories = categoryList.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                }).ToList();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                // Handle the case when no categories are found
+                ViewBag.NoCategoriesMessage = "No categories available";
+            }
+
             var model = new TransferViewModel
             {
                 Wallets = wallets.Select(w => new SelectListItem
                 {
                     Value = w.Id.ToString(),
                     Text = $"{w.Name} - {w.Balance.ToString("C")}"
-                }).ToList()
+                }).ToList(),
+                Categories = categories
             };
 
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> InitiateTransfer(TransferViewModel model)
@@ -223,10 +246,22 @@ namespace Wallet.MVC.Controllers
                         Value = w.WalletId.ToString(),
                         Text = $"{w.Currency} - {w.Balance:N2}"
                     }).ToList();
+
+                    var categories = await _categoryService.GetUserCategoriesAsync(userId, 1, int.MaxValue);
+                    model.Categories = categories.Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    }).ToList();
                 }
                 catch (ArgumentException ex)
                 {
                     ModelState.AddModelError("RecipientUsername", ex.Message);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    // Handle the case when no categories are found
+                    ViewBag.NoCategoriesMessage = "No categories available";
                 }
             }
 
@@ -268,6 +303,7 @@ namespace Wallet.MVC.Controllers
                     Description = $"Transfer to Wallet ID {model.ToWalletId}",
                     TransactionType = TransactionType.Transfer,
                     RecepientWalletId = model.ToWalletId,
+                    CategoryId = model.SelectedCategoryId,
                     Token = null // Initially null; will be generated if needed
                 };
 

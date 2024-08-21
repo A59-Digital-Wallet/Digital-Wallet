@@ -11,7 +11,7 @@ namespace Wallet.DTO.Request
     {
         public decimal Amount { get; set; }
         public int WalletId { get; set; }
-        
+
         public string Description { get; set; }
         public TransactionType TransactionType { get; set; }
         public int CardId { get; set; }
@@ -21,5 +21,6 @@ namespace Wallet.DTO.Request
         public RecurrenceInterval? RecurrenceInterval { get; set; }
 
         public string Token { get; set; }
+        public int? CategoryId { get; set;}
     }
 }

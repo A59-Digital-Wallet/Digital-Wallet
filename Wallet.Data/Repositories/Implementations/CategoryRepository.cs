@@ -29,7 +29,7 @@ namespace Wallet.Data.Repositories.Implementations
             return await categories;
         }
 
-        public async Task<Category> GetCategoryById(int categoryId)
+        public async Task<Category> GetCategoryByIdAsync(int categoryId)
         {
             Category category = await _context.Categories.FindAsync(categoryId);
             return category;
