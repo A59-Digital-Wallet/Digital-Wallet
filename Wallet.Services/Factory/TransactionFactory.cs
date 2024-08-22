@@ -62,6 +62,9 @@ namespace Wallet.Services.Factory
                 RecepientWalledName = transaction.RecipientWallet?.Name,
                 IsReccuring = transaction.IsRecurring,
                 RecurrenceInterval = transaction.Interval,
+                OriginalAmount = transaction.OriginalAmount,
+                OriginalCurrency = transaction.OriginalCurrency.ToString(),
+               
 
             };
 

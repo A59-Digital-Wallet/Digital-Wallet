@@ -224,10 +224,12 @@ namespace Wallet.Services.Implementations
 
                 case TransactionType.Withdraw:
                     wallet.Balance -= transactionRequest.Amount;
+                    transaction.OriginalAmount = transactionRequest.Amount;
                     break;
 
                 case TransactionType.Deposit:
                     wallet.Balance += transactionRequest.Amount;
+                    transaction.OriginalAmount = transactionRequest.Amount;
                     break;
             }
         }
@@ -284,6 +286,8 @@ namespace Wallet.Services.Implementations
             {
                 throw new ArgumentException("Recipient wallet does not exist.");
             }
+            transaction.OriginalAmount = transactionRequest.Amount;
+            transaction.OriginalCurrency = wallet.Currency;
 
             if (wallet.Currency != recipientWallet.Currency)
             {
@@ -509,7 +513,7 @@ namespace Wallet.Services.Implementations
 
                 var totalForWeek = transactions
                     .Where(t => DetermineDirection(t, walletId) == "Outgoing" && t.Date >= startOfWeek && t.Date <= endOfWeek)
-                    .Sum(t => t.Amount);
+                    .Sum(t => t.OriginalAmount); // Use OriginalAmount instead of Amount
 
                 weeklySpending.Add(totalForWeek);
             }

@@ -189,6 +189,9 @@ namespace Wallet.MVC.Controllers
                         ToWallet = t.RecepientWalledName,
                         IsRecurring = t.IsReccuring,
                         RecurrenceInterval = t.RecurrenceInterval,
+                        OriginalAmount = t.OriginalAmount,
+                        CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency)
+
                     }).ToList()
                 }).ToList();
 

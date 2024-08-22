@@ -14,5 +14,8 @@ namespace Wallet.MVC.Models
         public string ToWallet { get; set; }
         public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
         public RecurrenceInterval? RecurrenceInterval { get; set; }
+        public decimal OriginalAmount { get; set; }
+        public string OriginalCurrency { get; set; }
+        public string CurrencyCulture { get; set; }
     }
 }

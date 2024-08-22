@@ -24,6 +24,10 @@ namespace Wallet.DTO.Response
         public string Direction { get; set; }
         public bool IsReccuring { get; set; }
         public RecurrenceInterval? RecurrenceInterval { get; set; }
+
+        public decimal OriginalAmount { get; set; }
+        public string OriginalCurrency { get; set; }
+        
     }
 
 }

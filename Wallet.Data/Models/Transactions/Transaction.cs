@@ -54,6 +54,9 @@ namespace Wallet.Data.Models.Transactions
         public bool IsActive { get; set; } // Indicates if the recurrence is still active
         public DateTime? LastExecutedDate { get; set; }
 
+        public decimal OriginalAmount { get; set; }
+        public Currency OriginalCurrency { get; set; }
+
 
 
     }

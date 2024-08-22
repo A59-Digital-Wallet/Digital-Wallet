@@ -42,6 +42,10 @@ namespace Wallet.MVC.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
             var wallets = await _walletService.GetUserWalletsAsync(userId);
             var cards = await _cardService.GetCardsAsync(userId);
 
@@ -70,7 +74,16 @@ namespace Wallet.MVC.Controllers
 
 
             // Set the selected wallet in ViewBag for use in the view
-            ViewBag.SelectedWallet = selectedWallet;
+            var culture = CurrencyHelper.GetCurrencyCulture(selectedWallet.Currency.ToString());
+            ViewBag.SelectedWallet = new WalletViewModel
+            {
+                Id = selectedWallet.Id,
+                Name = selectedWallet.Name,
+                Balance = selectedWallet.Balance,
+                Currency = selectedWallet.Currency.ToString(),
+                CurrencyCulture = culture // Pass the culture to the ViewBag
+            };
+
 
             // Filter transactions based on the selected wallet
             var transactionRequest = new TransactionRequestFilter
@@ -93,6 +106,7 @@ namespace Wallet.MVC.Controllers
                     Balance = wallet.Balance,
                     Currency = wallet.Currency.ToString(),
                     Type = wallet.WalletType.ToString(),
+                    CurrencyCulture = CurrencyHelper.GetCurrencyCulture(wallet.Currency.ToString())
                 }).ToList(),
 
                 Card = cards.FirstOrDefault(),
@@ -106,7 +120,10 @@ namespace Wallet.MVC.Controllers
                     Type = transaction.TransactionType.ToString(),
                     Direction = transaction.Direction,
                     IsRecurring = transaction.IsReccuring,
+                    OriginalCurrency = transaction.OriginalCurrency,
+                    OriginalAmount = transaction.OriginalAmount,
                     RecurrenceInterval = transaction.RecurrenceInterval,
+                    CurrencyCulture = CurrencyHelper.GetCurrencyCulture(transaction.OriginalCurrency)
                 }).ToList(),
 
                 Contacts = recentContacts.Select(contact => new ContactResponseDTO

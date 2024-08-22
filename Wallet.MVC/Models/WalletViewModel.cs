@@ -9,6 +9,7 @@ namespace Wallet.MVC.Models
         public decimal Balance { get; set; }
         public string Currency { get; set; }
         public string Type { get; set; }
+        public string CurrencyCulture {  get; set; }
     }
 
 }

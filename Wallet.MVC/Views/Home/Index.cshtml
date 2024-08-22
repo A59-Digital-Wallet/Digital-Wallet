@@ -78,7 +78,7 @@
                             <div class="bg-white rounded-xl p-6 shadow-md mb-6">
                                 <div class="flex justify-between items-center">
                                     <div class="balance text-4xl font-bold text-gray-800">
-                                        @ViewBag.SelectedWallet.Balance.ToString("C", System.Globalization.CultureInfo.CurrentCulture) @ViewBag.SelectedWallet.Currency
+                                        @ViewBag.SelectedWallet.Balance.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(ViewBag.SelectedWallet.CurrencyCulture))
                                     </div>
                                     <form asp-action="Index" method="get">
                                         <select name="walletId" onchange="this.form.submit()" class="form-select border border-gray-300 rounded-lg">
@@ -147,7 +147,15 @@
                                             </div>
                                             <div class="text-right">
                                                 <p class="@(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500") font-bold">
-                                                    @(transaction.Direction == "Incoming" ? "+" : "-")@transaction.Amount.ToString("C", System.Globalization.CultureInfo.CurrentCulture)
+                                                    @(transaction.Direction == "Incoming" ? "+" : "-")
+                                                    @if (transaction.Direction == "Incoming")
+                                                    {
+                                                        @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
+                                                    }
+                                                    else
+                                                    {
+                                                        @transaction.OriginalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
+                                                    }
                                                 </p>
                                             </div>
                                         </div>
