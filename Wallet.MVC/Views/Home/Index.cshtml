@@ -10,440 +10,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f7f7f7;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .sidebar {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .main-content {
-            padding: 20px;
-        }
-
-        .balance-card {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            color: #333;
-        }
-
-        .balance {
-            font-size: 40px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .btn-custom {
-            border-radius: 25px;
-            font-weight: bold;
-            padding: 10px 20px;
-            margin-right: 10px;
-        }
-
-        .btn-primary-custom {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-            color: #fff;
-        }
-
-        .btn-outline-custom {
-            color: #6c63ff;
-            border-color: #6c63ff;
-        }
-
-        .btn-deposit {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            margin-right: 10px;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-
-        .btn-deposit:hover {
-            background-color: #218838;
-        }
-
-        .btn-withdraw {
-            background-color: #dc3545;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-        }
-
-        .btn-withdraw:hover {
-            background-color: #c82333;
-        }
-
-        .contact-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
-
-        .transaction-history .row {
-            align-items: center;
-            padding: 10px 0;
-        }
-
-        .transaction-history .row:not(:last-child) {
-            border-bottom: 1px solid #ddd;
-        }
-
-        .transaction-amount {
-            font-weight: bold;
-        }
-
-        .card-details,
-        .invite-card {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .btn-copy {
-            background-color: #333;
-            color: #fff;
-            border-radius: 10px;
-            padding: 5px 10px;
-        }
-
-        .nav-tabs {
-            border-bottom: none;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            color: #555;
-            font-weight: bold;
-        }
-
-        .nav-tabs .nav-link.active {
-            background-color: transparent;
-            color: #333;
-            border-bottom: 3px solid #6c63ff;
-        }
-
-        .btn-remove {
-            background-color: #FF6B6B;
-            border-color: #FF6B6B;
-            color: #fff;
-        }
-
-        .btn-remove:hover {
-            background-color: #ff4a4a;
-            border-color: #ff4a4a;
-        }
-
-        .text-primary-custom {
-            color: #6c63ff;
-        }
-
-        .btn-outline-secondary-custom {
-            border-radius: 50px;
-            padding: 10px 20px;
-            color: #6c63ff;
-            border-color: #ddd;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .card-container {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 20px auto;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .card-header h5 {
-            font-size: 18px;
-            color: #333;
-            margin: 0;
-        }
-
-        .card-header a {
-            font-size: 14px;
-            color: #6c63ff;
-            text-decoration: none;
-        }
-
-        .credit-card {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, #000000, #333);
-            border-radius: 15px;
-            color: white;
-            padding: 15px;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-
-        .credit-card h6 {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .credit-card p {
-            font-size: 16px;
-            margin-bottom: 0;
-            letter-spacing: 2px;
-        }
-
-        .credit-card img {
-            width: 40px;
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
-
-        .credit-card .cvv {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-
-        .list-group-item {
-            border: none;
-            padding-left: 0;
-            padding-right: 0;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .list-group-item i {
-            font-size: 18px;
-            margin-right: 15px;
-            color: #6c63ff;
-        }
-
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .btn-add-card {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-        .btn-remove-card {
-            background-color: #ff6b6b;
-            border-color: #ff6b6b;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-        .btn-transfer {
-            background-color: #17a2b8;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-
-            .btn-transfer:hover {
-                background-color: #138496;
-            }
-
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-<body>
-    <div class="container mt-4">
+<body class="bg-gray-100 font-sans">
+
+    <div class="container mx-auto mt-8">
         @if (User.Identity.IsAuthenticated)
         {
-            <div class="row">
+            <div class="flex flex-wrap">
                 <!-- Sidebar -->
-                <div class="col-lg-3 sidebar">
-                    <div class="text-center mb-4">
-                        <img src="https://via.placeholder.com/150" alt="User Image" class="img-fluid rounded mb-3">
-                        <h5 class="fw-bold">@User.Identity.Name</h5>
-                        <p>@User.Identity.Name's Dashboard</p>
-                        <a class="nav-link" href="@Url.Action("Profile", "User")">Profile</a>
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <p>You have USD 1,000 pending money. It will be ready in 2 business days.</p>
-                        <button class="btn btn-primary-custom w-100">Get your money now</button>
-                    </div>
-                    <!-- Cards Section -->
-                    <div class="card-container">
-                        <div class="card-header">
-                            <h5>Cards</h5>
-                            <a href="@Url.Action("ShowAll", "Card")">Show All</a>
+                <div class="w-full lg:w-1/4 p-4">
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <div class="text-center mb-6">
+                            <img src="https://via.placeholder.com/150" alt="User Image" class="mx-auto rounded-full mb-3">
+                            <h5 class="font-bold text-lg">@User.Identity.Name</h5>
+                            <p class="text-gray-600">@User.Identity.Name's Dashboard</p>
+                            <a class="text-indigo-600" href="@Url.Action("Profile", "User")">Profile</a>
                         </div>
 
-                        @if (Model.Card != null)
-                        {
-                            var firstCard = Model.Card;
-                            <div class="credit-card">
-                                <h6>@firstCard.CardHolderName</h6>
-                                <p>@firstCard.CardNumber</p>
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1158px-Mastercard-logo.svg.png" alt="Card Network Logo">
-                                <div class="cvv">CVV</div>
-                            </div>
-                        }
-                        else
-                        {
-                            <p>No cards available. <a href="@Url.Action("AddCard", "Card")">Add a card</a>.</p>
-                        }
+                        <div class="text-center mt-4">
+                            <p>You have USD 1,000 pending money. It will be ready in 2 business days.</p>
+                            <button class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4 w-full">Get your money now</button>
+                        </div>
 
-                        <div class="button-group">
-                            <a href="@Url.Action("AddCard", "Card")" class="btn btn-add-card">
-                                <i class="fas fa-plus"></i> Add Card
-                            </a>
+                        <!-- Cards Section -->
+                        <div class="mt-8">
+                            <div class="flex justify-between items-center mb-4">
+                                <h5 class="font-bold text-lg">Cards</h5>
+                                <a href="@Url.Action("ShowAll", "Card")" class="text-indigo-600 text-sm">Show All</a>
+                            </div>
+
+                            @if (Model.Card != null)
+                            {
+                                var firstCard = Model.Card;
+                                <div class="relative w-full h-48 rounded-xl shadow-lg text-white p-4" style="background: linear-gradient(135deg, #000000, #333);">
+                                    <h6 class="font-bold text-lg">@firstCard.CardHolderName</h6>
+                                    <p class="tracking-wider mt-4 text-lg">@firstCard.CardNumber</p>
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1158px-Mastercard-logo.svg.png" alt="Card Network Logo" class="absolute top-4 right-4 w-10">
+                                    <div class="absolute bottom-4 right-4 bg-black bg-opacity-50 py-1 px-2 rounded-lg text-sm">CVV</div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p>No cards available. <a href="@Url.Action("AddCard", "Card")" class="text-indigo-600">Add a card</a>.</p>
+                            }
+
+                            <div class="flex justify-between mt-6">
+                                <a href="@Url.Action("AddCard", "Card")" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4 flex items-center">
+                                    <span class="material-icons">add</span> Add Card
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Main Content -->
-                <div class="col-lg-9">
-                    <div class="row">
+                <div class="w-full lg:w-3/4 p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Left Column: Welcome Message, Balance, Contacts, Transaction History -->
-                        <div class="col-lg-8">
-                            <div class="alert alert-success" role="alert">
+                        <div>
+                            <div class="bg-green-100 text-green-800 p-4 rounded-lg mb-4">
                                 Welcome back, @User.Identity.Name!
                             </div>
 
-                            <div class="balance-card mb-4">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="balance">29,475.00 USD</div>
+                            <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+                                <div class="flex justify-between items-center">
+                                    <div class="balance text-4xl font-bold text-gray-800">
+                                        @ViewBag.SelectedWallet.Balance.ToString("C", System.Globalization.CultureInfo.CurrentCulture) @ViewBag.SelectedWallet.Currency
                                     </div>
-                                    <div class="col-md-6 text-end">
-                                        <button class="btn btn-primary-custom btn-custom">Send</button>
-                                        <button class="btn btn-outline-custom btn-custom">Request</button>
-                                        <button class="btn btn-outline-secondary btn-custom">Top Up</button>
-                                    </div>
+                                    <form asp-action="Index" method="get">
+                                        <select name="walletId" onchange="this.form.submit()" class="form-select border border-gray-300 rounded-lg">
+                                            @foreach (var wallet in Model.Wallets)
+                                            {
+                                                <option value="@wallet.Id" selected="@(wallet.Id == ViewBag.SelectedWallet.Id ? "selected" : null)">
+                                                    @wallet.Name (@wallet.Currency)
+                                                </option>
+                                            }
+                                        </select>
+                                    </form>
+                                </div>
+
+                                <!-- Transaction Action Buttons -->
+                                <div class="mt-4 flex justify-center space-x-4">
+                                    <!-- Deposit Button -->
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-green-500 text-white py-2 px-4 rounded-full font-bold">
+                                        Deposit
+                                    </a>
+
+                                    <!-- Withdraw Button -->
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="bg-red-500 text-white py-2 px-4 rounded-full font-bold">
+                                        Withdraw
+                                    </a>
+
+                                    <!-- Transfer Button -->
+                                    <a href="@Url.Action("InitiateTransfer", "Transaction")" class="bg-blue-500 text-white py-2 px-4 rounded-full font-bold">
+                                        Transfer
+                                    </a>
                                 </div>
                             </div>
 
                             <!-- Recent Contacts & Invite -->
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <div class="card-details mb-4">
-                                        <h5 class="fw-bold mb-3">Recent Contacts</h5>
-                                        <div class="d-flex flex-wrap" id="recentContacts">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="bg-white rounded-xl p-6 shadow-md">
+                                        <h5 class="font-bold text-lg mb-4">Recent Contacts</h5>
+                                        <div class="flex flex-wrap" id="recentContacts">
                                             @await Html.PartialAsync("~/Views/Contacts/_RecentContacts.cshtml", Model.Contacts)
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="invite-card text-center">
+                                <div>
+                                    <div class="bg-white rounded-xl p-6 shadow-md text-center">
                                         <p>Invite a friend with code below and redeem a special bonus of USD 15 from us!</p>
-                                        <div class="input-group mt-2">
-                                            <input type="text" class="form-control" value="JELLYPOENYA-SEP2023" readonly>
-                                            <button class="btn-copy">Copy</button>
+                                        <div class="mt-4">
+                                            <input type="text" class="form-input border border-gray-300 rounded-lg w-full" value="JELLYPOENYA-SEP2023" readonly>
+                                            <button class="mt-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg">Copy</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Transaction History -->
-                            <div class="balance-card">
-                                <h5 class="fw-bold mb-3">
-                                    <a href="@Url.Action("TransactionHistory", "Transaction")" class="text-decoration-none">Transaction History</a>
+                            <div class="bg-white rounded-xl p-6 shadow-md mt-6">
+                                <h5 class="font-bold text-lg mb-4">
+                                    <a href="@Url.Action("TransactionHistory", "Transaction")" class="text-indigo-600">Transaction History</a>
                                 </h5>
-                                <div class="transaction-history">
-                                    @foreach (var transaction in Model.Transactions.Take(3))
+                                <div>
+                                    @foreach (var transaction in Model.Transactions)
                                     {
-                                        <div class="row">
-                                            <div class="col-8">
-                                                <p class="mb-1">@transaction.Description</p>
-                                                <small>@transaction.Date.ToString("ddd, dd MMMM yyyy - h:mm tt")</small>
+                                        <div class="flex justify-between items-center py-3 border-b last:border-0">
+                                            <div>
+                                                <p class="font-semibold text-gray-700">@transaction.Description</p>
+                                                <small class="text-gray-500">@transaction.Date.ToString("ddd, dd MMMM yyyy - h:mm tt")</small>
                                             </div>
-                                            <div class="col-4 text-end">
-                                                <p class="@(transaction.Direction == "Incoming" ? "text-success" : "text-danger") transaction-amount mb-0">
-                                                    @(transaction.Direction == "Incoming" ? "+" : "-")@transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                                            <div class="text-right">
+                                                <p class="@(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500") font-bold">
+                                                    @(transaction.Direction == "Incoming" ? "+" : "-")@transaction.Amount.ToString("C", System.Globalization.CultureInfo.CurrentCulture)
                                                 </p>
                                             </div>
                                         </div>
                                     }
-                                    <div class="text-center mt-3">
-                                        <a href="@Url.Action("TransactionHistory", "Transaction")" class="btn btn-outline-primary">View All Transactions</a>
+                                    <div class="text-center mt-4">
+                                        <a href="@Url.Action("TransactionHistory", "Transaction")" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4">View All Transactions</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Wallets List -->
-                        <div class="col-lg-4">
-                            <div class="balance-card mb-4">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h5 class="fw-bold mb-3">Your Wallets</h5>
-                                    <a href="@Url.Action("Create", "Wallet")" class="btn btn-outline-primary btn-sm" title="Create a new wallet">
-                                        <i class="bi bi-plus-lg"></i> <!-- Plus sign icon -->
-                                    </a>
+                        <!-- Wallet Statistics Section -->
+                        <div>
+                            <div class="bg-white rounded-xl p-6 shadow-md">
+                                <div class="mb-6">
+                                    <h5 class="font-bold text-lg">Wallet Statistics</h5>
+                                    <p class="text-gray-600">Total spent this month: @Model.TotalSpentThisMonth.ToString("C")</p>
                                 </div>
-                                <ul class="list-group">
-                                    @foreach (var wallet in Model.Wallets)
-                                    {
-                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                            <a href="@Url.Action("Details", "Wallet", new { id = wallet.Id })">@wallet.Name</a>
-                                            <span class="badge bg-primary rounded-pill">@wallet.Balance.ToString("C")</span>
-                                        </li>
-                                    }
-                                </ul>
-                            </div>
 
-                            <!-- Deposit and Withdraw Buttons -->
-                            <div class="text-center">
-                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn btn-deposit btn-custom">Deposit</a>
-                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn btn-withdraw btn-custom">Withdraw</a>
-                                <a href="@Url.Action("InitiateTransfer", "Transaction")" class="btn btn-transfer btn-custom">Transfer</a>
+                                <!-- Bar Chart for Weekly Spending -->
+                                <canvas id="weeklySpendingChart" width="400" height="200"></canvas>
                             </div>
                         </div>
                     </div>
 
                     <!-- Logout Button -->
-                    <div class="text-center mt-4">
+                    <div class="text-center mt-8">
                         <form asp-controller="Account" asp-action="Logout" method="post">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-custom">Log Out</button>
+                            <button type="submit" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4">Log Out</button>
                         </form>
                     </div>
                 </div>
@@ -451,16 +185,57 @@
         }
         else
         {
-            <div class="text-center">
-                <h2>Please log in to access your dashboard.</h2>
-                <a href="@Url.Action("Login", "Account")" class="btn btn-primary-custom">Log In</a>
-                <a href="@Url.Action("Register", "Account")" class="btn btn-outline-custom">Register</a>
+            <div class="text-center mt-8">
+                <h2 class="text-2xl font-bold mb-4">Please log in to access your dashboard.</h2>
+                <a href="@Url.Action("Login", "Account")" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Log In</a>
+                <a href="@Url.Action("Register", "Account")" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4 ml-2">Register</a>
             </div>
         }
     </div>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        // Data for the bar chart with weekly spending
+        var weeklySpendingData = {
+            labels: @Html.Raw(Json.Serialize(Model.WeeklySpendingLabels)), // Week labels
+            datasets: [{
+                label: 'Weekly Spending',
+                data: @Html.Raw(Json.Serialize(Model.WeeklySpendingAmounts)), // Spending amounts
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Config for the chart
+        var config = {
+            type: 'bar', // Bar chart
+            data: weeklySpendingData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Weekly Spending'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true // Ensure the y-axis starts at 0
+                    }
+                }
+            },
+        };
+
+        // Render the chart
+        var ctx = document.getElementById('weeklySpendingChart').getContext('2d');
+        new Chart(ctx, config);
+    </script>
 </body>
 
 </html>

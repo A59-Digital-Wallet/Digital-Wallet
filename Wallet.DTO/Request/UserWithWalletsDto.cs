@@ -13,5 +13,6 @@ namespace Wallet.DTO.Request
         public string UserName { get; set; }
         public List<WalletDto> Wallets { get; set; }
         public List<Category>? Categories { get; set; }
+        public UserWallet PreferredWallet {get; set;}
     }
 }

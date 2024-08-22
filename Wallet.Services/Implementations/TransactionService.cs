@@ -334,6 +334,7 @@ namespace Wallet.Services.Implementations
                 .Include(u => u.OwnedWallets)
                 .Include(u => u.JointWallets)
                 .Include(u => u.Categories)
+                .Include(u => u.LastSelectedWallet)
                 .Where(u => u.UserName.Contains(searchTerm) || u.Email.Contains(searchTerm) || u.PhoneNumber.Contains(searchTerm))
                 .Select(u => new UserWithWalletsDto
                 {
@@ -344,8 +345,10 @@ namespace Wallet.Services.Implementations
                         WalletId = w.Id,
                         Currency = w.Currency,
                         Balance = w.Balance
+                        
                     }).ToList(),
                     Categories = u.Categories.ToList(),
+                    PreferredWallet = u.LastSelectedWallet
                 })
                 .FirstOrDefaultAsync();
 
@@ -476,6 +479,42 @@ namespace Wallet.Services.Implementations
 
             // Outgoing if it's a withdrawal or a transfer from this wallet
             return "Outgoing";
+        }
+        private string DetermineDirection(Transaction transaction, int walletId)
+        {
+            // Determine direction based on transaction type or recipient wallet ID
+            if (transaction.TransactionType == TransactionType.Deposit ||
+                (transaction.TransactionType == TransactionType.Transfer && transaction.RecipientWalletId == walletId))
+            {
+                return "Incoming";
+            }
+            return "Outgoing";
+        }
+
+        public async Task<(List<string> WeekLabels, List<decimal> WeeklySpendingAmounts)> GetWeeklySpendingAsync(int walletId)
+        {
+            var transactions = await _transactionRepository.GetTransactionsByWalletId(walletId);
+
+            var startOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var weeks = new List<string>();
+            var weeklySpending = new List<decimal>();
+
+            for (int i = 0; i < 5; i++) // Assuming a maximum of 5 weeks in a month
+            {
+                var startOfWeek = startOfMonth.AddDays(i * 7);
+                var endOfWeek = startOfWeek.AddDays(6);
+                var weekLabel = $"{startOfWeek:MMM dd} - {endOfWeek:MMM dd}";
+
+                weeks.Add(weekLabel);
+
+                var totalForWeek = transactions
+                    .Where(t => DetermineDirection(t, walletId) == "Outgoing" && t.Date >= startOfWeek && t.Date <= endOfWeek)
+                    .Sum(t => t.Amount);
+
+                weeklySpending.Add(totalForWeek);
+            }
+
+            return (weeks, weeklySpending);
         }
 
     }

@@ -37,12 +37,15 @@ namespace Wallet.Services.Implementations
             {
                 throw new EntityNotFoundException("No cards were found");
             }
-
-            foreach (var card in cards)
+            if (cards.Count > 0 && !long.TryParse(cards[0].CardNumber, out var cardNumber))
             {
-                card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
-                card.CVV = await _encryptionService.DecryptAsync(card.CVV);
+                foreach (var card in cards)
+                {
+                    card.CardNumber = await _encryptionService.DecryptAsync(card.CardNumber);
+                    card.CVV = await _encryptionService.DecryptAsync(card.CVV);
+                }
             }
+           
 
             List<CardResponseDTO> cardResponseDTOs = _cardFactory.Map(cards);
             return cardResponseDTOs;

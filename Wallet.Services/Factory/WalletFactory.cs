@@ -24,6 +24,16 @@ namespace Wallet.Services.Factory
                 OverdraftLimit = overdraft.DefaultOverdraftLimit,
             };
             return wallet;
-        }     
+        }
+
+        public WalletDto Map(UserWallet userWallet)
+        {
+            return new WalletDto
+            {
+                WalletId = userWallet.Id,
+                Currency = userWallet.Currency,
+                Balance = userWallet.Balance
+            };
+        }
     }
 }

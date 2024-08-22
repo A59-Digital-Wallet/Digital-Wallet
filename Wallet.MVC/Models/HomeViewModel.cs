@@ -8,5 +8,10 @@ namespace Wallet.MVC.Models
         public CardResponseDTO? Card { get; set; }
         public List<TransactionViewModel> Transactions { get; set; }
         public List<ContactResponseDTO> Contacts { get; set; }
+
+        public List<string> WeeklySpendingLabels { get; set; }  // Labels for each week
+        public List<decimal> WeeklySpendingAmounts { get; set; } // Spending amounts for each week
+
+        public decimal TotalSpentThisMonth { get; set; } // Total spending this month
     }
 }

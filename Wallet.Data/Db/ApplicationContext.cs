@@ -33,6 +33,12 @@ namespace Wallet.Data.Db
                 .HasForeignKey(c => c.AppUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<AppUser>()
+            .HasOne(u => u.LastSelectedWallet)
+            .WithMany() // Assuming a one-to-many relationship (a Wallet can be associated with many AppUsers)
+            .HasForeignKey(u => u.LastSelectedWalletId)
+            .OnDelete(DeleteBehavior.Restrict);
+
             // Set up relationship between AppUser and Wallets where the user is the owner with DeleteBehavior.Restrict
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.OwnedWallets)

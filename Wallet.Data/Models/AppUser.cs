@@ -34,5 +34,10 @@ namespace Wallet.Data.Models
         public string? ProfilePictureURL { get; set; }
         public List<Contact>? Contacts { get; set; }
         public ICollection<Category>? Categories { get; set; }
+
+        public int? LastSelectedWalletId { get; set; }
+
+        // Navigation property if needed
+        public UserWallet LastSelectedWallet { get; set; }
     }
 }

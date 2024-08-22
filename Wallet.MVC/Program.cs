@@ -54,6 +54,7 @@ namespace Wallet.MVC
             // Add Authentication and JWT Bearer token services (not typically needed in MVC)
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.ASCII.GetBytes(jwtSettings["Secret"]);
+            builder.Services.AddDistributedMemoryCache();
             builder.Services.AddSession(options =>
             {
                 options.Cookie.HttpOnly = true;
@@ -177,7 +178,7 @@ namespace Wallet.MVC
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseSession();
             // Map Controllers
             app.MapControllerRoute(
                 name: "default",

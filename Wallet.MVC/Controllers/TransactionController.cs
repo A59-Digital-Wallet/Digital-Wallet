@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
@@ -8,6 +9,7 @@ using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
+using Wallet.Services.Factory.Contracts;
 using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
@@ -18,41 +20,50 @@ namespace Wallet.MVC.Controllers
         private readonly ICardService _cardService;
         private readonly ITransactionService _transactionService;
         private readonly ICategoryService _categoryService;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IWalletFactory _walletFactory;
 
-        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService)
+        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService, UserManager<AppUser> userManager, IWalletFactory walletFactory)
         {
             _walletService = walletService;
             _cardService = cardService;
             _transactionService = transactionService;
             _categoryService = categoryService;
+            _userManager = userManager;
+            _walletFactory = walletFactory;
         }
 
         [HttpGet]
         public async Task<IActionResult> SelectWalletAndCard(string type)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-            var wallets = await _walletService.GetUserWalletsAsync(userId);
+
+            // Fetch the user's preferred wallet directly
+            var user = await _userManager.FindByIdAsync(userId);
+            var preferredWallet = await _walletService.GetWalletAsync((int)user.LastSelectedWalletId, userId);
+
+            if (preferredWallet == null)
+            {
+                return RedirectToAction("Index", "Home"); // Or handle the case where the preferred wallet isn't set
+            }
+
             var cards = await _cardService.GetCardsAsync(userId);
 
             var model = new WalletAndCardSelectionViewModel
             {
                 TransactionType = type,
-                Wallets = wallets.Select(w => new SelectListItem
-                {
-                    Value = w.Id.ToString(),
-                    Text = $"{w.Name} - {w.Balance.ToString("C")}"
-                }).ToList(),
+                SelectedWalletId = preferredWallet.Id, // Automatically use the preferred wallet
                 Cards = cards.Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
                     Text = $"{c.CardNumber} - {c.CardHolderName} (Exp: {c.ExpiryDate:MM/yy})"
                 }).ToList(),
                 
-                
             };
 
             return View(model);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ProcessTransaction(WalletAndCardSelectionViewModel model)
@@ -63,7 +74,7 @@ namespace Wallet.MVC.Controllers
 
                 var transactionRequest = new TransactionRequestModel
                 {
-                    WalletId = model.SelectedWalletId,
+                    WalletId = model.SelectedWalletId, // This is automatically set in SelectWalletAndCard
                     Amount = model.Amount,
                     Description = model.Description,
                     TransactionType = model.TransactionType == "Deposit" ? TransactionType.Deposit : TransactionType.Withdraw,
@@ -87,11 +98,10 @@ namespace Wallet.MVC.Controllers
                         Description = model.Description,
                         TransactionType = model.TransactionType,
                         TransactionToken = ex.TransactionToken,
-                        
                     };
+
                     // Redirect to the confirmation page
                     return RedirectToAction("ConfirmTransaction", transactionConfig);
-                    
                 }
             }
 
@@ -191,19 +201,53 @@ namespace Wallet.MVC.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SearchUser(TransferViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.RecipientUsernameOrEmail))
+            {
+                ModelState.AddModelError("RecipientUsernameOrEmail", "Please enter a username or email.");
+                return View("InitiateTransfer", model);
+            }
+
+            try
+            {
+                var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.UserData));
+                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(model.RecipientUsernameOrEmail);
+
+                if (userWithWallets == null)
+                {
+                    ModelState.AddModelError("RecipientUsernameOrEmail", "No user found with the given username or email.");
+                    return View("InitiateTransfer", model);
+                }
+
+                // Set the selected recipient ID and the first wallet ID
+                model.SelectedRecipientId = userWithWallets.UserId;
+                var preferredWallet = userWithWallets.Wallets.FirstOrDefault(w => w.Currency == model.Currency)
+                                     ?? userWithWallets.Wallets.First();
+
+                model.ToWalletId = preferredWallet.WalletId;
+                model.FromWalletId = (int)user.LastSelectedWalletId;
+                // Pass the necessary information back to the view
+                return View("InitiateTransfer", model);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while searching for the user: " + ex.Message);
+                return View("InitiateTransfer", model);
+            }
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> InitiateTransfer()
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
+            var user = await _userManager.FindByIdAsync(userId);
 
-            // Fetch user wallets to populate the dropdown
-            var wallets = await _walletService.GetUserWalletsAsync(userId);
-
-            List<SelectListItem> categories = new List<SelectListItem>();
-
+            var categories = new List<SelectListItem>();
             try
             {
-                // Load the categories for selection
                 var categoryList = await _categoryService.GetUserCategoriesAsync(userId, 1, int.MaxValue);
                 categories = categoryList.Select(c => new SelectListItem
                 {
@@ -211,111 +255,92 @@ namespace Wallet.MVC.Controllers
                     Text = c.Name
                 }).ToList();
             }
-            catch (EntityNotFoundException ex)
+            catch (EntityNotFoundException)
             {
-                // Handle the case when no categories are found
                 ViewBag.NoCategoriesMessage = "No categories available";
             }
 
             var model = new TransferViewModel
             {
-                Wallets = wallets.Select(w => new SelectListItem
-                {
-                    Value = w.Id.ToString(),
-                    Text = $"{w.Name} - {w.Balance.ToString("C")}"
-                }).ToList(),
-                Categories = categories
+                FromWalletId = (int)user.LastSelectedWalletId,
+                Categories = categories,
+                // Initialize other fields to prevent null reference issues
+                RecipientWallets = new List<SelectListItem>(),
+                SelectedRecipientId = "",
+                ToWalletId = 0
             };
 
             return View(model);
         }
 
 
+
+
+
         [HttpPost]
         public async Task<IActionResult> InitiateTransfer(TransferViewModel model)
         {
-            var userId = User.FindFirstValue(ClaimTypes.UserData);
-
-            if (ModelState.IsValid && !string.IsNullOrEmpty(model.RecipientUsername))
+            try
             {
-                try
+                if (model.SelectedRecipientId == null || model.ToWalletId == 0)
                 {
-                    var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(model.RecipientUsername);
-                    model.RecipientWallets = userWithWallets.Wallets.Select(w => new SelectListItem
-                    {
-                        Value = w.WalletId.ToString(),
-                        Text = $"{w.Currency} - {w.Balance:N2}"
-                    }).ToList();
+                    ModelState.AddModelError("RecipientUsernameOrEmail", "Please search and select a valid recipient.");
+                    return View(model);
+                }
 
-                    var categories = await _categoryService.GetUserCategoriesAsync(userId, 1, int.MaxValue);
-                    model.Categories = categories.Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Name
-                    }).ToList();
-                }
-                catch (ArgumentException ex)
+                // Proceed to process the transfer
+                return RedirectToAction("ProcessTransfer", new
                 {
-                    ModelState.AddModelError("RecipientUsername", ex.Message);
-                }
-                catch (EntityNotFoundException ex)
-                {
-                    // Handle the case when no categories are found
-                    ViewBag.NoCategoriesMessage = "No categories available";
-                }
+                    FromWalletId = model.FromWalletId,
+                    ToWalletId = model.ToWalletId,
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    SelectedCategoryId = model.SelectedCategoryId,
+                    IsRecurring = model.IsRecurring,
+                    RecurrenceInterval = model.RecurrenceInterval
+                });
             }
-
-            // Reload the user's wallets for the dropdown
-            var wallets = await _walletService.GetUserWalletsAsync(userId);
-            model.Wallets = wallets.Select(w => new SelectListItem
+            catch (Exception ex)
             {
-                Value = w.Id.ToString(),
-                Text = $"{w.Name} - {w.Balance.ToString("C")}"
-            }).ToList();
-
-            return View(model);
+                ModelState.AddModelError(string.Empty, "An error occurred while initiating the transfer: " + ex.Message);
+                return View(model);
+            }
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                var userId = User.FindFirstValue(ClaimTypes.UserData);
-                var wallets = await _walletService.GetUserWalletsAsync(userId);
-                model.Wallets = wallets.Select(w => new SelectListItem
-                {
-                    Value = w.Id.ToString(),
-                    Text = $"{w.Name} - {w.Balance.ToString("C")}"
-                }).ToList();
-                return View("InitiateTransfer", model);
-            }
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
 
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.UserData);
+                if (model.ToWalletId == 0)
+                {
+                    ModelState.AddModelError(string.Empty, "Recipient wallet is not selected. Please ensure you have selected a recipient.");
+                    return View("InitiateTransfer", model);
+                }
 
-                // Create a transaction request model for the transfer
                 var transactionRequest = new TransactionRequestModel
                 {
                     WalletId = model.FromWalletId,
                     Amount = model.Amount,
-                    Description = $"Transfer to Wallet ID {model.ToWalletId}",
+                    Description = model.Description,
                     TransactionType = TransactionType.Transfer,
                     RecepientWalletId = model.ToWalletId,
                     CategoryId = model.SelectedCategoryId,
-                    Token = null // Initially null; will be generated if needed
+                    IsRecurring = model.IsRecurring,
+                    RecurrenceInterval = model.RecurrenceInterval
                 };
 
-                // Execute the transaction
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId);
 
                 return RedirectToAction("TransactionHistory");
             }
             catch (VerificationRequiredException ex)
             {
-                // Handle the case where a verification is required for high-value transactions
-                return RedirectToAction("ConfirmTransaction", "Transaction", new { token = ex });
+                return RedirectToAction("ConfirmTransaction", "Transaction", new { token = ex.TransactionToken });
             }
             catch (Exception ex)
             {
@@ -323,6 +348,11 @@ namespace Wallet.MVC.Controllers
                 return View("InitiateTransfer", model);
             }
         }
+
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> SearchRecipientWallets(string searchTerm)

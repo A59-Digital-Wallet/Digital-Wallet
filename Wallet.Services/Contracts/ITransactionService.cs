@@ -19,6 +19,7 @@ namespace Wallet.Services.Contracts
         Task CancelRecurringTransactionAsync(int transactionId, string userId);
         Task<bool> VerifyTransactionAsync(string transactionToken, string verificationCode);
         Task AddTransactionToCategoryAsync(int transactionId, int categoryId, string userId);
+        Task<(List<string> WeekLabels, List<decimal> WeeklySpendingAmounts)> GetWeeklySpendingAsync(int walletId);
     }
 
 }

@@ -64,18 +64,8 @@
             <form asp-action="ProcessTransaction" method="post">
                 <input type="hidden" asp-for="TransactionType" />
 
-                <!-- Wallet Selection -->
-                <div class="form-group mb-3">
-                    <label asp-for="SelectedWalletId" class="form-label">Select Wallet</label>
-                    <select asp-for="SelectedWalletId" class="form-control">
-                        <option value="">-- Select Wallet --</option>
-                        @foreach (var wallet in Model.Wallets)
-                        {
-                            <option value="@wallet.Value">@wallet.Text</option>
-                        }
-                    </select>
-                    <span asp-validation-for="SelectedWalletId" class="text-danger"></span>
-                </div>
+                <input type="hidden" name="SelectedWalletId" value="@Model.SelectedWalletId" />
+               
 
                 <!-- Card Selection -->
                 <div class="form-group mb-3">

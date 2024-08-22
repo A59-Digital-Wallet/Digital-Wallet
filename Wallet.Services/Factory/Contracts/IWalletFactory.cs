@@ -12,5 +12,6 @@ namespace Wallet.Services.Factory.Contracts
     {
         UserWallet Map(UserWalletRequest request, OverdraftSettings overdraft);
         //AppUserWallet Map(int walletId, string userId, bool canSpend, bool canAddFunds);
+        WalletDto Map(UserWallet userWallet);
     }
 }

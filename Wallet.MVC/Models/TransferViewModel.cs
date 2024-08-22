@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Wallet.Data.Models.Enums;
+using System.Collections.Generic;
 
 namespace Wallet.MVC.Models
 {
     public class TransferViewModel
     {
-        public int FromWalletId { get; set; }
+        public int FromWalletId { get; set; } // Automatically set from preferred wallet
         public int ToWalletId { get; set; }
         public decimal Amount { get; set; }
+        public string Description { get; set; } // Added Description property
 
-        public List<SelectListItem> Wallets { get; set; } = new List<SelectListItem>();
-        public string RecipientUsername { get; set; } // To enter the recipient's username
+        public string RecipientUsernameOrEmail { get; set; } // For searching recipient
+        public List<SelectListItem> PotentialRecipients { get; set; } = new List<SelectListItem>(); // To hold potential recipient options
+        public string SelectedRecipientId { get; set; } // To hold the selected recipient's ID
         public List<SelectListItem> RecipientWallets { get; set; } = new List<SelectListItem>(); // To hold the recipient's wallets
-        public bool IsRecurring { get; set; } // Indicates if this transaction is recurring
+        public Currency Currency { get; set; }
+        public bool IsRecurring { get; set; }
         public RecurrenceInterval? RecurrenceInterval { get; set; }
-        public int? SelectedCategoryId { get; set; } // Optional category selection
-        public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>(); // List of available categories
+        public int? SelectedCategoryId { get; set; }
+        public List<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
     }
 }
