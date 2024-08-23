@@ -24,13 +24,15 @@ namespace Wallet.MVC.Controllers
         private readonly ITransactionService _transactionService;
         private readonly IContactService _contactService;
         private readonly UserManager<AppUser> _userManager;
-        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService, UserManager<AppUser> userManager)
+        private readonly ICategoryService _categoryService;
+        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService, UserManager<AppUser> userManager, ICategoryService categoryService)
         {
             _walletService = walletService;
             _cardService = cardService;
             _transactionService = transactionService;
             _contactService = contactService;
             _userManager = userManager;
+            _categoryService = categoryService;
         }
 
 
@@ -95,6 +97,31 @@ namespace Wallet.MVC.Controllers
             // Get the user's contacts
             var contacts = await _contactService.GetContactsAsync(userId);
             var recentContacts = contacts.Take(5).ToList();
+            List<CategoryViewModel> categories = new List<CategoryViewModel>();
+            try
+            {
+                var categoryList = await _categoryService.GetUserCategoriesAsync(userId, pageNumber: 1, pageSize: 10);
+                categories = categoryList.Select(c => new CategoryViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Transactions = c.Transactions?.Select(t => new TransactionViewModel
+                    {
+                        Id = t.Id,
+                        Date = t.Date,
+                        Amount = t.Amount,
+                        Description = t.Description,
+                        Type = t.TransactionType.ToString(),
+                        FromWallet = t.WalletName,
+                        Direction = t.Status.ToString(),
+                        RecurrenceInterval = t.RecurrenceInterval
+                    }).ToList()
+                }).ToList();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                ViewBag.ErrorMessage = ex.Message; // Pass the error message to the view
+            }
             var (weeklyLabels, weeklyAmounts) = await _transactionService.GetWeeklySpendingAsync(selectedWallet.Id);
             // Build the HomeViewModel with all the necessary data
             var model = new HomeViewModel
@@ -136,6 +163,7 @@ namespace Wallet.MVC.Controllers
                 WeeklySpendingLabels = weeklyLabels,  // Pass the weekly labels to the view model
                 WeeklySpendingAmounts = weeklyAmounts,  // Pass the weekly spending amounts to the view model
                 TotalSpentThisMonth = weeklyAmounts.Sum(),
+                Categories = categories
 
                 // Example of other potential properties
 

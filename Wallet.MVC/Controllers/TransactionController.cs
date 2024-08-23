@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
+using Wallet.Data.Migrations;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
@@ -231,7 +232,21 @@ namespace Wallet.MVC.Controllers
 
                 model.ToWalletId = preferredWallet.WalletId;
                 model.FromWalletId = (int)user.LastSelectedWalletId;
+                var categories = new List<SelectListItem>();
+                var categoryList = await _categoryService.GetUserCategoriesAsync(User.FindFirstValue(ClaimTypes.UserData), 1, int.MaxValue);
+                categories = categoryList.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                }).ToList();
+                model.Categories = categories;
                 // Pass the necessary information back to the view
+                return View("InitiateTransfer", model);
+            }
+
+            catch (EntityNotFoundException)
+            {
+                ViewBag.NoCategoriesMessage = "No categories available";
                 return View("InitiateTransfer", model);
             }
             catch (Exception ex)

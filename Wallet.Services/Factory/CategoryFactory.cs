@@ -21,7 +21,7 @@ namespace Wallet.Services.Factory
                 Transactions = category.Transactions?.Select(transaction => new TransactionDto
                 {
                     Id = transaction.Id,
-                    Amount = transaction.Amount,
+                    Amount = transaction.OriginalAmount,
                     Date = transaction.Date,
                     Description = transaction.Description,
                     Status = transaction.Status,
