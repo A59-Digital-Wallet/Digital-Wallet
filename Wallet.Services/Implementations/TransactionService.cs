@@ -531,17 +531,10 @@ namespace Wallet.Services.Implementations
             // Get all wallet IDs for both the user and the contact
             var userWalletIds = (await _walletRepository.GetUserWalletsAsync(userId)).Select(w => w.Id).ToList();
             var contactWalletIds = (await _walletRepository.GetUserWalletsAsync(contactId)).Select(w => w.Id).ToList();
+            var transactions = await _transactionRepository.GetTransactionHistoryContactAsync(userWalletIds, contactWalletIds);
 
-            // Check cache first
-            var cacheKey = $"TransactionHistory_{userId}_{contactId}";
-            if (!_transactionCache.TryGetValue(cacheKey, out IEnumerable<Transaction> transactions))
-            {
-                // If not cached, fetch from repository
-                transactions = await _transactionRepository.GetTransactionHistoryContactAsync(userWalletIds, contactWalletIds);
-
-                // Cache the result
-                _transactionCache.Set(cacheKey, transactions, TimeSpan.FromMinutes(10));
-            }
+               
+             
 
             return transactions;
         }

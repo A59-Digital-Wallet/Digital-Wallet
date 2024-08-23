@@ -7,7 +7,7 @@ namespace Wallet.MVC.Models
         public string ContactId { get; set; }
         public IEnumerable<Transaction> Transactions { get; set; }
         public List<int> UserWalletIds { get; set; }
-        public string CurrencyCulture {  get; set; }
+        
     }
 
 }

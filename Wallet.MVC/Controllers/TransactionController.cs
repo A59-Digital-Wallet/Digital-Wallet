@@ -277,8 +277,8 @@ namespace Wallet.MVC.Controllers
             {
                 ContactId = contactId,
                 Transactions = transactions,
-                UserWalletIds = userWalletIds, // Set the user's wallet IDs here
-                //CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency)
+                UserWalletIds = userWalletIds, 
+           
             };
 
             return View(model);
