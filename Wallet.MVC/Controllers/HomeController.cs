@@ -92,11 +92,11 @@ namespace Wallet.MVC.Controllers
             {
                 WalletId = selectedWallet.Id
             };
-            var transactions = await _transactionService.FilterTransactionsAsync(1, 3, transactionRequest, userId);
+            var transactions = await _transactionService.FilterTransactionsAsync(1, 5, transactionRequest, userId);
 
             // Get the user's contacts
             var contacts = await _contactService.GetContactsAsync(userId);
-            var recentContacts = contacts.Take(5).ToList();
+            var recentContacts = contacts.Take(1).ToList();
             List<CategoryViewModel> categories = new List<CategoryViewModel>();
             try
             {
@@ -150,7 +150,8 @@ namespace Wallet.MVC.Controllers
                     OriginalCurrency = transaction.OriginalCurrency,
                     OriginalAmount = transaction.OriginalAmount,
                     RecurrenceInterval = transaction.RecurrenceInterval,
-                    CurrencyCulture = CurrencyHelper.GetCurrencyCulture(transaction.OriginalCurrency)
+                    CurrencyCulture = CurrencyHelper.GetCurrencyCulture(transaction.OriginalCurrency),
+                    CurrencyCultureSent = CurrencyHelper.GetCurrencyCulture(transaction.SentCurrency),
                 }).ToList(),
 
                 Contacts = recentContacts.Select(contact => new ContactResponseDTO

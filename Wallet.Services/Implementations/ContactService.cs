@@ -68,5 +68,9 @@ namespace Wallet.Services.Implementations
             await _contactsRepository.RemoveContactAsync(contact);
             return true;
         }
+        public async Task<Contact> GetContactAsync(string userId, string contactId)
+        {
+            return await _contactsRepository.GetContactAsync(userId, contactId);
+        }
     }
 }

@@ -56,6 +56,7 @@ namespace Wallet.Data.Models.Transactions
 
         public decimal OriginalAmount { get; set; }
         public Currency OriginalCurrency { get; set; }
+        public Currency SentCurrency { get; set; }
 
 
 

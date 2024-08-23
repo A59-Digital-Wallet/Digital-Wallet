@@ -17,7 +17,9 @@ namespace Wallet.Data.Repositories.Contracts
 
         Task<ICollection<Transaction>> GetRecurringTransactionsDueAsync(DateTime dueDate);
         Task UpdateTransactionAsync(Transaction transaction);
-        
+        Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(List<int> userWalletIds, List<int> contactWalletIds);
+
+
 
     }
 }

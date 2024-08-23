@@ -64,6 +64,16 @@ namespace Wallet.Data.Repositories.Implementations
                                  .Include(t => t.Wallet) 
                                  .ToListAsync();
         }
+
+        public async Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(List<int> userWalletIds, List<int> contactWalletIds)
+        {
+            return await _context.Transactions
+                .Where(t =>
+                    (userWalletIds.Contains(t.WalletId) && contactWalletIds.Contains((int)t.RecipientWalletId)) ||
+                    (userWalletIds.Contains((int)t.RecipientWalletId) && contactWalletIds.Contains(t.WalletId)))
+                .OrderByDescending(t => t.Date)
+                .ToListAsync();
+        }
         public async Task<ICollection<Transaction>> FilterBy(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
         {
             IList<Transaction> results = await GetTransactionsByUserId(userId);

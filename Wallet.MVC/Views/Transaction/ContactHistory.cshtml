@@ -1,0 +1,60 @@
+﻿@model ContactHistoryViewModel
+@using System.Globalization
+
+<div class="container mx-auto mt-12">
+    <h2 class="text-3xl font-bold mb-8 text-center">Transaction History with Contact</h2>
+
+    <div class="overflow-x-auto shadow-lg rounded-lg">
+        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg">
+            <thead class="bg-gray-100 dark:bg-gray-700">
+                <tr>
+                    <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Date</th>
+                    <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Description</th>
+                    <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Amount</th>
+                    <th class="py-3 px-6 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">Direction</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model.Transactions)
+                {
+                    // Determine if the transaction is incoming or outgoing for the current user
+                    var direction = Model.UserWalletIds.Contains(transaction.WalletId) ? "Outgoing" : "Incoming";
+                    var currencyCulture = Wallet.Services.Implementations.CurrencyHelper.GetCurrencyCulture(transaction.OriginalCurrency.ToString());
+                    var currencyCultureSent = Wallet.Services.Implementations.CurrencyHelper.GetCurrencyCulture(transaction.SentCurrency.ToString());
+                    <tr class="@((direction == "Incoming") ? "bg-green-50 dark:bg-green-900" : "bg-red-50 dark:bg-red-900")">
+                        <td class="py-4 px-6 text-sm text-gray-600 dark:text-gray-300">
+                            @transaction.Date.ToString("MMMM dd, yyyy - HH:mm")
+                        </td>
+                        <td class="py-4 px-6 text-sm text-gray-600 dark:text-gray-300">
+                            @transaction.Description
+                        </td>
+                        <td class="py-4 px-6 text-sm text-gray-600 dark:text-gray-300">
+                            @if (direction == "Incoming")
+                            {
+                                <span class="text-green-600 dark:text-green-400 font-bold">
+                                    +@transaction.Amount.ToString("C", new CultureInfo(currencyCultureSent))
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-red-600 dark:text-red-400 font-bold">
+                                    -@transaction.OriginalAmount.ToString("C", new CultureInfo(currencyCulture))
+                                </span>
+                            }
+                        </td>
+                        <td class="py-4 px-6 text-sm text-gray-600 dark:text-gray-300">
+                            @if (direction == "Incoming")
+                            {
+                                <span class="text-green-700 dark:text-green-300">Received</span>
+                            }
+                            else
+                            {
+                                <span class="text-red-700 dark:text-red-300">Sent</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -20,6 +20,8 @@ namespace Wallet.Services.Contracts
         Task<bool> VerifyTransactionAsync(string transactionToken, string verificationCode);
         Task AddTransactionToCategoryAsync(int transactionId, int categoryId, string userId);
         Task<(List<string> WeekLabels, List<decimal> WeeklySpendingAmounts)> GetWeeklySpendingAsync(int walletId);
+
+        Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(string userId, string contactId);
     }
 
 }

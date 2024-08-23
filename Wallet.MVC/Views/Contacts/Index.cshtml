@@ -7,92 +7,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Contacts</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f7f7f7;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .card-container {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 20px auto;
-        }
-
-        .contact-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
-
-        .btn-remove {
-            background-color: #FF6B6B;
-            border-color: #FF6B6B;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-            .btn-remove:hover {
-                background-color: #ff4a4a;
-                border-color: #ff4a4a;
-            }
-
-        .btn-primary-custom {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container mt-4">
-        <h2 class="mb-4">All Contacts</h2>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto mt-12">
+        <h2 class="text-3xl font-bold mb-8 text-center">All Contacts</h2>
 
-        @foreach (var contact in Model)
-        {
-            string name = $"{contact.FirstName} {contact.LastName}";
-            <div class="card-container mb-4">
-                <div class="card-details">
-                    <div>
-                        <img src="@contact.ProfilePictureURL" class="contact-img mb-1" alt="@contact.FirstName's Profile Picture">
-                        <span>@name</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach (var contact in Model)
+            {
+                string name = $"{contact.FirstName} {contact.LastName}";
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transform transition duration-500 hover:scale-105">
+                    <div class="flex items-center mb-4">
+                        <img src="@contact.ProfilePictureURL" alt="@contact.FirstName's Profile Picture" class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">@name</h3>
+                           
+                        </div>
                     </div>
-                    <form asp-action="RemoveContact" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="contactId" value="@contact.Id" />
-                        <button type="submit" class="btn btn-remove">
-                            <i class="fas fa-minus"></i> Remove
-                        </button>
-                    </form>
+                    <div class="flex justify-between items-center">
+                        <form asp-action="RemoveContact" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="contactId" value="@contact.Id" />
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full focus:outline-none transition duration-150">
+                                <i class="fas fa-minus"></i> Remove
+                            </button>
+                        </form>
+                        <a href="@Url.Action("ContactHistory", "Transaction", new { contactId = contact.Id })" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-full focus:outline-none transition duration-150">
+                            <i class="fas fa-history"></i> View History
+                        </a>
+                    </div>
+                    <div class="flex space-x-4">
+                        <!-- Transfer Button -->
+                        <a href="@Url.Action("InitiateTransfer", "Transaction", new { contactId = contact.Id })"
+                           class="bg-blue-500 text-white py-2 px-4 rounded-full">Transfer</a>
+                    </div>
                 </div>
-            </div>
-        }
+            }
+        </div>
 
-        <div class="text-center mt-4">
-            <a href="@Url.Action("AddContact", "Contacts")" class="btn btn-primary-custom">
+        <div class="text-center mt-12">
+            <a href="@Url.Action("AddContact", "Contacts")" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-full focus:outline-none transition duration-150">
                 <i class="fas fa-plus"></i> Add Contact
             </a>
         </div>
     </div>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

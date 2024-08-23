@@ -44,6 +44,7 @@ namespace Wallet.Data.Repositories.Implementations
             return await applicationContext.Wallets
                 .Where(w => w.OwnerId == userId || w.AppUserWallets.Any(uw => uw.Id == userId))
                 .Include(w => w.AppUserWallets)
+                .Include(w => w.Owner)
                 .ToListAsync();
         }
         public async Task AddMemberToJointWalletAsync(int walletId, AppUser userWallet)

@@ -23,8 +23,9 @@ namespace Wallet.MVC.Controllers
         private readonly ICategoryService _categoryService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IWalletFactory _walletFactory;
+        private readonly IContactService _contactService;
 
-        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService, UserManager<AppUser> userManager, IWalletFactory walletFactory)
+        public TransactionController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, ICategoryService categoryService, UserManager<AppUser> userManager, IWalletFactory walletFactory, IContactService contactService)
         {
             _walletService = walletService;
             _cardService = cardService;
@@ -32,6 +33,7 @@ namespace Wallet.MVC.Controllers
             _categoryService = categoryService;
             _userManager = userManager;
             _walletFactory = walletFactory;
+            _contactService = contactService;
         }
 
         [HttpGet]
@@ -186,12 +188,15 @@ namespace Wallet.MVC.Controllers
                         Description = t.Description,
                         Type = t.TransactionType.ToString(),
                         Direction = t.Direction, // Direction determined by the service,
-                         FromWallet = t.WalletName,  // Pass the From wallet name
+                        FromWallet = t.WalletName,  // Pass the From wallet name
                         ToWallet = t.RecepientWalledName,
                         IsRecurring = t.IsReccuring,
                         RecurrenceInterval = t.RecurrenceInterval,
                         OriginalAmount = t.OriginalAmount,
-                        CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency)
+                        OriginalCurrency = t.OriginalCurrency,
+                        SentCurrency = t.SentCurrency,
+                        CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency),
+                        CurrencyCultureSent = CurrencyHelper.GetCurrencyCulture(t.SentCurrency),
 
                     }).ToList()
                 }).ToList();
@@ -205,63 +210,18 @@ namespace Wallet.MVC.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SearchUser(TransferViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.RecipientUsernameOrEmail))
-            {
-                ModelState.AddModelError("RecipientUsernameOrEmail", "Please enter a username or email.");
-                return View("InitiateTransfer", model);
-            }
-
-            try
-            {
-                var user = await _userManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.UserData));
-                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(model.RecipientUsernameOrEmail);
-
-                if (userWithWallets == null)
-                {
-                    ModelState.AddModelError("RecipientUsernameOrEmail", "No user found with the given username or email.");
-                    return View("InitiateTransfer", model);
-                }
-
-                // Set the selected recipient ID and the first wallet ID
-                model.SelectedRecipientId = userWithWallets.UserId;
-                var preferredWallet = userWithWallets.Wallets.FirstOrDefault(w => w.Currency == model.Currency)
-                                     ?? userWithWallets.Wallets.First();
-
-                model.ToWalletId = preferredWallet.WalletId;
-                model.FromWalletId = (int)user.LastSelectedWalletId;
-                var categories = new List<SelectListItem>();
-                var categoryList = await _categoryService.GetUserCategoriesAsync(User.FindFirstValue(ClaimTypes.UserData), 1, int.MaxValue);
-                categories = categoryList.Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                }).ToList();
-                model.Categories = categories;
-                // Pass the necessary information back to the view
-                return View("InitiateTransfer", model);
-            }
-
-            catch (EntityNotFoundException)
-            {
-                ViewBag.NoCategoriesMessage = "No categories available";
-                return View("InitiateTransfer", model);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "An error occurred while searching for the user: " + ex.Message);
-                return View("InitiateTransfer", model);
-            }
-        }
+   
 
 
         [HttpGet]
-        public async Task<IActionResult> InitiateTransfer()
+        public async Task<IActionResult> InitiateTransfer(string contactId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             var user = await _userManager.FindByIdAsync(userId);
+
+            // Retrieve the user's last selected wallet to determine the currency
+            var fromWallet = await _walletService.GetWalletAsync((int)user.LastSelectedWalletId, userId);
+            var fromCurrency = fromWallet.Currency;
 
             var categories = new List<SelectListItem>();
             try
@@ -278,14 +238,47 @@ namespace Wallet.MVC.Controllers
                 ViewBag.NoCategoriesMessage = "No categories available";
             }
 
+            // Retrieve recipient's wallets
+            var recipientWallets = await _walletService.GetUserWalletsAsync(contactId);
+
+            // Find a wallet with the same currency as the sender's wallet
+            var matchingWallet = recipientWallets.FirstOrDefault(w => w.Currency == fromCurrency);
+
+            // If no matching wallet found, use the recipient's last selected wallet
+            var recipientWallet = matchingWallet ?? recipientWallets.FirstOrDefault(w => w.Id == w.Owner.LastSelectedWalletId);
+
             var model = new TransferViewModel
             {
-                FromWalletId = (int)user.LastSelectedWalletId,
+                FromWalletId = fromWallet.Id,
+                ToWalletId = recipientWallet?.Id ?? 0, // Set the ToWalletId based on the logic
+                ContactId = contactId,
                 Categories = categories,
-                // Initialize other fields to prevent null reference issues
-                RecipientWallets = new List<SelectListItem>(),
-                SelectedRecipientId = "",
-                ToWalletId = 0
+               
+            };
+
+            return View(model);
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> ContactHistory(string contactId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            // Get all wallet IDs associated with the current user
+            var userWallets = await _walletService.GetUserWalletsAsync(userId);
+            var userWalletIds = userWallets.Select(w => w.Id).ToList();
+
+            // Get the transaction history with the contact
+            var transactions = await _transactionService.GetTransactionHistoryContactAsync(userId, contactId);
+
+            var model = new ContactHistoryViewModel
+            {
+                ContactId = contactId,
+                Transactions = transactions,
+                UserWalletIds = userWalletIds, // Set the user's wallet IDs here
+                //CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency)
             };
 
             return View(model);
@@ -296,42 +289,10 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> InitiateTransfer(TransferViewModel model)
-        {
-            try
-            {
-                if (model.SelectedRecipientId == null || model.ToWalletId == 0)
-                {
-                    ModelState.AddModelError("RecipientUsernameOrEmail", "Please search and select a valid recipient.");
-                    return View(model);
-                }
-
-                // Proceed to process the transfer
-                return RedirectToAction("ProcessTransfer", new
-                {
-                    FromWalletId = model.FromWalletId,
-                    ToWalletId = model.ToWalletId,
-                    Amount = model.Amount,
-                    Description = model.Description,
-                    SelectedCategoryId = model.SelectedCategoryId,
-                    IsRecurring = model.IsRecurring,
-                    RecurrenceInterval = model.RecurrenceInterval
-                });
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "An error occurred while initiating the transfer: " + ex.Message);
-                return View(model);
-            }
-        }
-
-
-
-        [HttpPost]
         public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-
+            
             try
             {
                 if (model.ToWalletId == 0)
@@ -352,7 +313,17 @@ namespace Wallet.MVC.Controllers
                     RecurrenceInterval = model.RecurrenceInterval
                 };
 
+                // Create the transaction
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId);
+
+                // Automatically add the sending account to the recipient’s contacts
+
+                var existingContact = await _contactService.GetContactAsync(model.ContactId, userId);
+                if (existingContact == null)
+                {
+                    // If not, add the sending account to the recipient’s contacts
+                    await _contactService.AddContactAsync(model.ContactId, userId);
+                }
 
                 return RedirectToAction("TransactionHistory");
             }
@@ -366,6 +337,7 @@ namespace Wallet.MVC.Controllers
                 return View("InitiateTransfer", model);
             }
         }
+
 
 
 

@@ -64,7 +64,7 @@ namespace Wallet.Services.Factory
                 RecurrenceInterval = transaction.Interval,
                 OriginalAmount = transaction.OriginalAmount,
                 OriginalCurrency = transaction.OriginalCurrency.ToString(),
-               
+               SentCurrency = transaction.SentCurrency.ToString(),
 
             };
 

@@ -225,11 +225,15 @@ namespace Wallet.Services.Implementations
                 case TransactionType.Withdraw:
                     wallet.Balance -= transactionRequest.Amount;
                     transaction.OriginalAmount = transactionRequest.Amount;
+                    transaction.OriginalCurrency = wallet.Currency;
+                    transaction.SentCurrency = wallet.Currency;
                     break;
 
                 case TransactionType.Deposit:
                     wallet.Balance += transactionRequest.Amount;
                     transaction.OriginalAmount = transactionRequest.Amount;
+                    transaction.SentCurrency = wallet.Currency;
+                    transaction.OriginalCurrency= wallet.Currency;
                     break;
             }
         }
@@ -288,6 +292,7 @@ namespace Wallet.Services.Implementations
             }
             transaction.OriginalAmount = transactionRequest.Amount;
             transaction.OriginalCurrency = wallet.Currency;
+            transaction.SentCurrency = recipientWallet.Currency;
 
             if (wallet.Currency != recipientWallet.Currency)
             {
@@ -520,6 +525,27 @@ namespace Wallet.Services.Implementations
 
             return (weeks, weeklySpending);
         }
+
+        public async Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(string userId, string contactId)
+        {
+            // Get all wallet IDs for both the user and the contact
+            var userWalletIds = (await _walletRepository.GetUserWalletsAsync(userId)).Select(w => w.Id).ToList();
+            var contactWalletIds = (await _walletRepository.GetUserWalletsAsync(contactId)).Select(w => w.Id).ToList();
+
+            // Check cache first
+            var cacheKey = $"TransactionHistory_{userId}_{contactId}";
+            if (!_transactionCache.TryGetValue(cacheKey, out IEnumerable<Transaction> transactions))
+            {
+                // If not cached, fetch from repository
+                transactions = await _transactionRepository.GetTransactionHistoryContactAsync(userWalletIds, contactWalletIds);
+
+                // Cache the result
+                _transactionCache.Set(cacheKey, transactions, TimeSpan.FromMinutes(10));
+            }
+
+            return transactions;
+        }
+
 
     }
 }

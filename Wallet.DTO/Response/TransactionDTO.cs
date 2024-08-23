@@ -27,7 +27,7 @@ namespace Wallet.DTO.Response
 
         public decimal OriginalAmount { get; set; }
         public string OriginalCurrency { get; set; }
-        
+        public string SentCurrency {  get; set; }
     }
 
 }

@@ -17,5 +17,7 @@ namespace Wallet.MVC.Models
         public decimal OriginalAmount { get; set; }
         public string OriginalCurrency { get; set; }
         public string CurrencyCulture { get; set; }
+        public string CurrencyCultureSent {  get; set; }
+        public string SentCurrency { get; set; }
     }
 }

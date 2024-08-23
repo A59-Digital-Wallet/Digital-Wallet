@@ -8,6 +8,7 @@ namespace Wallet.MVC.Models
     {
         public int FromWalletId { get; set; } // Automatically set from preferred wallet
         public int ToWalletId { get; set; }
+        public string ContactId { get; set; }
         public decimal Amount { get; set; }
         public string Description { get; set; } // Added Description property
 

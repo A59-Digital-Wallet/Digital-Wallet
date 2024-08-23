@@ -1,5 +1,8 @@
 ﻿@model HomeViewModel
 @{
+    Layout = "_Layout";
+}
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -87,7 +90,7 @@
                                 <div class="mt-4 flex justify-center space-x-4">
                                     <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-green-500 text-white py-2 px-4 rounded-full font-bold">Deposit</a>
                                     <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="bg-red-500 text-white py-2 px-4 rounded-full font-bold">Withdraw</a>
-                                    <a href="@Url.Action("InitiateTransfer", "Transaction")" class="bg-blue-500 text-white py-2 px-4 rounded-full font-bold">Transfer</a>
+                                    
                                 </div>
                             </div>
 
@@ -147,7 +150,7 @@
                                                     @(transaction.Direction == "Incoming" ? "+" : "-")
                                                     @if (transaction.Direction == "Incoming")
                                                     {
-                                                        @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
+                                                        @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCultureSent))
                                                     }
                                                     else
                                                     {

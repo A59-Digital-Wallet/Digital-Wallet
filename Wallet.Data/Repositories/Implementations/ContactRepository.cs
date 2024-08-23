@@ -44,5 +44,6 @@ namespace Wallet.Data.Repositories.Implementations
             _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
         }
+
     }
 }
