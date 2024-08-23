@@ -16,29 +16,23 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body class="bg-gray-900 text-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center text-green-500 mb-4">Verify Two-Factor Authentication</h2>
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="bg-red-600 text-white p-4 rounded-lg mb-4">
-                @Html.ValidationSummary(true, "", new { @class = "text-white" })
-            </div>
-        }
-
-        <form method="post" asp-controller="Account" asp-action="VerifyTwoFactor" class="space-y-4">
-            @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="Code" class="block text-gray-300">Verification Code</label>
-                <input asp-for="Code" class="form-control w-full p-3 rounded bg-gray-700 border border-gray-600 text-gray-300 placeholder-gray-500" />
-                <span asp-validation-for="Code" class="text-red-500"></span>
-            </div>
-            <button type="submit" class="bg-green-500 text-white p-3 rounded w-full hover:bg-green-700 transition duration-300">Verify</button>
-        </form>
-    </div>
-
-    @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+    @{
+        ViewData["Title"] = "Verify Two-Factor Authentication";
     }
+
+    <h2>@ViewData["Title"]</h2>
+
+    <form asp-action="Verify2FA" method="post">
+        <div class="form-group">
+            <label asp-for="Code" class="control-label"></label>
+            <input asp-for="Code" class="form-control" />
+            <span asp-validation-for="Code" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Verify</button>
+    </form>
+
+    <div>
+        <a asp-action="Login">Back to Login</a>
+    </div>
 </body>
 </html>

@@ -172,7 +172,7 @@ namespace Wallet.Services.Implementations
                 throw new ArgumentException("Invalid or expired verification code.");
             }
 
-            ClearVerificationCode(user);
+            await ClearVerificationCode(user);
 
             if (!_transactionCache.TryGetValue(transactionRequest.Token, out PendingTransaction pendingTransaction))
             {

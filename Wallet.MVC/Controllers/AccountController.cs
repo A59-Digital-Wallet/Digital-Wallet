@@ -45,7 +45,6 @@ namespace Wallet.MVC.Controllers
                 return View(model);
             }
 
-            // Use the LoginAsync method from your UserService
             var (user, requiresTwoFactor) = await _userService.LoginAsync(model);
 
             if (user == null)
@@ -57,10 +56,61 @@ namespace Wallet.MVC.Controllers
             if (requiresTwoFactor)
             {
                 TempData["UserId"] = user.Id;
-                return RedirectToAction("VerifyTwoFactor");
+                return RedirectToAction("Verify2FA");
             }
 
-            // Generate JWT Token using the AuthManager
+            await SignInUserAsync(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Verify2FA()
+        {
+            return View(new Verify2FAModel());
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Verify2FA(Verify2FAModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = TempData["UserId"]?.ToString();
+            if (string.IsNullOrEmpty(userId))
+            {
+                ModelState.AddModelError("", "User session expired. Please log in again.");
+                return RedirectToAction("Login");
+            }
+
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "User not found.");
+                return RedirectToAction("Login");
+            }
+
+            var is2faTokenValid = await _twoFactorAuthService.VerifyTwoFactorCodeAsync(user, model.Code);
+            if (!is2faTokenValid)
+            {
+                ModelState.AddModelError("", "Invalid verification code.");
+                return View(model);
+            }
+
+            await SignInUserAsync(user);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // Helper method to sign in the user
+        private async Task SignInUserAsync(AppUser user)
+        {
             var token = await _authManager.GenerateJwtToken(user);
 
             // Set the JWT token in an HttpOnly cookie
@@ -75,23 +125,18 @@ namespace Wallet.MVC.Controllers
 
             // Sign in the user using Cookie Authentication
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
-            };
+        {
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id)
+        };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-            return RedirectToAction("Index", "Home");
         }
 
-
-
-        
 
         [HttpGet]
         [AllowAnonymous]
@@ -179,7 +224,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyTwoFactor(Verify2FAModel model)
         {
