@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Factory;
 
 namespace Wallet.Services.Contracts
@@ -17,7 +18,7 @@ namespace Wallet.Services.Contracts
         Task<bool> VerifyEmailAsync(VerifyEmailModel model);
         Task<bool> VerifyPhoneAsync(string phoneNumber, string code);
         Task<AppUser> GetUserByIdAsync(string userId);
-        Task<PagedResult<AppUser>> SearchUsersAsync(string searchTerm, int page, int pageSize);
+        Task<PagedResult<UserWithRolesDto>> SearchUsersAsync(string searchTerm, int page, int pageSize);
         Task UploadProfilePictureAsync(string userId, IFormFile file);
 
         Task<IdentityResult> ManageRoleAsync(string userId, string action);

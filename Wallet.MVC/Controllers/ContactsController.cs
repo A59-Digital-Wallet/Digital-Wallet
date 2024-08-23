@@ -48,9 +48,9 @@ namespace Wallet.MVC.Controllers
             var users = await _userService.SearchUsersAsync(searchTerm, 1, 10); // Adjust page and pageSize as needed
             var userDtos = users.Items.Select(user => new UserResponseDTO
             {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
+                Id = user.User.Id,
+                UserName = user.User.UserName,
+                Email = user.User.Email
             });
 
             return PartialView("_SearchResults", userDtos);

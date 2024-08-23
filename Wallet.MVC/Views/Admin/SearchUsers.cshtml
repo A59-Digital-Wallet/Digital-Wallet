@@ -1,0 +1,118 @@
+﻿@model UserSearchViewModel
+@{
+    var user = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
+}
+
+<div class="container mx-auto mt-8">
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="bg-green-100 text-green-800 p-4 rounded-lg mb-4">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <h1 class="text-2xl font-bold mb-6">Admin Panel</h1>
+    <!-- User Search Section -->
+
+    <h2 class="font-bold text-xl mb-4">Search Users</h2>
+    <div class="flex justify-left mb-4">
+        <form asp-action="SearchUsers" method="get" class="flex items-center space-x-2">
+            <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search users..." class="w-full p-2 border border-gray-300 rounded-lg" />
+            <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Search</button>
+        </form>
+    </div>
+
+    @if (Model.UsersWithRoles.Any())
+    {
+        <table class="w-full bg-white rounded-lg shadow-lg overflow-hidden">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="text-left p-4 font-bold">Username</th>
+                    <th class="text-left p-4 font-bold">Email</th>
+                    <th class="text-left p-4 font-bold">Roles</th>
+                    <th class="text-left p-4 font-bold">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var userWithRoles in Model.UsersWithRoles)
+                {
+                    <tr class="border-b last:border-0">
+                        <td class="p-4">@userWithRoles.User.UserName</td>
+                        <td class="p-4">@userWithRoles.User.Email</td>
+                        <td class="p-4">
+                            @foreach (var role in userWithRoles.Roles)
+                            {
+                                if(role == "User")
+                                {
+                                    <span class="bg-blue-600 text-white rounded font-bold py-1 px-4 ">@role</span>
+
+                                }
+                                else if(role == "Blocked")
+                                {
+                                    <span class="bg-red-600 text-white rounded font-bold py-1 px-4 ">@role</span>
+                                }
+                                else if(role == "Admin")
+                                {
+                                    <span class="bg-violet-500 text-white rounded font-bold py-1 px-4 ">@role</span>
+                                }
+                            }
+                        </td>
+                        <td class="p-4">
+                            @if (user != userWithRoles.User.Id)
+                            {
+                                <form asp-action="ManageRole" method="post" class="inline">
+                                    <input type="hidden" name="userId" value="@userWithRoles.User.Id" />
+                                    <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
+                                    <select name="action" class="border border-gray-300 rounded-lg p-2">
+                                        <option value="">Select Action</option>
+                                        @if (userWithRoles.Roles.Contains("Blocked"))
+                                        {
+                                            <option value="unblock">Unblock</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="block">Block</option>
+                                            <option value="makeadmin">Make Admin</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-1 px-4 ml-2">Apply</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="flex justify-between items-center mt-6">
+            <div>
+                @if (Model.HasPreviousPage)
+                {
+                    <a href="@Url.Action("SearchUsers", new { page = Model.PageNumber - 1, searchTerm = Model.SearchTerm })" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg">Previous</a>
+                }
+            </div>
+            <div>
+                <span>Page @Model.PageNumber of @Model.TotalPages</span>
+            </div>
+            <div>
+                @if (Model.HasNextPage)
+                {
+                    <a href="@Url.Action("SearchUsers", new { page = Model.PageNumber + 1, searchTerm = Model.SearchTerm })" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg">Next</a>
+                }
+            </div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Model.SearchTerm))
+    {
+        <div class="bg-red-100 text-red-800 p-4 rounded-lg mt-4">
+            No users found for "@Model.SearchTerm".
+        </div>
+    }
+</div>

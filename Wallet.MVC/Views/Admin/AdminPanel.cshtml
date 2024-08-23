@@ -1,0 +1,72 @@
+﻿@model AdminPanelViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container mx-auto mt-8">
+    <h1 class="text-2xl font-bold mb-6">Admin Panel</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="bg-green-100 text-green-800 p-4 rounded-lg mb-4">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="bg-red-100 text-red-800 p-4 rounded-lg mb-4">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    <!-- User Search Section -->
+    <div class="bg-white rounded-xl p-6 mb-5 shadow-md">
+        <h2 class="font-bold text-xl mb-4">Search Users</h2>
+        <form asp-action="SearchUsers" method="get">
+            <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search users..." class="w-full p-2 border border-gray-300 rounded-lg" />
+            <button type="submit" class="mt-2 bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Search</button>
+        </form>
+    </div>
+    <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+
+  
+        <!-- Overdraft Settings Section -->
+        <div>
+            <h3 class="font-bold text-xl mb-4">Overdraft Settings</h3>
+
+            <!-- Interest Rate -->
+            <form asp-action="SetInterestRate" method="post" class="mb-4">
+                <label class="block font-semibold mb-1">Interest Rate (%)</label>
+                <small class="block text-gray-600 mb-2">
+                    Current Interest Rate: @{
+                        var interestRatePercentage = Model.CurrentInterestRate * 100;
+                        @interestRatePercentage.ToString("F2")
+                    }%
+                </small>
+                <input type="number" step="0.01" name="newRate" value="@Model.CurrentInterestRate" placeholder="e.g. 10,00" class="w-full p-2 border border-gray-300 rounded-lg mb-2" />
+                <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Update Rate</button>
+            </form>
+
+            <!-- Overdraft Limit -->
+            <form asp-action="SetOverdraftLimit" method="post" class="mb-4">
+                <label class="block font-semibold mb-1">Overdraft Limit</label>
+                <small class="block text-gray-600 mb-2">Current Overdraft Limit: @Model.CurrentOverdraftLimit</small>
+                <input type="number" step="0.01" name="newLimit" value="@Model.CurrentOverdraftLimit" placeholder="e.g. 200,00" class="w-full p-2 border border-gray-300 rounded-lg mb-2" />
+                <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Update Limit</button>
+            </form>
+
+            <!-- Consecutive Negative Months -->
+            <form asp-action="SetConsecutiveNegativeMonths" method="post">
+                <label class="block font-semibold mb-1">Consecutive Negative Months</label>
+                <small class="block text-gray-600 mb-2">Current Consecutive Negative Months: @Model.CurrentConsecutiveNegativeMonths</small>
+                <input type="number" name="months"
+                @(Model.CurrentConsecutiveNegativeMonths != 0
+                    ? $"value=\"{Model.CurrentConsecutiveNegativeMonths}\""
+                    : "")
+                       placeholder="e.g. 3"
+                       class="w-full p-2 border border-gray-300 rounded-lg mb-2" />
+                <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Update Months</button>
+            </form>
+        </div>
+    </div>
+</div>

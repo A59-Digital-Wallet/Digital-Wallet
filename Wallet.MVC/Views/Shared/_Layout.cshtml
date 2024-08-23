@@ -19,6 +19,12 @@
             </div>
             <div>
                 <ul class="flex space-x-6">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>
+                            <a href="@Url.Action("AdminPanel", "Admin")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Admin Panel</a>
+                        </li>
+                    }
                     <li>
                         <a href="@Url.Action("Index", "Home")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Home</a>
                     </li>

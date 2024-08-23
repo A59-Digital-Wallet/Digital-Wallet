@@ -13,6 +13,7 @@ using Wallet.Data.Models.Enums;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Data.Repositories.Implementations;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory;
 using IEmailSender = Wallet.Services.Contracts.IEmailSender;
@@ -144,14 +145,28 @@ namespace Wallet.Services.Implementations
             return await _userRepository.GetUserByIdAsync(userId);
         }
 
-        public async Task<PagedResult<AppUser>> SearchUsersAsync(string? searchTerm, int page, int pageSize)
+        public async Task<PagedResult<UserWithRolesDto>> SearchUsersAsync(string? searchTerm, int page, int pageSize)
         {
+            // Fetch the users using your existing logic
             var users = await _userRepository.SearchUsersAsync(searchTerm, page, pageSize);
             var totalUsers = await _userRepository.GetUserCountAsync(searchTerm);
 
-            return new PagedResult<AppUser>
+            // Prepare a list of users with their roles
+            var usersWithRoles = new List<UserWithRolesDto>();
+
+            foreach (var user in users)
             {
-                Items = users,
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add(new UserWithRolesDto
+                {
+                    User = user,
+                    Roles = roles.ToList()
+                });
+            }
+
+            return new PagedResult<UserWithRolesDto>
+            {
+                Items = usersWithRoles,
                 TotalCount = totalUsers,
                 PageNumber = page,
                 PageSize = pageSize
