@@ -88,8 +88,9 @@
                                 </div>
                                 <!-- Transaction Action Buttons -->
                                 <div class="mt-4 flex justify-center space-x-4">
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-green-500 text-white py-2 px-4 rounded-full font-bold">Deposit</a>
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="bg-red-500 text-white py-2 px-4 rounded-full font-bold">Withdraw</a>
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">Deposit</a>
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">Withdraw</a>
+                                    <a href="@Url.Action("Create", "Wallet")" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold"> Create a Wallet</a>
                                     
                                 </div>
                             </div>
@@ -179,6 +180,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Create Wallet Button -->
+                   
 
                     <!-- Logout Button -->
                     <div class="text-center mt-8">
