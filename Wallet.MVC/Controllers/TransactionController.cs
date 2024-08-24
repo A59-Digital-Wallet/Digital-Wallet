@@ -145,18 +145,53 @@ namespace Wallet.MVC.Controllers
 
             try
             {
-                var transactionRequest = new TransactionRequestModel
+                TransactionType transaction;
+                if(model.TransactionType == "Deposit")
                 {
-                    WalletId = model.WalletId,
-                    Amount = model.Amount,
-                    Description = model.Description,
-                    TransactionType = model.TransactionType == "Deposit" ? TransactionType.Deposit : TransactionType.Withdraw,
-                    CardId = model.CardId,
-                    Token = model.TransactionToken, // Pass the token to finalize the transaction
-                };
+                    transaction = TransactionType.Deposit;
+                }else if(model.TransactionType == "Transfer")
+                {
+                    transaction = TransactionType.Transfer;
+
+                }
+                else
+                {
+                    transaction = TransactionType.Deposit;
+                }
+                
+                if(transaction == TransactionType.Transfer)
+                {
+                    var transactionRequest = new TransactionRequestModel
+                    {
+                        WalletId = model.WalletId,
+                        Amount = model.Amount,
+                        Description = model.Description,
+                        TransactionType = transaction,
+                        CardId = model.CardId,
+                        Token = model.TransactionToken,
+                        RecepientWalletId = (int)model.RecipinetWalletId
+                    };
+                    await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
+                }
+                else
+                {
+                    var transactionRequest = new TransactionRequestModel
+                    {
+                        WalletId = model.WalletId,
+                        Amount = model.Amount,
+                        Description = model.Description,
+                        TransactionType = transaction,
+                        CardId = model.CardId,
+                        Token = model.TransactionToken,
+                      
+                    };
+                    await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
+                }
+               
+
 
                 // Verify the code and complete the transaction
-                await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
+                
 
                 return RedirectToAction("Index", "Home");
             }
@@ -329,7 +364,18 @@ namespace Wallet.MVC.Controllers
             }
             catch (VerificationRequiredException ex)
             {
-                return RedirectToAction("ConfirmTransaction", "Transaction", new { token = ex.TransactionToken });
+                var transactionConfig = new TransactionConfirmationViewModel
+                {
+                    WalletId = ex.WalletId.GetValueOrDefault(),  // Use GetValueOrDefault for nullable int
+                    Amount = ex.Amount.GetValueOrDefault(),
+                    Description = ex.Description,
+                    TransactionType = TransactionType.Transfer.ToString(),
+                    TransactionToken = ex.TransactionToken,
+                    RecipinetWalletId = ex.RecipientWallet
+                };
+
+
+                return RedirectToAction("ConfirmTransaction", transactionConfig);
             }
             catch (Exception ex)
             {

@@ -78,6 +78,11 @@ namespace Wallet.Services.Implementations
                 if (verificationCode == null)
                 {
                     await HandleHighValueTransactionAsync(transactionRequest, user, wallet);
+                    if(transactionRequest.TransactionType == TransactionType.Transfer)
+                    {
+                        
+                        throw new VerificationRequiredException(transactionRequest.Token, transactionRequest.WalletId, transactionRequest.Amount, transactionRequest.Description, transactionRequest.RecepientWalletId);
+                    }
                     throw new VerificationRequiredException(transactionRequest.Token);
                 }
                 else
