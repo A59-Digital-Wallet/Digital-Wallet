@@ -14,5 +14,7 @@ namespace Wallet.Services.Contracts
         Task AddContactAsync(string userId, string contactId);
         Task<bool> RemoveContactAsync(string userId, string contactId);
         Task<Contact> GetContactAsync(string userId, string contactId);
+
+        
     }
 }

@@ -42,6 +42,9 @@
                         <!-- Transfer Button -->
                         <a href="@Url.Action("InitiateTransfer", "Transaction", new { contactId = contact.Id })"
                            class="bg-blue-500 text-white py-2 px-4 rounded-full">Transfer</a>
+                        <!-- Request Button -->
+                        <a href="@Url.Action("CreateRequest", "MoneyRequest", new{recipientId = contact.Id})"
+                           class="bg-blue-500 text-white py-2 px-4 rounded-full">Request</a>
                     </div>
                 </div>
             }

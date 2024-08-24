@@ -91,8 +91,43 @@
                                     <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">Deposit</a>
                                     <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">Withdraw</a>
                                     <a href="@Url.Action("Create", "Wallet")" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold"> Create a Wallet</a>
-                                    
                                 </div>
+                            </div>
+
+                            <!-- Actions Card -->
+                            <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+                                <h5 class="font-bold text-lg mb-4">Actions</h5>
+                                <ul>
+                                    @if (Model.ReceivedRequests != null && Model.ReceivedRequests.Any())
+                                    {
+                                        @foreach (var request in Model.ReceivedRequests)
+                                        {
+                                            <li class="border-b border-gray-200 py-2 flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-semibold">@request.RequesterId</span>
+                                                    requested
+                                                    <span class="font-semibold">@request.Amount @request.RequestedCurrency</span>
+                                                </div>
+                                                <div class="space-x-2">
+                                                    <form asp-action="ApproveRequest" asp-controller="MoneyRequest" method="post" class="inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="requestId" value="@request.Id" />
+                                                        <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded-full">Approve</button>
+                                                    </form>
+                                                    <form asp-action="RejectRequest" asp-controller="MoneyRequest" method="post" class="inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="requestId" value="@request.Id" />
+                                                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded-full">Reject</button>
+                                                    </form>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li class="text-gray-500">No pending actions.</li>
+                                    }
+                                </ul>
                             </div>
 
                             <!-- Recent Contacts & Invite -->
@@ -181,9 +216,6 @@
                         </div>
                     </div>
 
-                    <!-- Create Wallet Button -->
-                   
-
                     <!-- Logout Button -->
                     <div class="text-center mt-8">
                         <form asp-controller="Account" asp-action="Logout" method="post">
@@ -245,6 +277,5 @@
     </script>
 
 </body>
+
 </html>
-
-

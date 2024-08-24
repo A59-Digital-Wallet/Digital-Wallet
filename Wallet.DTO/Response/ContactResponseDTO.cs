@@ -12,5 +12,6 @@ namespace Wallet.DTO.Response
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string ProfilePictureURL { get; set; }
+
     }
 }

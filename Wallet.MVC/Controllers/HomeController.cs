@@ -25,7 +25,8 @@ namespace Wallet.MVC.Controllers
         private readonly IContactService _contactService;
         private readonly UserManager<AppUser> _userManager;
         private readonly ICategoryService _categoryService;
-        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService, UserManager<AppUser> userManager, ICategoryService categoryService)
+        private readonly IMoneyRequestService _moneyRequestService;
+        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService, UserManager<AppUser> userManager, ICategoryService categoryService, IMoneyRequestService moneyRequestService)
         {
             _walletService = walletService;
             _cardService = cardService;
@@ -33,6 +34,7 @@ namespace Wallet.MVC.Controllers
             _contactService = contactService;
             _userManager = userManager;
             _categoryService = categoryService;
+            _moneyRequestService = moneyRequestService;
         }
 
 
@@ -122,6 +124,8 @@ namespace Wallet.MVC.Controllers
             {
                 ViewBag.ErrorMessage = ex.Message; // Pass the error message to the view
             }
+
+            var receivedRequests = await _moneyRequestService.GetReceivedRequestsAsync(userId);
             var (weeklyLabels, weeklyAmounts) = await _transactionService.GetWeeklySpendingAsync(selectedWallet.Id);
             // Build the HomeViewModel with all the necessary data
             var model = new HomeViewModel
@@ -164,7 +168,8 @@ namespace Wallet.MVC.Controllers
                 WeeklySpendingLabels = weeklyLabels,  // Pass the weekly labels to the view model
                 WeeklySpendingAmounts = weeklyAmounts,  // Pass the weekly spending amounts to the view model
                 TotalSpentThisMonth = weeklyAmounts.Sum(),
-                Categories = categories
+                Categories = categories,
+                ReceivedRequests = receivedRequests.ToList()
 
                 // Example of other potential properties
 

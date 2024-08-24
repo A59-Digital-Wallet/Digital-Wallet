@@ -39,5 +39,9 @@ namespace Wallet.Data.Models
 
         // Navigation property if needed
         public UserWallet LastSelectedWallet { get; set; }
+        public ICollection<MoneyRequest> SentRequests { get; set; } = new List<MoneyRequest>();
+
+        // Collection for money requests received by the user
+        public ICollection<MoneyRequest> ReceivedRequests { get; set; } = new List<MoneyRequest>();
     }
 }

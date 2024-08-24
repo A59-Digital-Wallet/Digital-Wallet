@@ -21,6 +21,7 @@ namespace Wallet.Data.Db
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<OverdraftSettings> OverdraftSettings { get; set; }
+        public DbSet<MoneyRequest> MoneyRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,18 @@ namespace Wallet.Data.Db
                 .HasMany(u => u.Cards)
                 .WithOne(c => c.AppUser)
                 .HasForeignKey(c => c.AppUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MoneyRequest>()
+            .HasOne(mr => mr.Requester)
+              .WithMany(u => u.SentRequests)
+              .HasForeignKey(mr => mr.RequesterId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MoneyRequest>()
+                .HasOne(mr => mr.Recipient)
+                .WithMany(u => u.ReceivedRequests)
+                .HasForeignKey(mr => mr.RecipientId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<AppUser>()

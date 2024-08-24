@@ -72,5 +72,6 @@ namespace Wallet.Services.Implementations
         {
             return await _contactsRepository.GetContactAsync(userId, contactId);
         }
+
     }
 }

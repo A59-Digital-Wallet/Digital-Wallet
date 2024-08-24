@@ -217,6 +217,7 @@ namespace Wallet.MVC
             services.AddScoped<IContactsRepository, ContactRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IOverdraftSettingsRepository, OverdraftSettingsRepository>();
+            services.AddScoped<IMoneyRequestRepository, MoneyRequestRepository>();
 
             // Services
             services.AddScoped<ICardService, CardService>();
@@ -227,6 +228,7 @@ namespace Wallet.MVC
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IOverdraftSettingsService, OverdraftSettingsService>();
+            services.AddScoped<IMoneyRequestService, MoneyRequestService>();
 
             // Factories
             services.AddScoped<ICardFactory, CardFactory>();

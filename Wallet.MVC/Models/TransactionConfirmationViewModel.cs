@@ -9,5 +9,6 @@
         public string TransactionType { get; set; }
         public string TransactionToken { get; set; }
         public string VerificationCode { get; set; }
+        public int? RecipinetWalletId { get; set; }
     }
 }

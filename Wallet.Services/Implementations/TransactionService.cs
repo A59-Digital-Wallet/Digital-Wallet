@@ -418,7 +418,10 @@ namespace Wallet.Services.Implementations
                         Date = now,
                         RecipientWalletId = transaction.RecipientWalletId,
                         IsRecurring = true,
-                        Interval = transaction.Interval// The actual record of the transaction is not recurring
+                        Interval = transaction.Interval,
+                        OriginalAmount = transaction.OriginalAmount,
+                        OriginalCurrency = transaction.OriginalCurrency,
+                        SentCurrency = transaction.SentCurrency,
                     };
                     transaction.IsRecurring = false;
                     transaction.Interval = default;

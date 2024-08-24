@@ -18,7 +18,6 @@
             @Html.AntiForgeryToken()
 
             <input type="hidden" asp-for="WalletId" />
-            <input type="hidden" asp-for="CardId" />
             <input type="hidden" asp-for="Amount" />
             <input type="hidden" asp-for="Description" />
             <input type="hidden" asp-for="TransactionType" />
@@ -28,11 +27,6 @@
             <div class="mb-3">
                 <label>Wallet ID:</label>
                 <span>@Model.WalletId</span>
-            </div>
-
-            <div class="mb-3">
-                <label>Card ID:</label>
-                <span>@Model.CardId</span>
             </div>
 
             <div class="mb-3">
