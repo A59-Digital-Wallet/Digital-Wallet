@@ -45,10 +45,10 @@ namespace Wallet.MVC.Controllers
             {
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
                 await _cardService.AddCardAsync(cardRequest, userId);
-                return RedirectToAction("Index", "Home");
+                return View();
             }
 
-            return View(cardRequest);
+            return View();
         }
 
         [HttpPost]

@@ -37,7 +37,7 @@ namespace Wallet.Services.Implementations
             {
                 throw new EntityNotFoundException("No cards were found");
             }
-            if (cards.Count > 0 && !long.TryParse(cards[0].CardNumber, out var cardNumber))
+            if (cards.Count > 0)
             {
                 foreach (var card in cards)
                 {
