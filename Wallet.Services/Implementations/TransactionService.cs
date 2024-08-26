@@ -289,7 +289,7 @@ namespace Wallet.Services.Implementations
         {
             
             
-            var recipientWallet = await _walletRepository.GetWalletAsync(transactionRequest.RecepientWalletId);
+            var recipientWallet = await _walletRepository.GetWalletAsync((int)transactionRequest.RecepientWalletId);
 
             if (recipientWallet == null)
             {

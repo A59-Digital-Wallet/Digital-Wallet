@@ -80,7 +80,7 @@ namespace Wallet.MVC.Controllers
                     WalletId = model.SelectedWalletId, // This is automatically set in SelectWalletAndCard
                     Amount = model.Amount,
                     Description = model.Description,
-                    TransactionType = model.TransactionType == "Deposit" ? TransactionType.Deposit : TransactionType.Withdraw,
+                    TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
                     CardId = int.Parse(model.SelectedCardId),
                     IsRecurring = model.IsRecurring,
                     RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null
@@ -101,6 +101,7 @@ namespace Wallet.MVC.Controllers
                         Description = model.Description,
                         TransactionType = model.TransactionType,
                         TransactionToken = ex.TransactionToken,
+                        
                     };
 
                     // Redirect to the confirmation page
@@ -145,48 +146,23 @@ namespace Wallet.MVC.Controllers
 
             try
             {
-                TransactionType transaction;
-                if(model.TransactionType == "Deposit")
-                {
-                    transaction = TransactionType.Deposit;
-                }else if(model.TransactionType == "Transfer")
-                {
-                    transaction = TransactionType.Transfer;
-
-                }
-                else
-                {
-                    transaction = TransactionType.Deposit;
-                }
                 
-                if(transaction == TransactionType.Transfer)
-                {
+                
+               
                     var transactionRequest = new TransactionRequestModel
                     {
                         WalletId = model.WalletId,
                         Amount = model.Amount,
                         Description = model.Description,
-                        TransactionType = transaction,
+                        TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
                         CardId = model.CardId,
                         Token = model.TransactionToken,
-                        RecepientWalletId = (int)model.RecipinetWalletId
+                        RecepientWalletId = model.RecipinetWalletId
+                        
                     };
                     await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
-                }
-                else
-                {
-                    var transactionRequest = new TransactionRequestModel
-                    {
-                        WalletId = model.WalletId,
-                        Amount = model.Amount,
-                        Description = model.Description,
-                        TransactionType = transaction,
-                        CardId = model.CardId,
-                        Token = model.TransactionToken,
-                      
-                    };
-                    await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
-                }
+                
+              
                
 
 

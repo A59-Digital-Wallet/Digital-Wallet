@@ -117,7 +117,8 @@ namespace Wallet.MVC
             builder.Services.AddScoped<IOverdraftSettingsService, OverdraftSettingsService>();
             builder.Services.AddScoped<SavingsInterestService>();
             builder.Services.AddHostedService<InterestHostedService>();
-            
+            builder.Services.AddScoped<IStatsService, StatsService>();
+
 
             // Seed roles and users
 

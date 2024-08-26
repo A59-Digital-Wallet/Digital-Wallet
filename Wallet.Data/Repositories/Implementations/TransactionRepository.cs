@@ -96,39 +96,37 @@ namespace Wallet.Data.Repositories.Implementations
 
         private static IList<Transaction> FilterByDate(IList<Transaction> transactions, DateTime? date, DateTime? startDate, DateTime? endDate)
         {
+            if (transactions.Count == 0) return transactions;
+
+            int startIndex = 0;
+            int endIndex = transactions.Count - 1;
+
             if (date.HasValue)
             {
-                // Binary search for the specific day
-                int startIndex = BinarySearch(transactions, date.Value, true);
-                int endIndex = BinarySearch(transactions, date.Value, false);
-
-                return transactions.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
+                startIndex = BinarySearch(transactions, date.Value, true);
+                endIndex = BinarySearch(transactions, date.Value, false);
             }
-
-            if (startDate.HasValue && endDate.HasValue)
+            else
             {
-                // Binary search for the start and end of the range
-                int startIndex = BinarySearch(transactions, startDate.Value, true);
-                int endIndex = BinarySearch(transactions, endDate.Value, false);
+                if (startDate.HasValue)
+                {
+                    startIndex = BinarySearch(transactions, startDate.Value, true);
+                    // If startIndex is out of bounds, set it to the first available transaction
+                    if (startIndex < 0) startIndex = 0;
+                }
 
-                return transactions.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
+                if (endDate.HasValue)
+                {
+                    endIndex = BinarySearch(transactions, endDate.Value, false);
+                    // If endIndex is out of bounds, set it to the last available transaction
+                    if (endIndex >= transactions.Count) endIndex = transactions.Count - 1;
+                }
             }
 
-            if (startDate.HasValue)
-            {
-                // Binary search for the start of the range
-                int startIndex = BinarySearch(transactions, startDate.Value, true);
-                return transactions.Skip(startIndex).ToList();
-            }
+            // Handle edge cases where no transactions fall in the range
+            if (startIndex > endIndex) return new List<Transaction>();
 
-            if (endDate.HasValue)
-            {
-                // Binary search for the end of the range
-                int endIndex = BinarySearch(transactions, endDate.Value, false);
-                return transactions.Take(endIndex + 1).ToList();
-            }
-
-            return transactions;
+            return transactions.Skip(startIndex).Take(endIndex - startIndex + 1).ToList();
         }
         private static IList<Transaction> FilterByTransactionType(IList<Transaction> transactions, TransactionType transactionType)
         {
@@ -211,9 +209,13 @@ namespace Wallet.Data.Repositories.Implementations
                 }
             }
 
-            return result == -1 ? left : result;
+            if (result == -1)
+            {
+                result = searchStart ? left : right;
+            }
+
+            return result;
         }
 
-       
     }
 }

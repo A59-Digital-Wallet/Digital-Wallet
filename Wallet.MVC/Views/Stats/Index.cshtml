@@ -1,0 +1,64 @@
+﻿@model Wallet.DTO.Response.StatsViewModel
+
+@{
+    Layout = "_Layout";
+}
+@{
+    ViewData["Title"] = "Stats Overview";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats Overview</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-8">
+        <h2 class="text-center text-3xl font-bold mb-6">Your Financial Overview</h2>
+
+        <!-- Date Filter Form -->
+        <div class="mb-6 flex justify-center">
+            <form method="get" class="flex space-x-4">
+                <div>
+                    <label for="startDate" class="sr-only">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label for="endDate" class="sr-only">End Date</label>
+                    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg">
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Filter</button>
+            </form>
+        </div>
+
+        <!-- Total Balance Section -->
+        <div class="mb-8">
+            <div class="bg-blue-500 text-white rounded-lg p-6 shadow-md">
+                <div class="text-lg font-semibold">Total Balance in BGN</div>
+                <div class="text-3xl font-bold">
+                    @Model.TotalBalance.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Breakdown -->
+        @foreach (var wallet in Model.WalletBreakdown)
+        {
+            <div class="mb-6">
+                <div class="bg-white rounded-lg p-6 shadow-md">
+                    <div class="text-lg font-semibold mb-4">@wallet.WalletName (@wallet.Currency)</div>
+                    <p class="text-gray-700"><strong>Total Deposits:</strong> @wallet.TotalDeposits.ToString()</p>
+                    <p class="text-gray-700"><strong>Total Withdrawals:</strong> @wallet.TotalWithdrawals.ToString()</p>
+                    <p class="text-gray-700"><strong>Total Transfers Sent:</strong> @wallet.TotalTransfersSent.ToString()</p>
+                    <p class="text-gray-700"><strong>Total Transfers Received:</strong> @wallet.TotalTransfersReceived.ToString()</p>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>
+</body>
+</html>

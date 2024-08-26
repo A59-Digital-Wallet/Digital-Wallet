@@ -82,7 +82,7 @@ namespace Wallet.MVC.Controllers
                     Description = model.Description,
                     TransactionType = TransactionType.Transfer,
                     CardId = model.CardId,
-                    RecepientWalletId = (int)model.RecipinetWalletId,
+                    RecepientWalletId = model.RecipinetWalletId,
                     Token = model.TransactionToken, // Pass the token to finalize the transaction
                 };
 

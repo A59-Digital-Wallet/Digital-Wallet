@@ -175,7 +175,7 @@ namespace Wallet.Services.Implementations
             {
                 WalletId = senderWallet.Id,
                 Amount = finalAmount,
-                Description = $"Money Request from {request.RequesterId} in {request.RequestedCurrency}",
+                Description = request.Description,
                 TransactionType = TransactionType.Transfer,
                 RecepientWalletId = recipientWallet.Id,
                 IsRecurring = false

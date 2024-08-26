@@ -32,7 +32,7 @@
                         <a href="@Url.Action("Index", "Contacts")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Contacts</a>
                     </li>
                     <li>
-                        <a href="@Url.Action("Statistics", "Home")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Statistics</a>
+                        <a href="@Url.Action("Index", "Stats")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Statistics</a>
                     </li>
                     <!-- Additional Navigation Links -->
                     @if (User.Identity.IsAuthenticated)

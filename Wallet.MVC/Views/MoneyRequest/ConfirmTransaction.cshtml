@@ -24,14 +24,11 @@
             <input type="hidden" asp-for="TransactionToken" />
             <input type="hidden" asp-for="RecipinetWalletId" />
 
-            <div class="mb-3">
-                <label>Wallet ID:</label>
-                <span>@Model.WalletId</span>
-            </div>
+           
 
             <div class="mb-3">
                 <label>Amount:</label>
-                <span>@Model.Amount.ToString("C")</span>
+                <span>@Model.Amount.ToString()</span>
             </div>
 
             <div class="mb-3">

@@ -10,5 +10,7 @@
         public string TransactionToken { get; set; }
         public string VerificationCode { get; set; }
         public int? RecipinetWalletId { get; set; }
+        public string CurrencyCulture { get; set; }
+
     }
 }
