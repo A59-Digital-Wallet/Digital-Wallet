@@ -20,9 +20,11 @@ namespace Wallet.Data.Repositories.Implementations
 
         public async Task<List<Card>> GetCardsAsync(string userId)
         {
-            return await _context.Cards
+
+            var cards = await _context.Cards
                 .Where(c => c.AppUserId == userId) 
-                .ToListAsync(); 
+                .ToListAsync();
+            return cards;
         }
 
         public async Task<Card> GetCardAsync(int cardId)

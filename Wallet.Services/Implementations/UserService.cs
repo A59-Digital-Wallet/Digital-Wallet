@@ -204,66 +204,28 @@ namespace Wallet.Services.Implementations
             {
                 throw new KeyNotFoundException("User not found.");
             }
-
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var currentRole = userRoles.FirstOrDefault()?.ToLower(); // Get the current role of the user, if any
-
-            IdentityResult result = IdentityResult.Success;
-
+            IdentityResult result = null;
             switch (action.ToLower())
             {
                 case "block":
-                    if (currentRole == "admin")
+                    if (await _userManager.IsInRoleAsync(user, "Admin"))
                     {
                         return IdentityResult.Failed(new IdentityError
                         {
                             Description = "Admin users cannot be blocked."
                         });
                     }
-                    if (currentRole != null && currentRole != "blocked")
-                    {
-                        result = await UnassignRoleAsync(user, currentRole);
-                        if (!result.Succeeded) return result;
-                    }
-                    result = await AssignRoleAsync(user, "blocked");
+                    result = await AssignRoleAsync(user, "Blocked");
                     break;
-
                 case "unblock":
-                    if (currentRole == "blocked")
-                    {
-                        result = await UnassignRoleAsync(user, "blocked");
-                    }
-                    result = await AssignRoleAsync(user, "user");
+                    result = await UnassignRoleAsync(user, "Blocked");
                     break;
-
                 case "makeadmin":
-                    if (currentRole != "admin")
-                    {
-                        if (currentRole != null)
-                        {
-                            result = await UnassignRoleAsync(user, currentRole);
-                            if (!result.Succeeded) return result;
-                        }
-                        result = await AssignRoleAsync(user, "admin");
-                    }
+                    result = await AssignRoleAsync(user, "Admin");
                     break;
-
-                case "user":
-                    if (currentRole != "user")
-                    {
-                        if (currentRole != null)
-                        {
-                            result = await UnassignRoleAsync(user, currentRole);
-                            if (!result.Succeeded) return result;
-                        }
-                        result = await AssignRoleAsync(user, "user");
-                    }
-                    break;
-
                 default:
-                    throw new ArgumentException("Invalid action. Use 'block', 'unblock', 'user' or 'makeadmin'.");
+                    throw new ArgumentException("Invalid action. Use 'block', 'unblock', or 'makeadmin'.");
             }
-
             return result;
         }
 

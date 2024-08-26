@@ -51,7 +51,6 @@ namespace Wallet.MVC.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var wallets = await _walletService.GetUserWalletsAsync(userId);
-            var cards = await _cardService.GetCardsAsync(userId);
 
             // If there are no wallets, redirect to wallet creation
             if (!wallets.Any())
@@ -124,7 +123,7 @@ namespace Wallet.MVC.Controllers
             {
                 ViewBag.ErrorMessage = ex.Message; // Pass the error message to the view
             }
-
+            var cards = await _cardService.GetCardsAsync(userId);
             var receivedRequests = await _moneyRequestService.GetReceivedRequestsAsync(userId);
             var (weeklyLabels, weeklyAmounts) = await _transactionService.GetWeeklySpendingAsync(selectedWallet.Id);
             // Build the HomeViewModel with all the necessary data
