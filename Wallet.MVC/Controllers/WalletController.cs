@@ -156,6 +156,65 @@ namespace Wallet.MVC.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> ManageJointWalletMembers(int walletId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+            var wallet = await _walletService.GetWalletAsync(walletId, userId);
+
+            if (wallet == null || wallet.OwnerId != userId)
+            {
+                return Unauthorized(); // or a view that displays an error message
+            }
+
+            var contacts = await _contactService.GetContactsAsync(userId);
+            var members = await _walletService.GetWalletMembersAsync(walletId); // Assuming you have this method
+
+            var model = new ManageJointWalletMembersViewModel
+            {
+                WalletId = wallet.Id,
+                WalletName = wallet.Name,
+                Contacts = contacts.ToList(),
+                Members = members,
+                OwnerId = userId
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddMember(int walletId, string userId)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.UserData);
+            try
+            {
+                await _walletService.AddMemberToJointWalletAsync(walletId, userId, canSpend: true, canAddFunds: true, ownerId: ownerId);
+                TempData["SuccessMessage"] = "Member added successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+
+            return RedirectToAction("ManageJointWalletMembers", new { walletId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveMember(int walletId, string userId)
+        {
+            var ownerId = User.FindFirstValue(ClaimTypes.UserData);
+            try
+            {
+                await _walletService.RemoveMemberFromJointWalletAsync(walletId, userId, ownerId);
+                TempData["SuccessMessage"] = "Member removed successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+            }
+
+            return RedirectToAction("ManageJointWalletMembers", new { walletId });
+        }
 
 
 

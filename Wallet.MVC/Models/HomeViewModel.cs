@@ -15,5 +15,7 @@ namespace Wallet.MVC.Models
         public decimal TotalSpentThisMonth { get; set; } // Total spending this month
         public List<CategoryViewModel> Categories { get; set; }
         public List<MoneyRequestResponseDTO> ReceivedRequests { get; set; }
+
+        public Dictionary<string, decimal> MonthlySpendingByCategory { get; set; }
     }
 }

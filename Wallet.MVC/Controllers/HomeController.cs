@@ -84,10 +84,15 @@ namespace Wallet.MVC.Controllers
                 Name = selectedWallet.Name,
                 Balance = selectedWallet.Balance,
                 Currency = selectedWallet.Currency.ToString(),
-                CurrencyCulture = culture // Pass the culture to the ViewBag
+                CurrencyCulture = culture,
+                Type = selectedWallet.WalletType.ToString(),
+                OwnerId = selectedWallet.OwnerId
             };
 
-
+            var isOwnerOfJointWallet = selectedWallet.WalletType == WalletType.Joint && selectedWallet.OwnerId == userId;
+            ViewBag.ShowManageMembersButton = isOwnerOfJointWallet;
+            
+           
             // Filter transactions based on the selected wallet
             var transactionRequest = new TransactionRequestFilter
             {
@@ -126,6 +131,8 @@ namespace Wallet.MVC.Controllers
             var cards = await _cardService.GetCardsAsync(userId);
             var receivedRequests = await _moneyRequestService.GetReceivedRequestsAsync(userId);
             var (weeklyLabels, weeklyAmounts) = await _transactionService.GetWeeklySpendingAsync(selectedWallet.Id);
+            var spendingByCategory = await _transactionService.GetMonthlySpendingByCategoryAsync(userId, selectedWallet.Id);
+
             // Build the HomeViewModel with all the necessary data
             var model = new HomeViewModel
             {
@@ -140,7 +147,7 @@ namespace Wallet.MVC.Controllers
                 }).ToList(),
 
                 Card = cards.FirstOrDefault(),
-
+                MonthlySpendingByCategory = spendingByCategory,
                 Transactions = transactions.Select(transaction => new TransactionViewModel
                 {
                     Id = transaction.Id,

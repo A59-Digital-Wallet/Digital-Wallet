@@ -21,5 +21,6 @@ namespace Wallet.Services.Contracts
         Task<List<UserWallet>> GetUserWalletsAsync(string userId);
         Task<List<UserWallet>> GetWalletsForProcessingAsync();
         Task UpdateWalletAsync();
+        Task<List<AppUser>> GetWalletMembersAsync(int walletId);
     }
 }

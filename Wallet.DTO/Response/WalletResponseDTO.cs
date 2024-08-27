@@ -16,5 +16,6 @@ namespace Wallet.DTO.Response
         public Currency Currency { get; set; }
         public WalletType WalletType { get; set; }
         public List<AppUser> AppUserWallets { get; set; } = new List<AppUser>();
+        public string OwnerId {  get; set; }
     }
 }

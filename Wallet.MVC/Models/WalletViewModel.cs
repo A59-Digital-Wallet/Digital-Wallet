@@ -10,6 +10,7 @@ namespace Wallet.MVC.Models
         public string Currency { get; set; }
         public string Type { get; set; }
         public string CurrencyCulture {  get; set; }
+        public string OwnerId {  get; set; }
     }
 
 }

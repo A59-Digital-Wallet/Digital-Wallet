@@ -22,6 +22,7 @@ namespace Wallet.Services.Contracts
         Task<(List<string> WeekLabels, List<decimal> WeeklySpendingAmounts)> GetWeeklySpendingAsync(int walletId);
 
         Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(string userId, string contactId);
+        Task<Dictionary<string, decimal>> GetMonthlySpendingByCategoryAsync(string userId, int walletId);
     }
 
 }

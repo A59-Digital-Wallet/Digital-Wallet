@@ -13,5 +13,10 @@ namespace Wallet.DTO.Response
         public List<WalletStatsViewModel> WalletBreakdown { get; set; }
        public DateTime? StartDate { get; set; } 
         public DateTime? EndDate { get; set;}
+
+
+        public Dictionary<string, decimal> CategoryBreakdown { get; set; }
+        
+        public List<TransactionDto> RecentTransactions { get; set; }
     }
 }
