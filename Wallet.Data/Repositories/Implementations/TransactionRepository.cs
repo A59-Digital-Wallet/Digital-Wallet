@@ -46,6 +46,7 @@ namespace Wallet.Data.Repositories.Implementations
                                  .ThenInclude(u => u.Owner)
                                  .Include(t => t.Wallet)
                                  .ThenInclude( u => u.AppUserWallets)
+                                 .Include(u => u.Category)
                                  .FirstOrDefaultAsync(t => t.Id == transactionId);
         }
 

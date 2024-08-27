@@ -60,6 +60,19 @@
                     <input type="number" id="Amount" name="filter.Amount" class="form-control p-2 rounded-lg border-gray-300" value="@Model.Filter.Amount" />
                 </div>
                 <div class="col-md-6 mb-2">
+                    <label for="WalletId" class="font-semibold text-gray-700">Wallet</label>
+                    <select id="WalletId" name="filter.WalletId" class="form-control p-2 rounded-lg border-gray-300">
+                        <option value="0" selected="@(Model.Filter.WalletId == 0 ? "selected" : null)">All</option>
+                        @foreach (var wallet in Model.Wallets)
+                        {
+                            <option value="@wallet.Id" selected="@(Model.Filter.WalletId == wallet.Id ? "selected" : null)">@wallet.Name (@wallet.Currency)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Fourth Row of Filters -->
+                <div class="col-md-6 mb-2">
                     <label for="SortBy" class="font-semibold text-gray-700">Sort By</label>
                     <select id="SortBy" name="filter.SortBy" class="form-control p-2 rounded-lg border-gray-300">
                         <option value="Date" selected="@(Model.Filter.SortBy == "Date" ? "selected" : null)">Date</option>
@@ -67,9 +80,6 @@
                         <option value="Status" selected="@(Model.Filter.SortBy == "Status" ? "selected" : null)">Status</option>
                     </select>
                 </div>
-            </div>
-            <div class="row">
-                <!-- Fourth Row of Filters -->
                 <div class="col-md-6 mb-2">
                     <label for="OrderBy" class="font-semibold text-gray-700">Order By</label>
                     <select id="OrderBy" name="filter.OrderBy" class="form-control p-2 rounded-lg border-gray-300">

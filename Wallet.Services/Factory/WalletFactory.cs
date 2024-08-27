@@ -32,7 +32,8 @@ namespace Wallet.Services.Factory
             {
                 WalletId = userWallet.Id,
                 Currency = userWallet.Currency,
-                Balance = userWallet.Balance
+                Balance = userWallet.Balance,
+                
             };
         }
     }

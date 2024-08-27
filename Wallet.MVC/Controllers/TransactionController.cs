@@ -183,7 +183,7 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 100)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-
+            var wallets = await _walletService.GetUserWalletsAsync(userId);
             var transactions = await _transactionService.FilterTransactionsAsync(page, pageSize, filter, userId);
 
             var groupedTransactions = transactions
@@ -215,7 +215,14 @@ namespace Wallet.MVC.Controllers
             var model = new TransactionHistoryViewModel
             {
                 MonthlyTransactions = groupedTransactions,
-                Filter = filter
+                Filter = filter,
+                Wallets = wallets.Select(w => new WalletViewModel
+                {
+                    Id = w.Id,
+                    Name = w.Name,
+                    Currency = w.Currency.ToString(),
+                }).ToList()
+                
             };
 
             return View(model);

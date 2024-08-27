@@ -81,12 +81,23 @@ namespace Wallet.Services.Implementations
                 WalletType = wallet.WalletType,
                 Id = wallet.Id,
                 AppUserWallets = wallet.AppUserWallets,
+                OwnerId = userId,
 
             };
 
             return walletToReturn;
         }
+        public async Task<List<AppUser>> GetWalletMembersAsync(int walletId)
+        {
+            var wallet = await _walletRepository.GetWalletAsync(walletId);
 
+            if (wallet == null)
+            {
+                throw new ArgumentException("Wallet not found.");
+            }
+
+            return wallet.AppUserWallets.ToList(); // Assuming `AppUserWallets` is the collection of members in the wallet
+        }
         public async Task<List<UserWallet>> GetUserWalletsAsync(string userId)
         {
             return await _walletRepository.GetUserWalletsAsync(userId);

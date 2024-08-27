@@ -71,11 +71,11 @@
                             </div>
 
                             <div class="bg-white rounded-xl p-6 shadow-md mb-6">
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center mb-4">
                                     <div class="balance text-4xl font-bold text-gray-800">
                                         @ViewBag.SelectedWallet.Balance.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(ViewBag.SelectedWallet.CurrencyCulture))
                                     </div>
-                                    <form asp-action="Index" method="get">
+                                    <form asp-action="Index" method="get" class="flex items-center space-x-4">
                                         <select name="walletId" onchange="this.form.submit()" class="form-select border border-gray-300 rounded-lg">
                                             @foreach (var wallet in Model.Wallets)
                                             {
@@ -84,8 +84,15 @@
                                                 </option>
                                             }
                                         </select>
+                                        @if (ViewBag.ShowManageMembersButton)
+                                        {
+                                            <a href="@Url.Action("ManageJointWalletMembers", "Wallet", new { walletId = ViewBag.SelectedWallet.Id })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">
+                                                Manage Members
+                                            </a>
+                                        }
                                     </form>
                                 </div>
+
                                 <!-- Transaction Action Buttons -->
                                 <div class="mt-4 flex justify-center space-x-4">
                                     <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold">Deposit</a>
@@ -93,6 +100,7 @@
                                     <a href="@Url.Action("Create", "Wallet")" class="bg-purple-500 text-white py-2 px-4 rounded-full font-bold"> Create a Wallet</a>
                                 </div>
                             </div>
+
 
                             <!-- Actions Card -->
                             <div class="bg-white rounded-xl p-6 shadow-md mb-6">
@@ -104,7 +112,7 @@
                                         {
                                             <li class="border-b border-gray-200 py-2 flex justify-between items-center">
                                                 <div>
-                                                    <span class="font-semibold">@request.RequesterId</span>
+                                                    <span class="font-semibold">@request.Description</span>
                                                     requested
                                                     <span class="font-semibold">@request.Amount @request.RequestedCurrency</span>
                                                 </div>
@@ -213,8 +221,18 @@
                                 <!-- Bar Chart for Weekly Spending -->
                                 <canvas id="weeklySpendingChart" width="400" height="200"></canvas>
                             </div>
+
+                            @if (ViewBag.SelectedWallet.Type != "Joint")
+                            {
+                                <div class="bg-white rounded-xl p-6 shadow-md mt-6">
+                                    <h5 class="font-bold text-lg mb-4">Monthly Spending by Category</h5>
+                                    <canvas id="categorySpendingChart" width="400" height="200"></canvas>
+                                </div>
+                            }
                         </div>
                     </div>
+                    
+
 
                     <!-- Logout Button -->
                     <div class="text-center mt-8">
@@ -275,6 +293,53 @@
         var ctx = document.getElementById('weeklySpendingChart').getContext('2d');
         new Chart(ctx, config);
     </script>
+
+    <script>
+        var categorySpendingData = {
+            labels: @Html.Raw(Json.Serialize(Model.MonthlySpendingByCategory.Keys)),
+            datasets: [{
+                label: 'Spending by Category',
+                data: @Html.Raw(Json.Serialize(Model.MonthlySpendingByCategory.Values)),
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40'
+                ],
+                hoverBackgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0',
+                    '#9966FF',
+                    '#FF9F40'
+                ]
+            }]
+        };
+
+        var config = {
+            type: 'pie',
+            data: categorySpendingData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Monthly Spending by Category'
+                    }
+                }
+            },
+        };
+
+        var ctx = document.getElementById('categorySpendingChart').getContext('2d');
+        new Chart(ctx, config);
+    </script>
+
 
 </body>
 

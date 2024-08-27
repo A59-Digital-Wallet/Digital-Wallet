@@ -534,6 +534,28 @@ namespace Wallet.Services.Implementations
             return (weeks, weeklySpending);
         }
 
+        public async Task<Dictionary<string, decimal>> GetMonthlySpendingByCategoryAsync(string userId, int walletId)
+        {
+            var transactions = await _transactionRepository.GetTransactionsByWalletId(walletId);
+
+            var currentMonth = DateTime.Now.Month;
+            var currentYear = DateTime.Now.Year;
+
+            var spendingByCategory = transactions
+                .Where(t => t.TransactionType == TransactionType.Withdraw || t.TransactionType == TransactionType.Transfer)
+                .Where(t => t.Date.Month == currentMonth && t.Date.Year == currentYear)
+                .Where(t => t.Category != null) // Ensure that the transaction has a category
+                .GroupBy(t => t.Category.Name)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Sum(t => t.Amount)
+                );
+
+            return spendingByCategory;
+        }
+
+
+
         public async Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(string userId, string contactId)
         {
             // Get all wallet IDs for both the user and the contact
