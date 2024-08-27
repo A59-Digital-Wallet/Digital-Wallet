@@ -21,6 +21,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Wallet.Common.Exceptions;
 using Wallet.Services.Validation.TransactionValidation;
 using Wallet.Data.Migrations;
+using Wallet.Common.Helpers;
 
 namespace Wallet.Services.Implementations
 {
@@ -109,11 +110,11 @@ namespace Wallet.Services.Implementations
             var wallet = await _walletRepository.GetWalletAsync(walletId);
             if (wallet == null)
             {
-                throw new ArgumentException("Wallet does not exist.");
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
             if (wallet.OwnerId != userId && !wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new ArgumentException("Not your wallet!");
+                throw new ArgumentException(Messages.Unauthorized);
             }
 
             return wallet;
@@ -174,14 +175,14 @@ namespace Wallet.Services.Implementations
                 !user.EmailConfirmationCodeGeneratedAt.HasValue ||
                 (DateTime.UtcNow - user.EmailConfirmationCodeGeneratedAt.Value).TotalMinutes > 10)
             {
-                throw new ArgumentException("Invalid or expired verification code.");
+                throw new ArgumentException(Messages.Service.InvalidOrExpiredCode);
             }
 
             await ClearVerificationCode(user);
 
             if (!_transactionCache.TryGetValue(transactionRequest.Token, out PendingTransaction pendingTransaction))
             {
-                throw new InvalidOperationException("Transaction token is invalid or has expired.");
+                throw new InvalidOperationException(Messages.Service.InvalidOrExpiredTransactionToken);
             }
 
             _transactionCache.Remove(transactionRequest.Token);
@@ -211,7 +212,7 @@ namespace Wallet.Services.Implementations
                 var card = await _cardRepository.GetCardAsync(transactionRequest.CardId);
                 if (card == null)
                 {
-                    throw new ArgumentException("Card does not exist.");
+                    throw new ArgumentException(Messages.Service.CardNotFound);
                 }
                 transaction.CardId = card.Id;
             }
@@ -252,7 +253,7 @@ namespace Wallet.Services.Implementations
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw new InvalidOperationException("Transaction conflict detected. Please try again.");
+                throw new InvalidOperationException(Messages.Service.TransactionConflict);
             }
         }
 
@@ -262,7 +263,7 @@ namespace Wallet.Services.Implementations
             // Retrieve the pending transaction using the token
             if (!_transactionCache.TryGetValue(transactionToken, out PendingTransaction pendingTransaction))
             {
-                throw new InvalidOperationException("Transaction token is invalid or has expired.");
+                throw new InvalidOperationException(Messages.Service.InvalidOrExpiredTransactionToken);
             }
 
             var user = await this.userManager.FindByIdAsync(pendingTransaction.UserId);
@@ -293,7 +294,7 @@ namespace Wallet.Services.Implementations
 
             if (recipientWallet == null)
             {
-                throw new ArgumentException("Recipient wallet does not exist.");
+                throw new ArgumentException(Messages.Service.RecipientWalletNotFound);
             }
             transaction.OriginalAmount = transactionRequest.Amount;
             transaction.OriginalCurrency = wallet.Currency;
@@ -368,7 +369,7 @@ namespace Wallet.Services.Implementations
 
             if (user == null)
             {
-                throw new ArgumentException("User not found.");
+                throw new ArgumentException(Messages.UserNotFound);
             }
 
             return user;
@@ -447,17 +448,17 @@ namespace Wallet.Services.Implementations
 
             if (transaction == null)
             {
-                throw new ArgumentException("Transaction not found.");
+                throw new ArgumentException(Messages.Service.TransactionNotFound);
             }
 
             if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new UnauthorizedAccessException("You do not have permission to cancel this transaction.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized); //"You do not have permission to cancel this transaction."
             }
 
             if (!transaction.IsRecurring)
             {
-                throw new InvalidOperationException("This transaction is not a recurring transaction.");
+                throw new InvalidOperationException(Messages.Service.NotRecurringTransaction);
             }
 
             transaction.IsRecurring = false;
@@ -472,12 +473,12 @@ namespace Wallet.Services.Implementations
             var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
             if (transaction == null)
             {
-                throw new EntityNotFoundException("Transaction not found.");
+                throw new EntityNotFoundException(Messages.Service.TransactionNotFound);
             }
 
             if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new UnauthorizedAccessException("You do not have permission to modify this transaction.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized); //"You do not have permission to modify this transaction."
             }
 
             transaction.CategoryId = categoryId;

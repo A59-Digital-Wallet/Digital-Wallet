@@ -10,6 +10,7 @@ using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 
 namespace Wallet.Services.Implementations
 {
@@ -37,12 +38,12 @@ namespace Wallet.Services.Implementations
 
             if (recipient == null)
             {
-                throw new ArgumentException("Recipient not found.");
+                throw new ArgumentException(Messages.Service.RecipientNotFound);
             }
 
             if (!Enum.TryParse(requestDto.RequestedCurrency, out Currency requestedCurrency))
             {
-                throw new ArgumentException("Invalid currency.");
+                throw new ArgumentException(Messages.Service.InvalidCurrency);
             }
 
             var moneyRequest = new MoneyRequest
@@ -97,7 +98,7 @@ namespace Wallet.Services.Implementations
 
             if (request == null)
             {
-                throw new ArgumentException("Money request not found.");
+                throw new ArgumentException(Messages.Service.MoneyRequestNotFound);
             }
 
             return new MoneyRequestResponseDTO
@@ -120,7 +121,7 @@ namespace Wallet.Services.Implementations
 
             if (request == null)
             {
-                throw new ArgumentException("Money request not found.");
+                throw new ArgumentException(Messages.Service.MoneyRequestNotFound);
             }
 
             request.Status = status;
@@ -135,12 +136,12 @@ namespace Wallet.Services.Implementations
 
             if (request == null)
             {
-                throw new ArgumentException("Money request not found.");
+                throw new ArgumentException(Messages.Service.MoneyRequestNotFound);
             }
 
             if (request.RecipientId != senderId)
             {
-                throw new UnauthorizedAccessException("You do not have permission to approve this request.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized);
             }
 
             await UpdateMoneyRequestStatusAsync(requestId, RequestStatus.Approved);
@@ -153,7 +154,7 @@ namespace Wallet.Services.Implementations
 
             if (senderWallet == null)
             {
-                throw new InvalidOperationException("User has no wallets to send funds from.");
+                throw new InvalidOperationException(Messages.Service.NoWalletsToSendFunds);
             }
 
             var recipientWallets = await _walletRepository.GetUserWalletsAsync(request.RequesterId);
@@ -161,7 +162,7 @@ namespace Wallet.Services.Implementations
 
             if (recipientWallet == null)
             {
-                throw new InvalidOperationException("Recipient has no wallet in the requested currency.");
+                throw new InvalidOperationException(Messages.Service.NoRecipientWalletInCurrency);
             }
 
             decimal finalAmount = request.Amount;

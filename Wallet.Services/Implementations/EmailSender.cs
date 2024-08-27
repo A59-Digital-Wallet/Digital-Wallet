@@ -1,21 +1,16 @@
-﻿using SendGrid.Helpers.Mail;
-using SendGrid;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SendGrid;
+using SendGrid.Helpers.Mail;
 using Wallet.Services.Contracts;
 
 namespace Wallet.Services.Implementations
 {
-    public class EmailSender :  IEmailSender
+    public class EmailSender : IEmailSender
     {
         public async Task SendEmail(string subject, string toEmail, string username, string message)
         {
             var apiKey = "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"; //should put in secrets!!
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("kosetololbeast@gmail.com", "DigitalWallet");            
+            var from = new EmailAddress("kosetololbeast@gmail.com", "DigitalWallet");
             var to = new EmailAddress(toEmail, username);
             var plainTextContent = message;
             var htmlContent = "";

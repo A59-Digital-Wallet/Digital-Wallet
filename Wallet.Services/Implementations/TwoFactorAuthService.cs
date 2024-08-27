@@ -1,15 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using QRCoder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using QRCoder;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.Services.Contracts;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 
 namespace Wallet.Services.Implementations
@@ -44,7 +36,7 @@ namespace Wallet.Services.Implementations
                 return qrCode.GetGraphic(5);
             }
         }
-     
+
 
         public async Task<bool> VerifyTwoFactorCodeAsync(AppUser user, string code)
         {

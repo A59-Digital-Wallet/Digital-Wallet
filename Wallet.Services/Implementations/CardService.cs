@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Common.Exceptions;
+﻿using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.DTO.Request;
@@ -33,9 +29,9 @@ namespace Wallet.Services.Implementations
         {
             List<Card> cards = await _cardRepository.GetCardsAsync(userId);
 
-            if(cards == null)
+            if (cards == null)
             {
-                throw new EntityNotFoundException("No cards were found");
+                throw new EntityNotFoundException(Messages.Service.CardsNotFound);
             }
             if (cards.Count > 0)
             {
@@ -45,7 +41,6 @@ namespace Wallet.Services.Implementations
                     card.CVV = await _encryptionService.DecryptAsync(card.CVV);
                 }
             }
-           
 
             List<CardResponseDTO> cardResponseDTOs = _cardFactory.Map(cards);
             return cardResponseDTOs;
@@ -65,7 +60,7 @@ namespace Wallet.Services.Implementations
             bool isDuplicate = await _cardRepository.CardExistsAsync(userID, encryptedCardNumber);
             if (isDuplicate)
             {
-                throw new InvalidOperationException("This card has already been added.");
+                throw new InvalidOperationException(Messages.Service.CardAlreadyExists);
             }
 
             var card = _cardFactory.Map(cardRequest, userID, validationResult.CardNetwork);
@@ -80,7 +75,7 @@ namespace Wallet.Services.Implementations
 
             if (userID != card.AppUserId)
             {
-                throw new AuthorizationException("You cannot access this card!");
+                throw new AuthorizationException(Messages.Unauthorized);
             }
 
             if (card != null)
@@ -96,18 +91,17 @@ namespace Wallet.Services.Implementations
         {
             var card = await _cardRepository.GetCardAsync(cardId);
 
-            if(card == null)
+            if (card == null)
             {
-                throw new ArgumentException("Card not found.");
+                throw new EntityNotFoundException(Messages.Service.CardNotFound);
             }
             if (card.AppUserId != userId)
             {
-                throw new ArgumentException("Ýou are not authorized to delete this card.");
+                throw new AuthorizationException(Messages.Unauthorized);
             }
 
-
-           await _cardRepository.DeleteCardAsync(card);
-           return true;
+            await _cardRepository.DeleteCardAsync(card);
+            return true;
         }
     }
 }

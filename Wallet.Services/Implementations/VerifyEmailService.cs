@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
+using Wallet.Common.Helpers;
 using Wallet.Services.Contracts;
 
 namespace Wallet.Services.Implementations
@@ -24,8 +23,8 @@ namespace Wallet.Services.Implementations
             _verificationCodes[email] = code;
 
             // Send the verification code via email
-            var subject = "Your Verification Code";
-            var message = $"Hello {username},\n\nYour verification code is: {code}\n\nPlease enter this code to complete your transaction.";
+            var subject = Messages.Service.VerificationCode;
+            var message = string.Format(Messages.Service.EmailMessage, username, code); //$"Hello {username},\n\nYour verification code is: {code}\n\nPlease enter this code to complete your transaction."
             await _emailSender.SendEmail(subject, email, username, message);
 
             return true; // Indicate that the code was sent successfully

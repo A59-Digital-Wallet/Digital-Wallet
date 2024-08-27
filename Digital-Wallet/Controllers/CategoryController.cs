@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
@@ -45,7 +45,7 @@ namespace Digital_Wallet.Controllers
             try
             {
                 await _categoryService.AddCategoryAsync(userId, categoryRequest);
-                return Ok(new { message = "Category added successfully." });
+                return Ok(new { message = Messages.Controller.CategoryAddedSuccessful });
             }
             catch (ArgumentNullException ex)
             {
@@ -88,7 +88,7 @@ namespace Digital_Wallet.Controllers
             try
             {
                 await _categoryService.DeleteCategoryAsync(userId, categoryId);
-                return Ok(new { message = "Category deleted successfully." });
+                return Ok(new { message = Messages.Controller.CategoryDeletedSuccessful });
             }
             catch (EntityNotFoundException ex)
             {

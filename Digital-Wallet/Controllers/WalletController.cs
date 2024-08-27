@@ -4,6 +4,7 @@ using Org.BouncyCastle.Bcpg;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Transactions;
 using Wallet.DTO.Request;
@@ -31,7 +32,7 @@ namespace Wallet.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.UserData);
 
             await _walletService.CreateWallet(wallet, userId);
-            return Ok(new { message = "Wallet created successfully." });
+            return Ok(new { message = Messages.Controller.WalletCreatedSuccessfully });
         }
 
         [HttpGet("{id}")]
@@ -48,9 +49,9 @@ namespace Wallet.API.Controllers
             {
                 return Forbid();
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { message = "Wallet not found." });
+                return NotFound(new { message = ex.Message });
             }
         }
 
@@ -62,7 +63,7 @@ namespace Wallet.API.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
                 await _walletService.AddMemberToJointWalletAsync(id, model.UserId, model.CanSpend, model.CanAddFunds, userId);
-                return Ok(new { message = "Member added successfully to the joint wallet." });
+                return Ok(new { message = Messages.Controller.MemberAddedToWalletSuccess });
             }
             catch (ArgumentException ex)
             {
@@ -78,7 +79,7 @@ namespace Wallet.API.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
                 await _walletService.RemoveMemberFromJointWalletAsync(id, userIdToRemove, userId);
-                return Ok(new { message = "Member removed successfully from the joint wallet." });
+                return Ok(new { message = Messages.Controller.MemberRemovedFromWalletSuccess });
             }
             catch (InvalidOperationException ex)
             {
@@ -94,7 +95,7 @@ namespace Wallet.API.Controllers
             try
             {
                 await _walletService.ToggleOverdraftAsync(walletId, userId);
-                return Ok(new { success = true, message = "Overdraft setting updated successfully." });
+                return Ok(new { success = true, message = Messages.Controller.OverdraftUpdatedSuccessfully });
             }
             catch (Exception ex)
             {

@@ -1,10 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.Services.Contracts;
 
@@ -19,10 +13,6 @@ namespace Wallet.Services.Implementations
             _userManager = userManager;
         }
 
-
-       
-
-       
         public async Task<string> GetOrGenerateAuthenticatorKeyAsync(AppUser user)
         {
             var key = await _userManager.GetAuthenticatorKeyAsync(user);
@@ -33,7 +23,6 @@ namespace Wallet.Services.Implementations
             }
             return key;
         }
-
 
         public async Task<bool> IsTwoFactorEnabledAsync(AppUser user)
         {

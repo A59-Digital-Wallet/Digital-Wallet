@@ -23,6 +23,7 @@ namespace Digital_Wallet.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Claims;
+    using Wallet.Common.Helpers;
     using Wallet.Data.Helpers.Contracts;
     using Wallet.Data.Models;
     using Wallet.DTO.Request;
@@ -53,7 +54,7 @@ namespace Digital_Wallet.Controllers
                 var result = await _userService.RegisterUserAsync(model);
                 if (result.Succeeded)
                 {
-                    return Ok("User registered successfully. Confirmation codes sent.");
+                    return Ok(Messages.Controller.RegistrationSuccess);
                 }
 
                 return BadRequest(result.Errors);
@@ -65,10 +66,10 @@ namespace Digital_Wallet.Controllers
                 var isSuccess = await _userService.VerifyEmailAsync(model);
                 if (isSuccess)
                 {
-                    return Ok("Email confirmed successfully.");
+                    return Ok(Messages.Controller.EmailConfirmationSuccess);
                 }
 
-                return BadRequest("Invalid or expired confirmation code.");
+                return BadRequest(Messages.Controller.InvalidOrExpiredConfirmationCode);
             }
 
             [HttpPost("login")]
@@ -78,7 +79,7 @@ namespace Digital_Wallet.Controllers
 
                 if (user == null)
                 {
-                    return Unauthorized("Invalid email or password.");
+                    return Unauthorized(Messages.Controller.InvalidEmailOrPassword);
                 }
 
                 if (requiresTwoFactor)
@@ -99,10 +100,10 @@ namespace Digital_Wallet.Controllers
                 var isSuccess = await _userService.VerifyPhoneAsync(phoneNumber, code);
                 if (isSuccess)
                 {
-                    return Ok("Phone number verified successfully.");
+                    return Ok(Messages.Controller.PhoneNumberVerificationSuccess);
                 }
 
-                return BadRequest("Invalid verification code.");
+                return BadRequest(Messages.Controller.InvalidVerificationCode);
             }
 
             [HttpPost("uploadProfilePicture")]
@@ -114,7 +115,7 @@ namespace Digital_Wallet.Controllers
                 try
                 {
                     await _userService.UploadProfilePictureAsync(userId, file);
-                    return Ok(new { message = "Profile picture updated successfully" });
+                    return Ok(new { message = Messages.Controller.ProfilePictureUpdatedSuccessfully });
                 }
                 catch (EntityNotFoundException ex)
                 {
@@ -139,7 +140,7 @@ namespace Digital_Wallet.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok("User profile updated successfully. Please verify your new phone number.");
+                    return Ok(Messages.Controller.UserProfileUpdatedSuccessfully);
                 }
 
                 return BadRequest(result.Errors);
@@ -154,7 +155,7 @@ namespace Digital_Wallet.Controllers
                 var user = await _userService.GetUserByIdAsync(userId);
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound(Messages.UserNotFound);
                 }
 
                 var qrCodeImage = await _twoFactorAuthService.GenerateQrCodeImageAsync(user);
@@ -169,19 +170,19 @@ namespace Digital_Wallet.Controllers
                 var user = await _userService.GetUserByIdAsync(userId);
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound(Messages.UserNotFound);
                 }
 
                 var is2faTokenValid = await _twoFactorAuthService.VerifyTwoFactorCodeAsync(user, model.Code);
 
                 if (!is2faTokenValid)
                 {
-                    return BadRequest("Invalid verification code.");
+                    return BadRequest(Messages.Controller.InvalidVerificationCode);
                 }
 
                 await _twoFactorAuthService.EnableTwoFactorAuthenticationAsync(user);
 
-                return Ok("2FA has been enabled.");
+                return Ok(Messages.Controller.TwoFactorAuthenticationEnabled);
             }
 
             [HttpPost("login-2fa")]
@@ -190,13 +191,13 @@ namespace Digital_Wallet.Controllers
                 var user = await _userService.GetUserByIdAsync(model.UserId);
                 if (user == null)
                 {
-                    return Unauthorized("Invalid user.");
+                    return Unauthorized(Messages.UserNotFound);
                 }
 
                 var is2faTokenValid = await _userService.VerifyTwoFactorCodeAsync(user, model.Code);
                 if (!is2faTokenValid)
                 {
-                    return Unauthorized("Invalid 2FA code.");
+                    return Unauthorized(Messages.Controller.InvalidVerificationCode); //"Invalid 2FA code."
                 }
 
                 var authToken = await _authManager.GenerateJwtToken(user);
@@ -211,11 +212,11 @@ namespace Digital_Wallet.Controllers
                 var user = await _userService.GetUserByIdAsync(userId);
                 if (user == null)
                 {
-                    return NotFound("User not found.");
+                    return NotFound(Messages.UserNotFound);
                 }
 
                 await _twoFactorAuthService.DisableTwoFactorAuthenticationAsync(user);
-                return Ok("2FA has been disabled.");
+                return Ok(Messages.Controller.TwoFactorAuthenticationDisabled);
             }
         }
     }

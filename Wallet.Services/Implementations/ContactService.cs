@@ -11,6 +11,7 @@ using IdentityServer4.Extensions;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Implementations;
 using Wallet.Services.Factory.Contracts;
+using Wallet.Common.Helpers;
 
 namespace Wallet.Services.Implementations
 {
@@ -31,9 +32,11 @@ namespace Wallet.Services.Implementations
         {
             ICollection<Contact> contacts = await _contactsRepository.GetContactsAsync(userId);
 
-/*            if(contacts.IsNullOrEmpty())
+            //Should uncomment when I handle the exception in MVC 
+
+/*            if (contacts.IsNullOrEmpty())
             {
-                throw new EntityNotFoundException("Contacts list is empty");
+                throw new EntityNotFoundException(Messages.Service.ContactsNotFound);
             }*/
 
             ICollection<ContactResponseDTO> contactsResponse = _contactsFactory.Map(contacts);
@@ -46,13 +49,13 @@ namespace Wallet.Services.Implementations
 
             if(contactUser == null)
             {
-                throw new EntityNotFoundException("Contact user not found");
+                throw new EntityNotFoundException(Messages.Service.ContactNotFound);
             }
 
             Contact existingContact = await _contactsRepository.GetContactAsync(userId, contactId);
             if (existingContact != null)
             {
-                throw new InvalidOperationException("This contact already exists.");
+                throw new InvalidOperationException(Messages.Service.ContactAlreadyExists);
             }
             Contact contact = _contactsFactory.Map(userId, contactId);
             await _contactsRepository.AddContactAsync(contact);
@@ -63,7 +66,7 @@ namespace Wallet.Services.Implementations
             Contact contact = await _contactsRepository.GetContactAsync(userId, contactId);
             if(contact == null)
             {
-                throw new EntityNotFoundException("Contact user not found");
+                throw new EntityNotFoundException(Messages.Service.ContactAlreadyExists);
             }
             await _contactsRepository.RemoveContactAsync(contact);
             return true;

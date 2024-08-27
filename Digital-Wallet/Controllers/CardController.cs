@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
@@ -32,7 +32,7 @@ namespace Digital_Wallet.Controllers
                 var cards = await _cardService.GetCardsAsync(userID);
                 return Ok(cards);
             }
-            catch(EntityNotFoundException ex)
+            catch (EntityNotFoundException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -60,7 +60,7 @@ namespace Digital_Wallet.Controllers
         {
             var userID = User.FindFirstValue(ClaimTypes.UserData);
             await _cardService.AddCardAsync(cardRequest, userID);
-            return Ok();
+            return Ok(new { message = Messages.Controller.CardAddedSuccessful });
         }
 
         [Authorize]
@@ -72,11 +72,11 @@ namespace Digital_Wallet.Controllers
             {
                 await _cardService.DeleteCardAsync(id, userID);
             }
-            catch(AuthorizationException ex)
+            catch (AuthorizationException ex)
             {
                 return Forbid(ex.Message);
             }
-            return Ok( new { message = "Card deleted successfully."});    
+            return Ok(new { message = Messages.Controller.CardDeletedSuccessful });
         }
     }
 }

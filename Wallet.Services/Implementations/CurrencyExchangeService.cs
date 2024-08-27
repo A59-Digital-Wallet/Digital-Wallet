@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models.Enums;
 using Wallet.Services.Contracts;
 
@@ -52,11 +53,11 @@ namespace Wallet.Services.Implementations
             }
             catch (HttpRequestException ex)
             {
-                throw new Exception("Failed to retrieve exchange rate due to a network error.", ex);
+                throw new Exception(Messages.Service.FailedDueToNetworkError, ex);
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to retrieve exchange rate.", ex);
+                throw new Exception(Messages.Service.FailedToRetrieveRate, ex);
             }
         }
     }
