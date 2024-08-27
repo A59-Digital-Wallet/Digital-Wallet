@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
-using Wallet.Data.Migrations;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
-using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory.Contracts;
@@ -61,7 +59,7 @@ namespace Wallet.MVC.Controllers
                     Value = c.Id.ToString(),
                     Text = $"{c.CardNumber} - {c.CardHolderName} (Exp: {c.ExpiryDate:MM/yy})"
                 }).ToList(),
-                
+
             };
 
             return View(model);
@@ -101,7 +99,7 @@ namespace Wallet.MVC.Controllers
                         Description = model.Description,
                         TransactionType = model.TransactionType,
                         TransactionToken = ex.TransactionToken,
-                        
+
                     };
 
                     // Redirect to the confirmation page
@@ -146,28 +144,28 @@ namespace Wallet.MVC.Controllers
 
             try
             {
-                
-                
-               
-                    var transactionRequest = new TransactionRequestModel
-                    {
-                        WalletId = model.WalletId,
-                        Amount = model.Amount,
-                        Description = model.Description,
-                        TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
-                        CardId = model.CardId,
-                        Token = model.TransactionToken,
-                        RecepientWalletId = model.RecipinetWalletId
-                        
-                    };
-                    await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
-                
-              
-               
+
+
+
+                var transactionRequest = new TransactionRequestModel
+                {
+                    WalletId = model.WalletId,
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
+                    CardId = model.CardId,
+                    Token = model.TransactionToken,
+                    RecepientWalletId = model.RecipinetWalletId
+
+                };
+                await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
+
+
+
 
 
                 // Verify the code and complete the transaction
-                
+
 
                 return RedirectToAction("Index", "Home");
             }
@@ -193,7 +191,7 @@ namespace Wallet.MVC.Controllers
                     MonthYear = g.Key,
                     Transactions = g.Select(t => new TransactionViewModel
                     {
-                        Id= t.Id,
+                        Id = t.Id,
                         Date = t.Date,
                         Amount = t.Amount,
                         Description = t.Description,
@@ -222,13 +220,13 @@ namespace Wallet.MVC.Controllers
                     Name = w.Name,
                     Currency = w.Currency.ToString(),
                 }).ToList()
-                
+
             };
 
             return View(model);
         }
 
-   
+
 
 
         [HttpGet]
@@ -271,7 +269,7 @@ namespace Wallet.MVC.Controllers
                 ToWalletId = recipientWallet?.Id ?? 0, // Set the ToWalletId based on the logic
                 ContactId = contactId,
                 Categories = categories,
-               
+
             };
 
             return View(model);
@@ -295,8 +293,8 @@ namespace Wallet.MVC.Controllers
             {
                 ContactId = contactId,
                 Transactions = transactions,
-                UserWalletIds = userWalletIds, 
-           
+                UserWalletIds = userWalletIds,
+
             };
 
             return View(model);
@@ -310,7 +308,7 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-            
+
             try
             {
                 if (model.ToWalletId == 0)
@@ -387,7 +385,7 @@ namespace Wallet.MVC.Controllers
             }
         }
 
-      
+
 
 
 

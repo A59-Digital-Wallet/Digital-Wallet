@@ -1,17 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using System.Web;
 using Wallet.Data.Helpers.Contracts;
 using Wallet.Data.Models;
 using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
-using Microsoft.AspNetCore.Identity;
-using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
@@ -224,7 +219,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
-        
+
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> VerifyTwoFactor(Verify2FAModel model)
         {

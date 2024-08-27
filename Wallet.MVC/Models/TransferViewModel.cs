@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Wallet.Data.Models.Enums;
-using System.Collections.Generic;
 
 namespace Wallet.MVC.Models
 {

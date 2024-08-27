@@ -89,7 +89,7 @@ namespace Wallet.Services.Implementations
 
             if (wallet == null)
             {
-                throw new ArgumentException("Wallet not found.");
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
 
             return wallet.AppUserWallets.ToList(); // Assuming `AppUserWallets` is the collection of members in the wallet

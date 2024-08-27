@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wallet.DTO.Request;
-using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {

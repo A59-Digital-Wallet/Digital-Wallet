@@ -1,14 +1,10 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
-using Wallet.Data.Migrations;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
-using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
@@ -41,12 +37,12 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> Index(int? walletId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData); // Or ClaimTypes.UserData based on your setup
-            if(userId == null)
+            if (userId == null)
             {
                 return RedirectToAction("Login", "Account");
             }
             var user = await _userManager.FindByIdAsync(userId);
-            if(user == null)
+            if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -91,8 +87,8 @@ namespace Wallet.MVC.Controllers
 
             var isOwnerOfJointWallet = selectedWallet.WalletType == WalletType.Joint && selectedWallet.OwnerId == userId;
             ViewBag.ShowManageMembersButton = isOwnerOfJointWallet;
-            
-           
+
+
             // Filter transactions based on the selected wallet
             var transactionRequest = new TransactionRequestFilter
             {
@@ -203,7 +199,7 @@ namespace Wallet.MVC.Controllers
         {
             return View();
         }
-       
+
 
 
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models.Enum;
+﻿using Wallet.Data.Models.Enum;
 using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
 using Wallet.DTO.Request;
@@ -26,7 +21,7 @@ namespace Wallet.Services.Factory
                 Status = TransactionStatus.Pending,
                 IsRecurring = transactionRequest.IsRecurring,
                 Interval = transactionRequest.RecurrenceInterval,
-                
+
             };
 
             // Set the recipient wallet ID if it's a transfer
@@ -47,9 +42,9 @@ namespace Wallet.Services.Factory
 
         public TransactionDto Map(Transaction transaction)
         {
-            
+
             return new TransactionDto
-            {           
+            {
                 Id = transaction.Id,
                 Amount = (decimal)transaction.Amount,
                 Date = transaction.Date,
@@ -64,7 +59,7 @@ namespace Wallet.Services.Factory
                 RecurrenceInterval = transaction.Interval,
                 OriginalAmount = transaction.OriginalAmount,
                 OriginalCurrency = transaction.OriginalCurrency.ToString(),
-               SentCurrency = transaction.SentCurrency.ToString(),
+                SentCurrency = transaction.SentCurrency.ToString(),
 
             };
 

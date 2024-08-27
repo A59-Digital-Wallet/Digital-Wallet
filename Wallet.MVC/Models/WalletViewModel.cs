@@ -1,6 +1,4 @@
-﻿using Wallet.Data.Models.Enums;
-
-namespace Wallet.MVC.Models
+﻿namespace Wallet.MVC.Models
 {
     public class WalletViewModel
     {
@@ -9,8 +7,8 @@ namespace Wallet.MVC.Models
         public decimal Balance { get; set; }
         public string Currency { get; set; }
         public string Type { get; set; }
-        public string CurrencyCulture {  get; set; }
-        public string OwnerId {  get; set; }
+        public string CurrencyCulture { get; set; }
+        public string OwnerId { get; set; }
     }
 
 }

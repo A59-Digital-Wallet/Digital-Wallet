@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Wallet.Common.Exceptions;
+using Wallet.DTO.Request;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Wallet.DTO.Request;
-using Wallet.Common.Exceptions;
 
 namespace Wallet.MVC.Controllers
 {
@@ -90,7 +88,7 @@ namespace Wallet.MVC.Controllers
             if (ModelState.IsValid)
             {
                 string userId = User.FindFirst(ClaimTypes.UserData)?.Value;
-                await _categoryService.AddCategoryAsync(userId, categoryRequest); 
+                await _categoryService.AddCategoryAsync(userId, categoryRequest);
                 return RedirectToAction("Index");
             }
             return View(categoryRequest);

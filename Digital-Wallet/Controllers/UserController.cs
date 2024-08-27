@@ -1,26 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Encodings.Web;
-using Wallet.Data.Models;
-using Wallet.DTO.Request;
-using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
-using Microsoft.EntityFrameworkCore;
-using Wallet.Common.Exceptions;
-
-
-namespace Digital_Wallet.Controllers
+﻿namespace Digital_Wallet.Controllers
 {
+    using Wallet.Common.Exceptions;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Claims;
     using Wallet.Common.Helpers;

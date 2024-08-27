@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Wallet.DTO.Request;
-using Wallet.Services.Contracts;
-using Wallet.Data.Models.Transactions;
-using Wallet.Data.Models;
 using Wallet.Common.Exceptions;
-using Wallet.DTO.Response;
 using Wallet.Common.Helpers;
+using Wallet.Data.Models;
+using Wallet.DTO.Request;
+using Wallet.DTO.Response;
+using Wallet.Services.Contracts;
 
 namespace Wallet.API.Controllers
 {
@@ -185,7 +183,7 @@ namespace Wallet.API.Controllers
 
         [Authorize]
         [HttpPost("add-to-category")]
-        public async Task<IActionResult> AddTransactionToCategory (int categoryId, int transactionId)
+        public async Task<IActionResult> AddTransactionToCategory(int categoryId, int transactionId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
 

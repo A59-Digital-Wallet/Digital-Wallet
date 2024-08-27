@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Wallet.Data.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
     public class AdminController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IOverdraftSettingsService _overdraftSettingsService; 
+        private readonly IOverdraftSettingsService _overdraftSettingsService;
         public AdminController(IUserService userService, IOverdraftSettingsService overdraftSettingsService)
         {
             _userService = userService;
@@ -39,7 +36,7 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> SearchUsersAsync(string? searchTerm, int page = 1)
         {
             int pageSize = 10;
-            var result = await _userService.SearchUsersAsync(searchTerm, page, pageSize); 
+            var result = await _userService.SearchUsersAsync(searchTerm, page, pageSize);
 
             var viewModel = new UserSearchViewModel()
             {

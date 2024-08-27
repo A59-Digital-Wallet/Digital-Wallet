@@ -1,7 +1,6 @@
-﻿using Microsoft.VisualBasic;
-using System.ComponentModel.DataAnnotations;
-using Wallet.Data.Models.Enum;
+﻿using System.ComponentModel.DataAnnotations;
 using Wallet.Common.Helpers;
+using Wallet.Data.Models.Enum;
 
 namespace Wallet.DTO.Request
 {

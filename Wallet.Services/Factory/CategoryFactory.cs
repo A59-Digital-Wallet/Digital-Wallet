@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models;
-using Wallet.DTO.Response;
+﻿using Wallet.Data.Models;
 using Wallet.DTO.Request;
+using Wallet.DTO.Response;
 using Wallet.Services.Factory.Contracts;
 
 namespace Wallet.Services.Factory
@@ -59,7 +54,7 @@ namespace Wallet.Services.Factory
         {
             CategoryResponseDTO response = new CategoryResponseDTO()
             {
-                Name= category.Name,
+                Name = category.Name,
             };
             return response;
         }

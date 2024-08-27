@@ -1,9 +1,4 @@
-﻿using MimeKit.Cryptography;
-using System;
-using System.Security.Cryptography.X509Certificates;
-using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
-
-namespace Wallet.Common.Helpers
+﻿namespace Wallet.Common.Helpers
 {
     public static class Messages
     {
@@ -51,7 +46,7 @@ namespace Wallet.Common.Helpers
 
             //Cloudinary
             public const string NoFileUploaded = "No file uploaded.";
-            public const string InvalidFileFormat= "Invalid file format. Only .jpg, .jpeg, and .png are allowed.";
+            public const string InvalidFileFormat = "Invalid file format. Only .jpg, .jpeg, and .png are allowed.";
             public const string ErrorUploadingFile = "Error uploading image.";
             public const string FailedToUpdateImage = "Failed to update profile picture.";
 
@@ -67,7 +62,7 @@ namespace Wallet.Common.Helpers
             public const string OverdraftOperationNotAllowed = "Overdraft can only be enabled/disabled for personal wallets by the owner.";
             public const string NotJointWallet = "Can't add to wallet that is not joint";
             public const string FailedToUpdateWallet = "Failed to update the wallet.";
-          
+
             //Email
             public const string VerificationCode = "Your Verification Code";
             public const string EmailMessage = "Hello {0},\n\nYour verification code is: {1}\n\nPlease enter this code to complete your transaction.";

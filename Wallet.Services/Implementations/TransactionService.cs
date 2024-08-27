@@ -1,27 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models.Enums;
-using Wallet.Data.Models;
-using Wallet.Data.Repositories.Contracts;
-using Wallet.Services.Contracts;
-using Wallet.Data.Models.Transactions;
-using Wallet.Data.Models.Enum;
-using Wallet.DTO.Request;
-using Wallet.Services.Factory.Contracts;
-using Wallet.DTO.Response;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Eventing.Reader;
-using Wallet.Services.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Wallet.Common.Exceptions;
-using Wallet.Services.Validation.TransactionValidation;
-using Wallet.Data.Migrations;
 using Wallet.Common.Helpers;
+using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
+using Wallet.Data.Models.Transactions;
+using Wallet.Data.Repositories.Contracts;
+using Wallet.DTO.Request;
+using Wallet.DTO.Response;
+using Wallet.Services.Contracts;
+using Wallet.Services.Extensions;
+using Wallet.Services.Factory.Contracts;
+using Wallet.Services.Validation.TransactionValidation;
 
 namespace Wallet.Services.Implementations
 {
@@ -37,17 +28,17 @@ namespace Wallet.Services.Implementations
         private readonly IMemoryCache _transactionCache;
         private readonly IEmailSender _emailSender;
         private readonly ITransactionValidator _transactionValidator;
-        public TransactionService(ITransactionRepository transactionRepository, 
-            IWalletRepository walletRepository, 
-            ICurrencyExchangeService currencyExchangeService, 
-            ICardRepository cardRepository, 
-            ITransactionFactory transactionFactory, 
+        public TransactionService(ITransactionRepository transactionRepository,
+            IWalletRepository walletRepository,
+            ICurrencyExchangeService currencyExchangeService,
+            ICardRepository cardRepository,
+            ITransactionFactory transactionFactory,
             UserManager<AppUser> userManager,
-            VerifyEmailService verifyEmailService, 
+            VerifyEmailService verifyEmailService,
             IMemoryCache transactionCache,
             IEmailSender emailSender,
-            ITransactionValidator transactionValidator )
-            
+            ITransactionValidator transactionValidator)
+
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
@@ -79,9 +70,9 @@ namespace Wallet.Services.Implementations
                 if (verificationCode == null)
                 {
                     await HandleHighValueTransactionAsync(transactionRequest, user, wallet);
-                    if(transactionRequest.TransactionType == TransactionType.Transfer)
+                    if (transactionRequest.TransactionType == TransactionType.Transfer)
                     {
-                        
+
                         throw new VerificationRequiredException(transactionRequest.Token, transactionRequest.WalletId, transactionRequest.Amount, transactionRequest.Description, transactionRequest.RecepientWalletId);
                     }
                     throw new VerificationRequiredException(transactionRequest.Token);
@@ -239,7 +230,7 @@ namespace Wallet.Services.Implementations
                     wallet.Balance += transactionRequest.Amount;
                     transaction.OriginalAmount = transactionRequest.Amount;
                     transaction.SentCurrency = wallet.Currency;
-                    transaction.OriginalCurrency= wallet.Currency;
+                    transaction.OriginalCurrency = wallet.Currency;
                     break;
             }
         }
@@ -276,7 +267,7 @@ namespace Wallet.Services.Implementations
                 return false; // Verification failed
             }
 
-         
+
             // Proceed with creating the transaction
             await CreateTransactionAsync(pendingTransaction.TransactionRequest, pendingTransaction.UserId, verificationCode);
 
@@ -288,8 +279,8 @@ namespace Wallet.Services.Implementations
 
         private async Task HandleTransferAsync(TransactionRequestModel transactionRequest, Transaction transaction, UserWallet wallet)
         {
-            
-            
+
+
             var recipientWallet = await _walletRepository.GetWalletAsync((int)transactionRequest.RecepientWalletId);
 
             if (recipientWallet == null)
@@ -310,20 +301,20 @@ namespace Wallet.Services.Implementations
 
             // Save the recipient wallet in the transaction
             transaction.RecipientWalletId = recipientWallet.Id;
-            
-           
-                bool response = await _walletRepository.UpdateWalletAsync();
-           
-                if (!response)
-                {
-                    throw new InvalidOperationException();
-                }
-            
-            
-                // Handle concurrency exception, e.g., by retrying or logging the issue
-            
 
-            
+
+            bool response = await _walletRepository.UpdateWalletAsync();
+
+            if (!response)
+            {
+                throw new InvalidOperationException();
+            }
+
+
+            // Handle concurrency exception, e.g., by retrying or logging the issue
+
+
+
         }
 
         public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
@@ -360,7 +351,7 @@ namespace Wallet.Services.Implementations
                         WalletId = w.Id,
                         Currency = w.Currency,
                         Balance = w.Balance
-                        
+
                     }).ToList(),
                     Categories = u.Categories.ToList(),
                     PreferredWallet = u.LastSelectedWallet
@@ -400,7 +391,7 @@ namespace Wallet.Services.Implementations
                         recipientWallet.Balance += transaction.Amount;
                         await _walletRepository.UpdateWalletAsync();
                     }
-                    if(transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer) 
+                    if (transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer)
                     {
                         wallet.Balance -= transaction.Amount;
                     }
@@ -408,7 +399,7 @@ namespace Wallet.Services.Implementations
                     {
                         wallet.Balance += transaction.Amount;
                     }
-                    
+
                     await _walletRepository.UpdateWalletAsync();
 
                     transaction.LastExecutedDate = now;
@@ -564,8 +555,8 @@ namespace Wallet.Services.Implementations
             var contactWalletIds = (await _walletRepository.GetUserWalletsAsync(contactId)).Select(w => w.Id).ToList();
             var transactions = await _transactionRepository.GetTransactionHistoryContactAsync(userWalletIds, contactWalletIds);
 
-               
-             
+
+
 
             return transactions;
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Wallet.Data.Models.Enums;
+﻿using Wallet.Data.Models.Enums;
 
 namespace Wallet.Services.Extensions
 {

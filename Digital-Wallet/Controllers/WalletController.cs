@@ -1,16 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Bcpg;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Wallet.Common.Helpers;
-using Wallet.Data.Models;
-using Wallet.Data.Models.Transactions;
 using Wallet.DTO.Request;
-using Wallet.Services;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.API.Controllers
 {
@@ -56,7 +49,7 @@ namespace Wallet.API.Controllers
         }
 
         [HttpPost("{id}/add-member")]
-        
+
         public async Task<IActionResult> AddMemberToJointWallet(int id, [FromBody] ManagePermissionsModel model)
         {
             try
@@ -72,7 +65,7 @@ namespace Wallet.API.Controllers
         }
 
         [HttpPost("{id}/remove-member")]
-        
+
         public async Task<IActionResult> RemoveMemberFromJointWallet(int id, [FromBody] string userIdToRemove)
         {
             try

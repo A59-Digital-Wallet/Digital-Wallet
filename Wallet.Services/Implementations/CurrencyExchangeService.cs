@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using Wallet.Common.Helpers;
 using Wallet.Data.Models.Enums;
 using Wallet.Services.Contracts;

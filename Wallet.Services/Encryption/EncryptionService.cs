@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Wallet.Services.Contracts;
 
 namespace Wallet.Services.Encryption

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models.Enums;
+﻿using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
-using Wallet.Common.Exceptions;
-using Wallet.Common.Helpers;
 
 namespace Wallet.Services.Implementations
 {
