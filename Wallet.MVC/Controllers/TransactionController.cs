@@ -85,25 +85,27 @@ namespace Wallet.MVC.Controllers
                     IsRecurring = model.IsRecurring,
                     RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null
                 };
+                var transactionConfig = new TransactionConfirmationViewModel
+                {
+                    WalletId = model.SelectedWalletId,
+                    CardId = int.Parse(model.SelectedCardId),
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    TransactionType = model.TransactionType,
 
+
+                };
                 try
                 {
-                    await _transactionService.CreateTransactionAsync(transactionRequest, userId);
-                    return RedirectToAction("Index", "Home");
+                   
+                   
+                    return RedirectToAction("ConfirmTransaction", transactionConfig);
                 }
                 catch (VerificationRequiredException ex)
                 {
-                    var transactionConfig = new TransactionConfirmationViewModel
-                    {
-                        WalletId = model.SelectedWalletId,
-                        CardId = int.Parse(model.SelectedCardId),
-                        Amount = model.Amount,
-                        Description = model.Description,
-                        TransactionType = model.TransactionType,
-                        TransactionToken = ex.TransactionToken,
-                        
-                    };
-
+                   
+                    transactionConfig.TransactionToken = ex.TransactionToken;
+                    transactionConfig.RequiresCode = true;
                     // Redirect to the confirmation page
                     return RedirectToAction("ConfirmTransaction", transactionConfig);
                 }
@@ -146,28 +148,25 @@ namespace Wallet.MVC.Controllers
 
             try
             {
-                
-                
-               
-                    var transactionRequest = new TransactionRequestModel
-                    {
-                        WalletId = model.WalletId,
-                        Amount = model.Amount,
-                        Description = model.Description,
-                        TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
-                        CardId = model.CardId,
-                        Token = model.TransactionToken,
-                        RecepientWalletId = model.RecipinetWalletId
-                        
-                    };
-                    await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
-                
-              
-               
+                // Check if a verification code is required and if it was provided
+                if (model.RequiresCode && string.IsNullOrWhiteSpace(model.VerificationCode))
+                {
+                    ModelState.AddModelError(string.Empty, "Verification code is required for high-value transactions.");
+                    return View("ConfirmTransaction", model);
+                }
 
+                var transactionRequest = new TransactionRequestModel
+                {
+                    WalletId = model.WalletId,
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
+                    CardId = model.CardId,
+                    Token = model.TransactionToken,
+                    RecepientWalletId = model.RecipinetWalletId
+                };
 
-                // Verify the code and complete the transaction
-                
+                await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -176,7 +175,6 @@ namespace Wallet.MVC.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            // If verification fails, redisplay the form with an error message
             return View("ConfirmTransaction", model);
         }
 

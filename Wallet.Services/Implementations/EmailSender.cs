@@ -13,7 +13,7 @@ namespace Wallet.Services.Implementations
     {
         public async Task SendEmail(string subject, string toEmail, string username, string message)
         {
-            var apiKey = "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"; //should put in secrets!!
+            var apiKey = "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"; //should put in secrets!!
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("kosetololbeast@gmail.com", "DigitalWallet");            
             var to = new EmailAddress(toEmail, username);

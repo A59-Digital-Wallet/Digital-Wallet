@@ -69,10 +69,13 @@ namespace Wallet.Services.Implementations
                 _transactionValidator.ValidateOverdraftAndBalance(wallet, transactionRequest.Amount);
             }
 
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(wallet.OwnerId);
 
             bool isHighValue = _transactionValidator.IsHighValueTransaction(transactionRequest, wallet);
-
+            if(wallet.WalletType == WalletType.Joint && wallet.OwnerId != userId)
+            {
+                isHighValue = true;
+            }
             if (isHighValue)
             {
                 if (verificationCode == null)

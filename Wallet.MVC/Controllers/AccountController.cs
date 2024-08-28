@@ -155,15 +155,28 @@ namespace Wallet.MVC.Controllers
                 return View(model);
             }
 
-            var result = await _userService.RegisterUserAsync(model);
-            if (result.Succeeded)
+            try
             {
-                return RedirectToAction("VerifyEmail");
-            }
+                var result = await _userService.RegisterUserAsync(model);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("VerifyEmail");
+                }
 
-            foreach (var error in result.Errors)
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            catch (InvalidOperationException ex)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
+                // Catch specific exception and add a model error
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                // Catch any other exceptions
+                ModelState.AddModelError(string.Empty, "An unexpected error occurred. Please try again.");
             }
 
             return View(model);

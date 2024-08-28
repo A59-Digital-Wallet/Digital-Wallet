@@ -213,17 +213,19 @@
 
                         <!-- Wallet Statistics Section -->
                         <div>
-                            <div class="bg-white rounded-xl p-6 shadow-md">
-                                <div class="mb-6">
-                                    <h5 class="font-bold text-lg">Wallet Statistics</h5>
-                                    <p class="text-gray-600">Total spent this month: @Model.TotalSpentThisMonth.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(ViewBag.SelectedWallet.CurrencyCulture))</p>
-                                </div>
-                                <!-- Bar Chart for Weekly Spending -->
-                                <canvas id="weeklySpendingChart" width="400" height="200"></canvas>
-                            </div>
+                           
 
                             @if (ViewBag.SelectedWallet.Type != "Joint")
                             {
+                                <div class="bg-white rounded-xl p-6 shadow-md">
+                                    <div class="mb-6">
+                                        <h5 class="font-bold text-lg">Wallet Statistics</h5>
+                                        <p class="text-gray-600">Total spent this month: @Model.TotalSpentThisMonth.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(ViewBag.SelectedWallet.CurrencyCulture))</p>
+                                    </div>
+                                    <!-- Bar Chart for Weekly Spending -->
+                                    <canvas id="weeklySpendingChart" width="400" height="200"></canvas>
+                                </div>
+
                                 <div class="bg-white rounded-xl p-6 shadow-md mt-6">
                                     <h5 class="font-bold text-lg mb-4">Monthly Spending by Category</h5>
                                     <canvas id="categorySpendingChart" width="400" height="200"></canvas>

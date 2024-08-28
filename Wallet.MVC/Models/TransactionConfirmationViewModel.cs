@@ -11,6 +11,7 @@
         public string VerificationCode { get; set; }
         public int? RecipinetWalletId { get; set; }
         public string CurrencyCulture { get; set; }
+        public bool RequiresCode {  get; set; } = false;    
 
     }
 }

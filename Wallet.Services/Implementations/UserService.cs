@@ -42,6 +42,19 @@ namespace Wallet.Services.Implementations
         }
         public async Task<IdentityResult> RegisterUserAsync(RegisterModel model)
         {
+            var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUserByEmail != null)
+            {
+                throw new InvalidOperationException("Email is already in use.");
+            }
+
+            // Check if the phone number is already in use
+            var existingUserByPhoneNumber = await _userManager.Users
+                .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
+            if (existingUserByPhoneNumber != null)
+            {
+                throw new InvalidOperationException("Phone number is already in use.");
+            }
             var user = new AppUser
             {
                 FirstName = model.FirstName,
