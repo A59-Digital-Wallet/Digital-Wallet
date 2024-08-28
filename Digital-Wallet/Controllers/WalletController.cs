@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Bcpg;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Wallet.Data.Models;
-using Wallet.Data.Models.Transactions;
+using Wallet.Common.Helpers;
 using Wallet.DTO.Request;
-using Wallet.Services;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.API.Controllers
 {
@@ -31,7 +25,7 @@ namespace Wallet.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.UserData);
 
             await _walletService.CreateWallet(wallet, userId);
-            return Ok(new { message = "Wallet created successfully." });
+            return Ok(new { message = Messages.Controller.WalletCreatedSuccessfully });
         }
 
         [HttpGet("{id}")]
@@ -48,21 +42,21 @@ namespace Wallet.API.Controllers
             {
                 return Forbid();
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
-                return NotFound(new { message = "Wallet not found." });
+                return NotFound(new { message = ex.Message });
             }
         }
 
         [HttpPost("{id}/add-member")]
-        
+
         public async Task<IActionResult> AddMemberToJointWallet(int id, [FromBody] ManagePermissionsModel model)
         {
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
                 await _walletService.AddMemberToJointWalletAsync(id, model.UserId, model.CanSpend, model.CanAddFunds, userId);
-                return Ok(new { message = "Member added successfully to the joint wallet." });
+                return Ok(new { message = Messages.Controller.MemberAddedToWalletSuccess });
             }
             catch (ArgumentException ex)
             {
@@ -71,14 +65,14 @@ namespace Wallet.API.Controllers
         }
 
         [HttpPost("{id}/remove-member")]
-        
+
         public async Task<IActionResult> RemoveMemberFromJointWallet(int id, [FromBody] string userIdToRemove)
         {
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
                 await _walletService.RemoveMemberFromJointWalletAsync(id, userIdToRemove, userId);
-                return Ok(new { message = "Member removed successfully from the joint wallet." });
+                return Ok(new { message = Messages.Controller.MemberRemovedFromWalletSuccess });
             }
             catch (InvalidOperationException ex)
             {
@@ -94,7 +88,7 @@ namespace Wallet.API.Controllers
             try
             {
                 await _walletService.ToggleOverdraftAsync(walletId, userId);
-                return Ok(new { success = true, message = "Overdraft setting updated successfully." });
+                return Ok(new { success = true, message = Messages.Controller.OverdraftUpdatedSuccessfully });
             }
             catch (Exception ex)
             {

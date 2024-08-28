@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
-using Wallet.Data.Migrations;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
-using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory.Contracts;
@@ -61,7 +59,7 @@ namespace Wallet.MVC.Controllers
                     Value = c.Id.ToString(),
                     Text = $"{c.CardNumber} - {c.CardHolderName} (Exp: {c.ExpiryDate:MM/yy})"
                 }).ToList(),
-                
+
             };
 
             return View(model);
@@ -191,7 +189,7 @@ namespace Wallet.MVC.Controllers
                     MonthYear = g.Key,
                     Transactions = g.Select(t => new TransactionViewModel
                     {
-                        Id= t.Id,
+                        Id = t.Id,
                         Date = t.Date,
                         Amount = t.Amount,
                         Description = t.Description,
@@ -220,13 +218,13 @@ namespace Wallet.MVC.Controllers
                     Name = w.Name,
                     Currency = w.Currency.ToString(),
                 }).ToList()
-                
+
             };
 
             return View(model);
         }
 
-   
+
 
 
         [HttpGet]
@@ -269,7 +267,7 @@ namespace Wallet.MVC.Controllers
                 ToWalletId = recipientWallet?.Id ?? 0, // Set the ToWalletId based on the logic
                 ContactId = contactId,
                 Categories = categories,
-               
+
             };
 
             return View(model);
@@ -293,8 +291,8 @@ namespace Wallet.MVC.Controllers
             {
                 ContactId = contactId,
                 Transactions = transactions,
-                UserWalletIds = userWalletIds, 
-           
+                UserWalletIds = userWalletIds,
+
             };
 
             return View(model);
@@ -308,7 +306,7 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
-            
+
             try
             {
                 if (model.ToWalletId == 0)
@@ -385,7 +383,7 @@ namespace Wallet.MVC.Controllers
             }
         }
 
-      
+
 
 
 

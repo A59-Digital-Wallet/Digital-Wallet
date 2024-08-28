@@ -1,17 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Twilio;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
-using Wallet.Data.Models.Enums;
 using Wallet.Data.Repositories.Contracts;
-using Wallet.Data.Repositories.Implementations;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
@@ -189,25 +181,25 @@ namespace Wallet.Services.Implementations
         public async Task UploadProfilePictureAsync(string userId, IFormFile file)
         {
             if (file == null || file.Length == 0)
-                throw new ArgumentException("No file uploaded.");
+                throw new ArgumentException(Messages.Service.NoFileUploaded);
 
             // Validate file extension
             var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
             if (!allowedExtensions.Contains(extension))
             {
-                throw new ArgumentException("Invalid file format. Only .jpg, .jpeg, and .png are allowed.");
+                throw new ArgumentException(Messages.Service.InvalidFileFormat);
             }
 
             // Upload image to Cloudinary
             var uploadResult = await _cloudinaryService.UploadImageAsync(file);
             if (uploadResult == null)
-                throw new Exception("Error uploading image.");
+                throw new Exception(Messages.Service.ErrorUploadingFile);
 
             // Update user's profile picture URL
             var result = await _userRepository.UpdateProfilePictureAsync(userId, uploadResult.Url);
             if (!result)
-                throw new Exception("Failed to update profile picture.");
+                throw new Exception(Messages.Service.FailedToUpdateImage);
         }
 
         public async Task<IdentityResult> ManageRoleAsync(string userId, string action)
@@ -215,7 +207,7 @@ namespace Wallet.Services.Implementations
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                throw new KeyNotFoundException("User not found.");
+                throw new KeyNotFoundException(Messages.UserNotFound);
             }
             IdentityResult result = null;
             switch (action.ToLower())
@@ -225,7 +217,7 @@ namespace Wallet.Services.Implementations
                     {
                         return IdentityResult.Failed(new IdentityError
                         {
-                            Description = "Admin users cannot be blocked."
+                            Description = Messages.Service.AdminCannotBeBlocked
                         });
                     }
                     result = await AssignRoleAsync(user, "Blocked");
@@ -237,7 +229,7 @@ namespace Wallet.Services.Implementations
                     result = await AssignRoleAsync(user, "Admin");
                     break;
                 default:
-                    throw new ArgumentException("Invalid action. Use 'block', 'unblock', or 'makeadmin'.");
+                    throw new ArgumentException(Messages.Service.InvalidUserAction);
             }
             return result;
         }
@@ -248,7 +240,7 @@ namespace Wallet.Services.Implementations
             {
                 return IdentityResult.Failed(new IdentityError
                 {
-                    Description = $"User is already in the '{role}' role."
+                    Description = string.Format(Messages.Service.UserAlreadyInRole, role)
                 });
             }
 
@@ -261,7 +253,7 @@ namespace Wallet.Services.Implementations
             {
                 return IdentityResult.Failed(new IdentityError
                 {
-                    Description = $"User is not in the '{role}' role."
+                    Description = string.Format(Messages.Service.UserIsNotInRole, role)
                 });
             }
 
@@ -279,7 +271,7 @@ namespace Wallet.Services.Implementations
             {
                 return IdentityResult.Failed(new IdentityError
                 {
-                    Description = "User not found."
+                    Description = Messages.UserNotFound
                 });
             }
 

@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
-   
+
     public class MoneyRequestController : Controller
     {
         private readonly IMoneyRequestService _moneyRequestService;
@@ -31,9 +29,9 @@ namespace Wallet.MVC.Controllers
                 RecipientId = recipientId // Pass the recipient ID to the view
             };
 
-            return View(model); 
+            return View(model);
         }
-      
+
 
         // Handle the form submission
         [HttpPost]

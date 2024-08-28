@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Wallet.Common.Exceptions;
-using Wallet.Data.Models;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
-using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
-using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {

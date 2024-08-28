@@ -1,15 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
-using Wallet.Data.Models.Transactions;
 using Wallet.Data.Repositories.Contracts;
-using Wallet.Data.Repositories.Implementations;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
@@ -38,11 +31,11 @@ namespace Wallet.Services.Implementations
             var wallet = await _walletRepository.GetWalletAsync(walletId);
             if (wallet.WalletType != WalletType.Joint)
             {
-                throw new UnauthorizedAccessException("Can't add to wallet that is not joint");
+                throw new UnauthorizedAccessException(Messages.Service.NotJointWallet);
             }
             if (wallet.OwnerId != ownerId)
             {
-                throw new UnauthorizedAccessException("Only owners can do that");
+                throw new UnauthorizedAccessException(Messages.Unauthorized);
             }
             var userWallet = await _userManager.FindByIdAsync(ownerId);
             var user = await _userManager.FindByIdAsync(userId);
@@ -56,7 +49,7 @@ namespace Wallet.Services.Implementations
 
             if (wallet.Currency == Currency.None)
             {
-                throw new ArgumentException("Invalid currency selected.");
+                throw new ArgumentException(Messages.Service.InvalidCurrency);
             }
             var createdWallet = _walletFactory.Map(wallet, overdraftSettings);
             createdWallet.OwnerId = userId;
@@ -70,7 +63,11 @@ namespace Wallet.Services.Implementations
 
             if (!isOwnerOrMember)
             {
-                throw new UnauthorizedAccessException("You do not have access to this wallet.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized);
+            }
+            if(wallet == null)
+            {
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
 
             var walletToReturn = new WalletResponseDTO
@@ -84,7 +81,6 @@ namespace Wallet.Services.Implementations
                 OwnerId = userId,
 
             };
-
             return walletToReturn;
         }
         public async Task<List<AppUser>> GetWalletMembersAsync(int walletId)
@@ -93,7 +89,7 @@ namespace Wallet.Services.Implementations
 
             if (wallet == null)
             {
-                throw new ArgumentException("Wallet not found.");
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
 
             return wallet.AppUserWallets.ToList(); // Assuming `AppUserWallets` is the collection of members in the wallet
@@ -112,13 +108,13 @@ namespace Wallet.Services.Implementations
             var wallet = await _walletRepository.GetWalletAsync(walletId);
             if (wallet.OwnerId != ownerId)
             {
-                throw new UnauthorizedAccessException("Only owners can do that");
+                throw new UnauthorizedAccessException(Messages.Unauthorized);
             }
             var userWallet = wallet.AppUserWallets.SingleOrDefault(uw => uw.Id == userId);
 
             if (userWallet == null)
             {
-                throw new InvalidOperationException("User is not a member of this wallet.");
+                throw new InvalidOperationException(Messages.Service.UserNotMemberOfWallet);
             }
             var user = await _userManager.FindByIdAsync(userId);
             user.JointWallets.Remove(wallet);
@@ -132,12 +128,12 @@ namespace Wallet.Services.Implementations
 
             if (wallet == null)
             {
-                throw new ArgumentException("Wallet not found");
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
 
             if (wallet.OwnerId != userId || wallet.WalletType != WalletType.Personal)
             {
-                throw new InvalidOperationException("Overdraft can only be enabled/disabled for personal wallets by the owner.");
+                throw new InvalidOperationException(Messages.Service.OverdraftOperationNotAllowed);
             }
 
             wallet.IsOverdraftEnabled = !wallet.IsOverdraftEnabled;
@@ -146,7 +142,7 @@ namespace Wallet.Services.Implementations
 
             if (!result)
             {
-                throw new Exception("Failed to update the wallet.");
+                throw new Exception(Messages.Service.FailedToUpdateWallet);
             }
         }
 

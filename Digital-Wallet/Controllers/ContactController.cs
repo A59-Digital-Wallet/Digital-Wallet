@@ -1,11 +1,8 @@
-﻿using IdentityServer4.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
-using Wallet.Data.Models;
+using Wallet.Common.Helpers;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 
@@ -44,7 +41,7 @@ namespace Digital_Wallet.Controllers
             try
             {
                 await _contactService.AddContactAsync(userId, contactId);
-                return Ok(new { message = "Contact Added."});
+                return Ok(new { message = Messages.Controller.ContactAddedSuccessful });
             }
             catch (EntityNotFoundException ex)
             {
@@ -65,7 +62,7 @@ namespace Digital_Wallet.Controllers
             try
             {
                 await _contactService.RemoveContactAsync(userId, contactId);
-                return Ok(new { message = "Contact removed." });
+                return Ok(new { message = Messages.Controller.ContactDeletedSuccessful });
             }
             catch (EntityNotFoundException ex)
             {

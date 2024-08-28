@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Wallet.DTO.Request;
-using Wallet.Services.Contracts;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Wallet.Data.Models.Enums;
-using Wallet.Data.Models;
-using Wallet.MVC.Models;
-using Wallet.DTO.Response;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Wallet.Services.Implementations;
+using System.Security.Claims;
+using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
+using Wallet.DTO.Request;
+using Wallet.MVC.Models;
+using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {

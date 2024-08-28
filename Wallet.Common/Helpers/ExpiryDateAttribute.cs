@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Wallet.Common.Helpers
 {
@@ -12,7 +7,7 @@ namespace Wallet.Common.Helpers
     {
         public override bool IsValid(object? value)
         {
-            if(value is string expiryDate)
+            if (value is string expiryDate)
             {
                 return DateTime.TryParseExact(
                     expiryDate,

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models;
+﻿using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Services.Contracts;
 
@@ -30,7 +25,7 @@ namespace Wallet.Services.Implementations
 
             if (settings != null)
             {
-                newRate = newRate / 100;    
+                newRate = newRate / 100;
                 settings.DefaultInterestRate = newRate;
                 return await _repository.UpdateSettings(settings);
             }

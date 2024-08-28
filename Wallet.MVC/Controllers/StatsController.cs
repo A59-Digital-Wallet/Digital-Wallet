@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 using System.Security.Claims;
 using Wallet.Services.Contracts;
 
@@ -17,8 +16,8 @@ namespace Wallet.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate)
         {
-          
-           
+
+
 
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             var model = await _statsService.GetUserStatsAsync(userId, startDate, endDate);

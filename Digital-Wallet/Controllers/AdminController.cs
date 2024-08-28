@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Services.Contracts;
 
@@ -37,7 +37,7 @@ namespace Digital_Wallet.Controllers
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
             {
-                return NotFound("User not found.");
+                return NotFound(Messages.UserNotFound);
             }
             return Ok(user);
         }
@@ -51,7 +51,7 @@ namespace Digital_Wallet.Controllers
 
                 if (result.Succeeded)
                 {
-                    return Ok($"Action '{action}' was successfully performed on the user.");
+                    return Ok(string.Format(Messages.Controller.ActionSuccessful, action));
                 }
 
                 return BadRequest($"Failed to perform '{action}' action on the user. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
@@ -67,7 +67,7 @@ namespace Digital_Wallet.Controllers
             catch (Exception ex)
             {
                 // Log the exception (not shown here for simplicity)
-                return StatusCode(500, "An unexpected error occurred.");
+                return StatusCode(500, Messages.OperationFailed); //"An unexpected error occurred."
             }
         }
 
@@ -77,9 +77,9 @@ namespace Digital_Wallet.Controllers
             bool isSuccessful = await _overdraftSettingsService.SetInterestRateAsync(newRate);
             if (isSuccessful)
             {
-                return Ok($"Default interest rate updated to {newRate}%");
+                return Ok(string.Format(Messages.Controller.InterestRateSuccessful, newRate));
             }
-            return BadRequest("Failed to update the default interest rate.");
+            return BadRequest();
         }
 
         [HttpPut("default-overdraft-limit")]
@@ -88,9 +88,9 @@ namespace Digital_Wallet.Controllers
             bool isSuccessful = await _overdraftSettingsService.SetOverdraftLimitAsync(newLimit);
             if (isSuccessful)
             {
-                return Ok($"Default overdraft limit updated to {newLimit}.");
+                return Ok(string.Format(Messages.Controller.OverdraftLimitSuccessful, newLimit));
             }
-            return BadRequest("Failed to update the default overdraft limit.");
+            return BadRequest();
         }
 
         [HttpPut("default-consecutive-negative-months")]
@@ -99,9 +99,9 @@ namespace Digital_Wallet.Controllers
             bool isSuccessful = await _overdraftSettingsService.SetConsecutiveNegativeMonthsAsync(months);
             if (isSuccessful)
             {
-                return Ok($"Default consecutive negative months updated to {months} months.");
+                return Ok(string.Format(Messages.Controller.NegativeMonthsSuccessful, months));
             }
-            return BadRequest("Failed to update the default consecutive negative months.");
+            return BadRequest(Messages.Controller.NegativeMonthsFailed);
         }
     }
 

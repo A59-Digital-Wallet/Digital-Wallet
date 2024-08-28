@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Common.Exceptions;
+﻿using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.DTO.Request;
@@ -35,19 +31,18 @@ namespace Wallet.Services.Implementations
 
             if (categories == null || !categories.Any())
             {
-                throw new EntityNotFoundException("No categories found!");
+                throw new EntityNotFoundException(Messages.Service.CategoriesNotFound);
             }
 
             List<CategoryResponseDTO> response = _categoryFactory.Map(categories);
             return response;
         }
 
-
         public async Task AddCategoryAsync(string userId, CategoryRequestDTO categoryRequest)
         {
             if (categoryRequest == null)
             {
-                throw new ArgumentNullException("Name of category cannot be empty!");
+                throw new ArgumentNullException(Messages.Service.CategoryNameCannotBeEmpty);
             }
 
             Category category = _categoryFactory.Map(userId, categoryRequest);
@@ -56,7 +51,7 @@ namespace Wallet.Services.Implementations
 
             if (!isAdded)
             {
-                throw new InvalidOperationException("Failed to save the category. Please try again.");
+                throw new InvalidOperationException(Messages.OperationFailed);
             }
         }
 
@@ -64,18 +59,18 @@ namespace Wallet.Services.Implementations
         {
             if (categoryRequest == null)
             {
-                throw new ArgumentNullException("Name of category cannot be empty!");
+                throw new ArgumentNullException(Messages.Service.CategoryNameCannotBeEmpty);
             }
 
             Category categoryExists = await _categoryRepository.GetCategoryByIdAsync(categoryId);
 
             if (categoryExists == null)
             {
-                throw new EntityNotFoundException($"Category does not exist.");
+                throw new EntityNotFoundException(Messages.Service.CategoryNotFound);
             }
             else if (categoryExists.UserId != userId)
             {
-                throw new AuthorizationException("You are not authorized to edit this category");
+                throw new AuthorizationException(Messages.Unauthorized);
             }
 
             // Update the existing entity's properties
@@ -93,19 +88,19 @@ namespace Wallet.Services.Implementations
 
             if (category == null)
             {
-                throw new EntityNotFoundException("Category not found.");
+                throw new EntityNotFoundException(Messages.Service.CategoryNotFound);
             }
 
             if (category.UserId != userId)
             {
-                throw new AuthorizationException("You are not authorized to delete this category.");
+                throw new AuthorizationException(Messages.Unauthorized);
             }
 
             bool result = await _categoryRepository.DeleteCategoryAsync(category);
 
             if (!result)
             {
-                throw new Exception("An error occurred while deleting the category.");
+                throw new Exception(Messages.OperationFailed);
             }
         }
     }

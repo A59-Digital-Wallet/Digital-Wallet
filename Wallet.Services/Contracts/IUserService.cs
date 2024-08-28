@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Wallet.Data.Models;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
@@ -20,7 +15,6 @@ namespace Wallet.Services.Contracts
         Task<AppUser> GetUserByIdAsync(string userId);
         Task<PagedResult<UserWithRolesDto>> SearchUsersAsync(string searchTerm, int page, int pageSize);
         Task UploadProfilePictureAsync(string userId, IFormFile file);
-
         Task<IdentityResult> ManageRoleAsync(string userId, string action);
         Task<IdentityResult> UpdateUserProfileAsync(UpdateUserModel model, string userId);
         Task<(AppUser user, bool requiresTwoFactor)> LoginAsync(LoginModel model);

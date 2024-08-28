@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models.Enums;
-using Wallet.Data.Models;
-using Wallet.Data.Repositories.Contracts;
-using Wallet.Services.Contracts;
-using Wallet.Data.Models.Transactions;
-using Wallet.Data.Models.Enum;
-using Wallet.DTO.Request;
-using Wallet.Services.Factory.Contracts;
-using Wallet.DTO.Response;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Eventing.Reader;
-using Wallet.Services.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
+using Wallet.Data.Models;
+using Wallet.Data.Models.Enums;
+using Wallet.Data.Models.Transactions;
+using Wallet.Data.Repositories.Contracts;
+using Wallet.DTO.Request;
+using Wallet.DTO.Response;
+using Wallet.Services.Contracts;
+using Wallet.Services.Extensions;
+using Wallet.Services.Factory.Contracts;
 using Wallet.Services.Validation.TransactionValidation;
-using Wallet.Data.Migrations;
 
 namespace Wallet.Services.Implementations
 {
@@ -36,17 +28,17 @@ namespace Wallet.Services.Implementations
         private readonly IMemoryCache _transactionCache;
         private readonly IEmailSender _emailSender;
         private readonly ITransactionValidator _transactionValidator;
-        public TransactionService(ITransactionRepository transactionRepository, 
-            IWalletRepository walletRepository, 
-            ICurrencyExchangeService currencyExchangeService, 
-            ICardRepository cardRepository, 
-            ITransactionFactory transactionFactory, 
+        public TransactionService(ITransactionRepository transactionRepository,
+            IWalletRepository walletRepository,
+            ICurrencyExchangeService currencyExchangeService,
+            ICardRepository cardRepository,
+            ITransactionFactory transactionFactory,
             UserManager<AppUser> userManager,
-            VerifyEmailService verifyEmailService, 
+            VerifyEmailService verifyEmailService,
             IMemoryCache transactionCache,
             IEmailSender emailSender,
-            ITransactionValidator transactionValidator )
-            
+            ITransactionValidator transactionValidator)
+
         {
             _transactionRepository = transactionRepository;
             _walletRepository = walletRepository;
@@ -81,9 +73,9 @@ namespace Wallet.Services.Implementations
                 if (verificationCode == null)
                 {
                     await HandleHighValueTransactionAsync(transactionRequest, user, wallet);
-                    if(transactionRequest.TransactionType == TransactionType.Transfer)
+                    if (transactionRequest.TransactionType == TransactionType.Transfer)
                     {
-                        
+
                         throw new VerificationRequiredException(transactionRequest.Token, transactionRequest.WalletId, transactionRequest.Amount, transactionRequest.Description, transactionRequest.RecepientWalletId);
                     }
                     throw new VerificationRequiredException(transactionRequest.Token);
@@ -112,11 +104,11 @@ namespace Wallet.Services.Implementations
             var wallet = await _walletRepository.GetWalletAsync(walletId);
             if (wallet == null)
             {
-                throw new ArgumentException("Wallet does not exist.");
+                throw new ArgumentException(Messages.Service.WalletNotFound);
             }
             if (wallet.OwnerId != userId && !wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new ArgumentException("Not your wallet!");
+                throw new ArgumentException(Messages.Unauthorized);
             }
 
             return wallet;
@@ -177,14 +169,14 @@ namespace Wallet.Services.Implementations
                 !user.EmailConfirmationCodeGeneratedAt.HasValue ||
                 (DateTime.UtcNow - user.EmailConfirmationCodeGeneratedAt.Value).TotalMinutes > 10)
             {
-                throw new ArgumentException("Invalid or expired verification code.");
+                throw new ArgumentException(Messages.Service.InvalidOrExpiredCode);
             }
 
             await ClearVerificationCode(user);
 
             if (!_transactionCache.TryGetValue(transactionRequest.Token, out PendingTransaction pendingTransaction))
             {
-                throw new InvalidOperationException("Transaction token is invalid or has expired.");
+                throw new InvalidOperationException(Messages.Service.InvalidOrExpiredTransactionToken);
             }
 
             _transactionCache.Remove(transactionRequest.Token);
@@ -214,7 +206,7 @@ namespace Wallet.Services.Implementations
                 var card = await _cardRepository.GetCardAsync(transactionRequest.CardId);
                 if (card == null)
                 {
-                    throw new ArgumentException("Card does not exist.");
+                    throw new ArgumentException(Messages.Service.CardNotFound);
                 }
                 transaction.CardId = card.Id;
             }
@@ -241,7 +233,7 @@ namespace Wallet.Services.Implementations
                     wallet.Balance += transactionRequest.Amount;
                     transaction.OriginalAmount = transactionRequest.Amount;
                     transaction.SentCurrency = wallet.Currency;
-                    transaction.OriginalCurrency= wallet.Currency;
+                    transaction.OriginalCurrency = wallet.Currency;
                     break;
             }
         }
@@ -255,7 +247,7 @@ namespace Wallet.Services.Implementations
             }
             catch (DbUpdateConcurrencyException)
             {
-                throw new InvalidOperationException("Transaction conflict detected. Please try again.");
+                throw new InvalidOperationException(Messages.Service.TransactionConflict);
             }
         }
 
@@ -265,7 +257,7 @@ namespace Wallet.Services.Implementations
             // Retrieve the pending transaction using the token
             if (!_transactionCache.TryGetValue(transactionToken, out PendingTransaction pendingTransaction))
             {
-                throw new InvalidOperationException("Transaction token is invalid or has expired.");
+                throw new InvalidOperationException(Messages.Service.InvalidOrExpiredTransactionToken);
             }
 
             var user = await this.userManager.FindByIdAsync(pendingTransaction.UserId);
@@ -278,7 +270,7 @@ namespace Wallet.Services.Implementations
                 return false; // Verification failed
             }
 
-         
+
             // Proceed with creating the transaction
             await CreateTransactionAsync(pendingTransaction.TransactionRequest, pendingTransaction.UserId, verificationCode);
 
@@ -290,13 +282,13 @@ namespace Wallet.Services.Implementations
 
         private async Task HandleTransferAsync(TransactionRequestModel transactionRequest, Transaction transaction, UserWallet wallet)
         {
-            
-            
+
+
             var recipientWallet = await _walletRepository.GetWalletAsync((int)transactionRequest.RecepientWalletId);
 
             if (recipientWallet == null)
             {
-                throw new ArgumentException("Recipient wallet does not exist.");
+                throw new ArgumentException(Messages.Service.RecipientWalletNotFound);
             }
             transaction.OriginalAmount = transactionRequest.Amount;
             transaction.OriginalCurrency = wallet.Currency;
@@ -312,20 +304,20 @@ namespace Wallet.Services.Implementations
 
             // Save the recipient wallet in the transaction
             transaction.RecipientWalletId = recipientWallet.Id;
-            
-           
-                bool response = await _walletRepository.UpdateWalletAsync();
-           
-                if (!response)
-                {
-                    throw new InvalidOperationException();
-                }
-            
-            
-                // Handle concurrency exception, e.g., by retrying or logging the issue
-            
 
-            
+
+            bool response = await _walletRepository.UpdateWalletAsync();
+
+            if (!response)
+            {
+                throw new InvalidOperationException();
+            }
+
+
+            // Handle concurrency exception, e.g., by retrying or logging the issue
+
+
+
         }
 
         public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
@@ -362,7 +354,7 @@ namespace Wallet.Services.Implementations
                         WalletId = w.Id,
                         Currency = w.Currency,
                         Balance = w.Balance
-                        
+
                     }).ToList(),
                     Categories = u.Categories.ToList(),
                     PreferredWallet = u.LastSelectedWallet
@@ -371,7 +363,7 @@ namespace Wallet.Services.Implementations
 
             if (user == null)
             {
-                throw new ArgumentException("User not found.");
+                throw new ArgumentException(Messages.UserNotFound);
             }
 
             return user;
@@ -402,7 +394,7 @@ namespace Wallet.Services.Implementations
                         recipientWallet.Balance += transaction.Amount;
                         await _walletRepository.UpdateWalletAsync();
                     }
-                    if(transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer) 
+                    if (transaction.TransactionType == TransactionType.Withdraw || transaction.TransactionType == TransactionType.Transfer)
                     {
                         wallet.Balance -= transaction.Amount;
                     }
@@ -410,7 +402,7 @@ namespace Wallet.Services.Implementations
                     {
                         wallet.Balance += transaction.Amount;
                     }
-                    
+
                     await _walletRepository.UpdateWalletAsync();
 
                     transaction.LastExecutedDate = now;
@@ -450,17 +442,17 @@ namespace Wallet.Services.Implementations
 
             if (transaction == null)
             {
-                throw new ArgumentException("Transaction not found.");
+                throw new ArgumentException(Messages.Service.TransactionNotFound);
             }
 
             if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new UnauthorizedAccessException("You do not have permission to cancel this transaction.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized); //"You do not have permission to cancel this transaction."
             }
 
             if (!transaction.IsRecurring)
             {
-                throw new InvalidOperationException("This transaction is not a recurring transaction.");
+                throw new InvalidOperationException(Messages.Service.NotRecurringTransaction);
             }
 
             transaction.IsRecurring = false;
@@ -475,12 +467,12 @@ namespace Wallet.Services.Implementations
             var transaction = await _transactionRepository.GetTransactionByIdAsync(transactionId);
             if (transaction == null)
             {
-                throw new EntityNotFoundException("Transaction not found.");
+                throw new EntityNotFoundException(Messages.Service.TransactionNotFound);
             }
 
             if (transaction.Wallet.OwnerId != userId && !transaction.Wallet.AppUserWallets.Any(uw => uw.Id == userId))
             {
-                throw new UnauthorizedAccessException("You do not have permission to modify this transaction.");
+                throw new UnauthorizedAccessException(Messages.Unauthorized); //"You do not have permission to modify this transaction."
             }
 
             transaction.CategoryId = categoryId;
@@ -566,8 +558,8 @@ namespace Wallet.Services.Implementations
             var contactWalletIds = (await _walletRepository.GetUserWalletsAsync(contactId)).Select(w => w.Id).ToList();
             var transactions = await _transactionRepository.GetTransactionHistoryContactAsync(userWalletIds, contactWalletIds);
 
-               
-             
+
+
 
             return transactions;
         }

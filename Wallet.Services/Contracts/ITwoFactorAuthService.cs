@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wallet.Data.Models;
+﻿using Wallet.Data.Models;
 
 namespace Wallet.Services.Contracts
 {
@@ -14,6 +9,6 @@ namespace Wallet.Services.Contracts
         Task EnableTwoFactorAuthenticationAsync(AppUser user);
         Task DisableTwoFactorAuthenticationAsync(AppUser user);
         Task<byte[]> GenerateQrCodeImageAsync(AppUser user);
-        
+
     }
 }

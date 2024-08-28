@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Wallet.DTO.Request;
-using Wallet.Services.Contracts;
-using Wallet.Data.Models.Transactions;
-using Wallet.Data.Models;
 using Wallet.Common.Exceptions;
+using Wallet.Common.Helpers;
+using Wallet.Data.Models;
+using Wallet.DTO.Request;
 using Wallet.DTO.Response;
+using Wallet.Services.Contracts;
 
 namespace Wallet.API.Controllers
 {
@@ -35,13 +34,13 @@ namespace Wallet.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { error = "User ID is missing from the token." });
+                return Unauthorized(new { error = Messages.Unauthorized }); //"User ID is missing from the token."
             }
 
             try
             {
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId);
-                return Ok(new { message = "Transaction created successfully." });
+                return Ok(new { message = Messages.Controller.TransactionCreatedSuccessfully });
             }
             catch (VerificationRequiredException ex)
             {
@@ -49,7 +48,7 @@ namespace Wallet.API.Controllers
                 var response = new VerificationRequiredResponse
                 {
                     TransactionToken = ex.TransactionToken,
-                    Message = "Transaction requires verification."
+                    Message = Messages.Controller.VerificationRequired
                 };
                 return Ok(response); // Return an OK status with the verification information
             }
@@ -63,7 +62,7 @@ namespace Wallet.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+                return StatusCode(500, new { error = Messages.OperationFailed, details = ex.Message }); //"An error occurred while processing the request."
             }
         }
 
@@ -75,13 +74,13 @@ namespace Wallet.API.Controllers
         {
             if (page <= 0 || pageSize <= 0)
             {
-                return BadRequest(new { error = "Page and pageSize must be greater than 0." });
+                return BadRequest(new { error = Messages.Controller.PageOrPageSizeInvalid });
             }
 
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { error = "User ID is missing from the token." });
+                return Unauthorized(new { error = Messages.Unauthorized }); //"User ID is missing from the token."
             }
 
             try
@@ -91,7 +90,7 @@ namespace Wallet.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+                return StatusCode(500, new { error = Messages.OperationFailed, details = ex.Message }); // "An error occurred while processing the request."
             }
         }
         [HttpPost]
@@ -106,7 +105,7 @@ namespace Wallet.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { error = "User ID is missing from the token." });
+                return Unauthorized(new { error = Messages.Unauthorized }); //"User ID is missing from the token."
             }
 
             try
@@ -116,11 +115,11 @@ namespace Wallet.API.Controllers
 
                 if (result)
                 {
-                    return Ok(new { message = "Transaction verified and completed successfully." });
+                    return Ok(new { message = Messages.Controller.TransactionVerifiedSuccessfully });
                 }
                 else
                 {
-                    return BadRequest(new { error = "Verification failed. Invalid code." });
+                    return BadRequest(new { error = Messages.Controller.VerificationFailed });
                 }
             }
             catch (ArgumentException ex)
@@ -133,7 +132,7 @@ namespace Wallet.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+                return StatusCode(500, new { error = Messages.OperationFailed, details = ex.Message });
             }
         }
 
@@ -153,7 +152,7 @@ namespace Wallet.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = "An error occurred while processing the request.", details = ex.Message });
+                return StatusCode(500, new { error = Messages.OperationFailed, details = ex.Message });
             }
         }
 
@@ -166,7 +165,7 @@ namespace Wallet.API.Controllers
             try
             {
                 await _transactionService.CancelRecurringTransactionAsync(transactionId, userId);
-                return Ok("Recurring transaction canceled successfully.");
+                return Ok(Messages.Controller.RecurringTransactionCancelledSuccessfully);
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -184,14 +183,14 @@ namespace Wallet.API.Controllers
 
         [Authorize]
         [HttpPost("add-to-category")]
-        public async Task<IActionResult> AddTransactionToCategory (int categoryId, int transactionId)
+        public async Task<IActionResult> AddTransactionToCategory(int categoryId, int transactionId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
 
             try
             {
                 await _transactionService.AddTransactionToCategoryAsync(transactionId, categoryId, userId);
-                return Ok(new { message = "Transaction successfully added to category." });
+                return Ok(new { message = Messages.Controller.TransactionAddedToCategorySuccessfully });
             }
             catch (EntityNotFoundException ex)
             {

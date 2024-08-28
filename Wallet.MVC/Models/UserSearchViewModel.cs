@@ -1,5 +1,4 @@
-﻿using Wallet.Data.Models;
-using Wallet.DTO.Response;
+﻿using Wallet.DTO.Response;
 
 namespace Wallet.MVC.Models
 {
