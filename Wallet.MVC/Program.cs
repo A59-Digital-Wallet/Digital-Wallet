@@ -174,6 +174,7 @@ namespace Wallet.MVC
 
             // Enable HTTPS Redirection
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             // Enable Routing, Authentication, and Authorization
             app.UseRouting();
