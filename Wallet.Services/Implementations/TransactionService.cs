@@ -503,6 +503,67 @@ namespace Wallet.Services.Implementations
             return "Outgoing";
         }
 
+        public async Task<(List<string>, List<decimal>)> GetDailyBalanceOverYear(int walletId)
+        {
+            var dailyBalanceLabels = new List<string>();
+            var dailyBalanceAmounts = new List<decimal>();
+
+            var now = DateTime.UtcNow;
+            var oneYearAgo = now.AddYears(-1).Date;
+
+            // Fetch all transactions for the wallet in the past year
+            var transactionsAll = await _transactionRepository
+                .GetTransactionsByWalletId(walletId);
+
+
+
+            var transactions = transactionsAll.Where(t => t.Date >= oneYearAgo).ToList();
+
+            var runningBalanceWallet = await _walletRepository.GetWalletAsync(walletId);
+            var runningBalance = runningBalanceWallet.Balance; 
+            var currentDate = now.Date;
+
+            for (int i = transactions.Count - 1; i >= 0; i--)
+            {
+                var transaction = transactions[i];
+
+                // Fill in days with the running balance up to the transaction date
+                while (currentDate > transaction.Date.Date)
+                {
+                    dailyBalanceLabels.Insert(0, currentDate.ToString("yyyy-MM-dd"));
+                    dailyBalanceAmounts.Insert(0, runningBalance);
+                    currentDate = currentDate.AddDays(-1);
+                }
+
+                // Apply the transaction to the balance
+                runningBalance = ApplyTransactionToBalance(runningBalance, transaction);
+            }
+
+            // Fill in the remaining days back to one year ago
+            while (currentDate >= oneYearAgo)
+            {
+                dailyBalanceLabels.Insert(0, currentDate.ToString("yyyy-MM-dd"));
+                dailyBalanceAmounts.Insert(0, runningBalance);
+                currentDate = currentDate.AddDays(-1);
+            }
+
+            return (dailyBalanceLabels, dailyBalanceAmounts);
+        }
+
+        private decimal ApplyTransactionToBalance(decimal balance, Transaction transaction)
+        {
+            switch (transaction.TransactionType)
+            {
+                case TransactionType.Deposit:
+                    return balance - transaction.OriginalAmount;
+                case TransactionType.Withdraw:
+                case TransactionType.Transfer:
+                    return balance + transaction.OriginalAmount;
+                default:
+                    return balance;
+            }
+        }
+
         public async Task<(List<string> WeekLabels, List<decimal> WeeklySpendingAmounts)> GetWeeklySpendingAsync(int walletId)
         {
             var transactions = await _transactionRepository.GetTransactionsByWalletId(walletId);

@@ -15,6 +15,7 @@
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="bg-gray-100 font-sans">
@@ -230,6 +231,20 @@
                                     <h5 class="font-bold text-lg mb-4">Monthly Spending by Category</h5>
                                     <canvas id="categorySpendingChart" width="400" height="200"></canvas>
                                 </div>
+
+                                <div class="w-full bg-white rounded-xl p-6 shadow-md mt-6">
+                                    <h5 class="font-bold text-lg mb-4">Wallet Balance Over Time</h5>
+
+                                    <!-- Time Interval Buttons -->
+                                    <div class="flex justify-around mb-4">
+                                        <button onclick="updateChart('daily')" class="bg-indigo-600 text-white rounded-full py-2 px-4 font-bold">Daily</button>
+                                        <button onclick="updateChart('weekly')" class="bg-indigo-600 text-white rounded-full py-2 px-4 font-bold">Weekly</button>
+                                        <button onclick="updateChart('monthly')" class="bg-indigo-600 text-white rounded-full py-2 px-4 font-bold">Monthly</button>
+                                        <button onclick="updateChart('yearly')" class="bg-indigo-600 text-white rounded-full py-2 px-4 font-bold">Yearly</button>
+                                    </div>
+
+                                    <canvas id="balanceGrowthChart" width="400" height="200"></canvas>
+                                </div>
                             }
                         </div>
                     </div>
@@ -341,7 +356,73 @@
         var ctx = document.getElementById('categorySpendingChart').getContext('2d');
         new Chart(ctx, config);
     </script>
+    <script>
+        var balanceGrowthChart;
 
+        $(document).ready(function () {
+            console.log("Initializing chart...");
+
+            // Check if labels and data are correctly passed to the view
+            console.log("Labels:", @Html.Raw(Json.Serialize(Model.DailyBalanceLabels)));
+            console.log("Data:", @Html.Raw(Json.Serialize(Model.DailyBalanceAmounts)));
+
+            // Initialize the chart with default data
+            var ctx = document.getElementById('balanceGrowthChart').getContext('2d');
+            balanceGrowthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @Html.Raw(Json.Serialize(Model.DailyBalanceLabels)),
+                    datasets: [{
+                        label: 'Wallet Balance',
+                        data: @Html.Raw(Json.Serialize(Model.DailyBalanceAmounts)),
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Wallet Balance Over Time'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        });
+
+        function updateChart(interval) {
+            console.log("Updating chart with interval:", interval);
+
+            $.ajax({
+                url: '@Url.Action("Index", "Home")',
+                type: 'GET',
+                data: { interval: interval },
+                success: function (result) {
+                    console.log("AJAX call success, result:", result);
+
+                    balanceGrowthChart.data.labels = result.balanceLabels;
+                    balanceGrowthChart.data.datasets[0].data = result.balanceAmounts;
+                    balanceGrowthChart.update();
+                },
+                error: function (xhr, status, error) {
+                    console.error("AJAX call error:", error);
+                }
+            });
+        }
+        
+    </script>
 
 </body>
 

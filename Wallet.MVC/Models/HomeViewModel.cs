@@ -17,5 +17,9 @@ namespace Wallet.MVC.Models
         public List<MoneyRequestResponseDTO> ReceivedRequests { get; set; }
 
         public Dictionary<string, decimal> MonthlySpendingByCategory { get; set; }
+        public List<string> DailyBalanceLabels { get; set; }
+        public List<decimal> DailyBalanceAmounts { get; set; }
+        public string SelectedInterval { get; set; }
     }
 }
+

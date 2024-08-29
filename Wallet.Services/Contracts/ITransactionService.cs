@@ -18,6 +18,7 @@ namespace Wallet.Services.Contracts
 
         Task<IEnumerable<Transaction>> GetTransactionHistoryContactAsync(string userId, string contactId);
         Task<Dictionary<string, decimal>> GetMonthlySpendingByCategoryAsync(string userId, int walletId);
+        Task<(List<string>, List<decimal>)> GetDailyBalanceOverYear(int walletId);
     }
 
 }

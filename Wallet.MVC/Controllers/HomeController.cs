@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
@@ -22,7 +23,11 @@ namespace Wallet.MVC.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ICategoryService _categoryService;
         private readonly IMoneyRequestService _moneyRequestService;
-        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, IContactService contactService, UserManager<AppUser> userManager, ICategoryService categoryService, IMoneyRequestService moneyRequestService)
+        private readonly IStatsService _statsService;
+        public HomeController(IWalletService walletService, ICardService cardService, ITransactionService transactionService, 
+            IContactService contactService, UserManager<AppUser> userManager, 
+            ICategoryService categoryService, IMoneyRequestService moneyRequestService,
+            IStatsService statsService)
         {
             _walletService = walletService;
             _cardService = cardService;
@@ -31,10 +36,11 @@ namespace Wallet.MVC.Controllers
             _userManager = userManager;
             _categoryService = categoryService;
             _moneyRequestService = moneyRequestService;
+            _statsService = statsService;
         }
 
 
-        public async Task<IActionResult> Index(int? walletId)
+        public async Task<IActionResult> Index(int? walletId, string interval = "daily")
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData); // Or ClaimTypes.UserData based on your setup
             if (userId == null)
@@ -53,12 +59,14 @@ namespace Wallet.MVC.Controllers
             {
                 return RedirectToAction("Create", "Wallet");
             }
-
+            
             // If a walletId is passed in, update the user's LastSelectedWalletId
             if (walletId.HasValue)
             {
-                user.LastSelectedWalletId = walletId.Value;
-                await _userManager.UpdateAsync(user); // Save the user's preference to the database
+                
+                    user.LastSelectedWalletId = walletId.Value;
+                    await _userManager.UpdateAsync(user); // Save the user's preference to the database
+                
             }
 
             // Retrieve the last selected wallet ID from the user record
@@ -67,7 +75,7 @@ namespace Wallet.MVC.Controllers
             // Select the wallet based on the preferredWalletId or default to the first wallet
             var selectedWallet = wallets.FirstOrDefault(w => w.Id == preferredWalletId)
                                  ?? wallets.FirstOrDefault();
-
+            
             user.LastSelectedWalletId = selectedWallet.Id;
             await _userManager.UpdateAsync(user);
 
@@ -128,6 +136,8 @@ namespace Wallet.MVC.Controllers
             var receivedRequests = await _moneyRequestService.GetReceivedRequestsAsync(userId);
             var (weeklyLabels, weeklyAmounts) = await _transactionService.GetWeeklySpendingAsync(selectedWallet.Id);
             var spendingByCategory = await _transactionService.GetMonthlySpendingByCategoryAsync(userId, selectedWallet.Id);
+          
+            var dailyBalanceData = await _statsService.GetBalanceOverTime(selectedWallet.Id, interval, userId);
 
             // Build the HomeViewModel with all the necessary data
             var model = new HomeViewModel
@@ -171,17 +181,27 @@ namespace Wallet.MVC.Controllers
                 WeeklySpendingAmounts = weeklyAmounts,  // Pass the weekly spending amounts to the view model
                 TotalSpentThisMonth = weeklyAmounts.Sum(),
                 Categories = categories,
-                ReceivedRequests = receivedRequests.ToList()
+                ReceivedRequests = receivedRequests.ToList(),
+                DailyBalanceLabels = dailyBalanceData.Item1,
+                DailyBalanceAmounts = dailyBalanceData.Item2,
+                SelectedInterval = interval
 
                 // Example of other potential properties
 
             };
+            if (Request.IsAjaxRequest())
+            {
+                return Json(new
+                {
+                    balanceLabels = model.DailyBalanceLabels,
+                    balanceAmounts = model.DailyBalanceAmounts
+                });
+            }
 
             return View(model);
         }
 
-
-
+        
         // This method handles setting the preferred wallet
         [HttpPost]
         public IActionResult SetPreferredWallet(int walletId)
