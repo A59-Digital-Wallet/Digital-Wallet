@@ -168,6 +168,14 @@ namespace Wallet.MVC.Controllers
 
                 return RedirectToAction("Index", "Home");
             }
+            catch (VerificationRequiredException ex)
+            {
+
+                model.TransactionToken = ex.TransactionToken;
+                model.RequiresCode = true;
+                // Redirect to the confirmation page
+                return RedirectToAction("ConfirmTransaction", model);
+            }
             catch (ArgumentException ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
