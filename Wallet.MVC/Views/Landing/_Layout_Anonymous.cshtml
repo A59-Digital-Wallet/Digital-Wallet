@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]Digital Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* General navbar styling with transitions */
+        #navbar {
+            transition: background-color 0.5s ease-in-out, height 0.5s ease-in-out;
+        }
+
+        /* Default navbar style */
+        .navbar-default {
+            background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
+            height: 80px; /* Default height */
+        }
+
+        /* Changed navbar style when it reaches the "How It Works" section */
+        .navbar-changed {
+            background-color: rgba(39, 56, 73, 0.9); /* Simulating the gradient with a solid color */
+            height: 60px; /* Adjusted height */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col" style="background-image: linear-gradient(to bottom right, #273849, #284a77, #294977);">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="navbar-default flex justify-between items-center py-4 px-6 backdrop-blur-lg border-b border-white/20 shadow-lg sticky top-0 z-50">
+        <div class="flex items-center space-x-4">
+            <img src="~/images/—Pngtree—online payment wallet and credit_9007866.png" class="w-10 h-10 lg:w-12 lg:h-12 object-contain" alt="Payme Logo" />
+            <a href="#" class="text-sm lg:text-lg text-white hover:text-gray-400">Home</a>
+        </div>
+        <div class="flex items-center space-x-2 lg:space-x-4">
+            <a href="@Url.Action("Login", "Account")" class="text-sm lg:text-lg text-white hover:text-gray-400">Login</a>
+            <a href="@Url.Action("Register", "Account")" class="bg-white px-3 py-1 lg:px-4 lg:py-2 rounded-full text-sm lg:text-base" style="color: #284a77;">
+                Sign Up
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        @RenderBody()
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="text-white py-6 px-4 w-full shadow-lg mt-auto" style="background-image: linear-gradient(to bottom right, #273849, #284a77, #294977);">
+        <div class="container mx-auto flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+            <div class="text-center lg:text-left">
+                <p>&copy; 2024 - Tailwind. All rights reserved.</p>
+            </div>
+            <div class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4 text-center lg:text-left">
+                <a href="#" class="hover:text-gray-600">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-600">Terms of Service</a>
+                <a href="#" class="hover:text-gray-600">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navbar = document.getElementById('navbar');
+            const howItWorksSection = document.getElementById('how-it-works');
+
+            // Get the offset position of the "How It Works" section relative to the top of the document
+            const howItWorksOffsetTop = howItWorksSection.offsetTop;
+
+            window.addEventListener('scroll', () => {
+                const scrollPosition = window.scrollY;
+                const navbarHeight = navbar.offsetHeight;
+
+                // If the scroll position reaches or exceeds the point where the navbar should change style
+                if (scrollPosition + navbarHeight >= howItWorksOffsetTop - 300) {
+                    navbar.classList.add('navbar-changed');
+                    navbar.classList.remove('navbar-default');
+                } else if (scrollPosition + navbarHeight <= howItWorksOffsetTop + 250) {
+                    navbar.classList.remove('navbar-changed');
+                    navbar.classList.add('navbar-default');
+                }
+            });
+        });
+    </script>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

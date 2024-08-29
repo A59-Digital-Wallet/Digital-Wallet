@@ -1,0 +1,155 @@
+﻿@{
+    Layout = "_Layout_Anonymous"; // Use a minimal or specific layout for the landing page
+}
+
+
+<div class="container mx-auto flex flex-col lg:flex-row items-center justify-center min-h-screen relative px-4 lg:px-8 xl:px-16">
+    <!-- Text Section -->
+    <div class="w-full lg:w-1/2 px-6 lg:px-12 xl:px-16 text-center lg:text-left text-white -mt-20 lg:-mt-32">
+        <h1 class="text-3xl lg:text-5xl font-bold mb-4 lg:mb-6">
+            The Most Secure Way to Do Online Payments
+        </h1>
+        <p class="text-base lg:text-lg mb-6 lg:mb-8">
+            A reliable and secure way to perform your online transactions.
+            Experience the convenience of paying online without the hassle of carrying physical cards.
+        </p>
+        <button id="learn-more-btn" class="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
+            Learn More
+        </button>
+    </div>
+    <!-- Image Section -->
+    <div class="w-full lg:w-1/2 flex justify-center lg:justify-end -mt-16 lg:-mt-32">
+        <img src="/images/—Pngtree—computer online payment shopping_5003267.png"
+             class="w-80 h-auto lg:w-96 xl:w-[500px] object-contain"
+             alt="Online Payment">
+    </div>
+</div>
+
+
+<!-- How It Works Section -->
+<div id="how-it-works" class="opacity-0 transition-opacity duration-700 ease-in-out bg-gray-100 py-16 lg:py-24 w-full">
+    <div class="container mx-auto px-4 lg:px-8 xl:px-16">
+        <h2 class="text-4xl font-bold text-center mb-8">How <span class="text-blue-800">Payme</span> Works</h2>
+
+        <!-- Icons and Text Container -->
+        <div class="flex flex-col lg:flex-row justify-between items-center space-y-12 lg:space-y-0 lg:space-x-8">
+            <!-- Step 1 Container -->
+            <div class="flex flex-col items-center text-center">
+                <!-- Step 1 Icon -->
+                <div class="relative inline-block mb-4">
+                    <div class="absolute top-0 left-2 w-6 h-6 bg-[#284a77] shadow-lg z-0"></div>
+                    <div class="relative w-24 h-24 rounded-full flex items-center justify-center shadow-xl overflow-hidden">
+                        <div class="absolute inset-0 bg-[#c8d4e0] bg-opacity-40 backdrop-blur-sm border border-white/30 rounded-full"></div>
+                        <svg class="relative w-16 h-16 text-[#284a77]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z" />
+                        </svg>
+                    </div>
+                </div>
+                <!-- Step 1 Text -->
+                <h3 class="text-xl font-semibold my-4">Create Your Account</h3>
+                <p class="px-8 max-w-xs" style="color:#284a77">Create your account and register yourself to get the card.</p>
+            </div>
+
+            <!-- Arrow 1 Container -->
+            <div class="flex justify-center items-center lg:w-auto lg:flex-shrink-0 lg:mx-4">
+                <svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 60 C 60 20, 140 20, 190 60" stroke="#284a77" stroke-width="2" stroke-dasharray="5,5" fill="none" />
+                    <polygon points="190,60 185,55 185,65" fill="#284a77" transform="rotate(20,190,60)" />
+                </svg>
+            </div>
+
+            <!-- Step 2 Container -->
+            <div class="flex flex-col items-center text-center">
+                <!-- Step 2 Icon -->
+                <div class="relative inline-block mb-4">
+                    <div class="absolute top-0 left-2 w-6 h-6 bg-[#284a77] shadow-lg z-0"></div>
+                    <div class="relative w-24 h-24 rounded-full flex items-center justify-center shadow-xl overflow-hidden">
+                        <div class="absolute inset-0 bg-[#c8d4e0] bg-opacity-40 backdrop-blur-sm border border-white/30 rounded-full"></div>
+                        <svg class="relative w-16 h-16 text-[#284a77]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v2h20v-2c0-3.33-6.67-5-10-5z" />
+                            <g transform="translate(11, 12)">
+                                <circle cx="8" cy="8" r="5" fill="#c8d4e0" fill-opacity="0.4" style="backdrop-filter: blur(4px);" />
+                                <circle cx="8" cy="8" r="3.5" fill="#284a77" />
+                                <path d="M7 9l-1-1L4.5 8.5l2 2 3.5-3.5L8.5 6l-1.5 1.5L7 9z" fill="white" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <!-- Step 2 Text -->
+                <h3 class="text-xl font-semibold my-4">Verify Your Account</h3>
+                <p class="px-4 max-w-xs" style="color:#284a77">Verify your account to start using your card and enjoy its perks.</p>
+            </div>
+
+            <!-- Arrow 2 Container -->
+            <div class="flex justify-center items-center lg:w-auto lg:flex-shrink-0 lg:mx-4">
+                <svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 40 C 60 80, 140 80, 190 40" stroke="#284a77" stroke-width="2" stroke-dasharray="5,5" fill="none" />
+                    <polygon points="190,40 185,35 185,45" fill="#284a77" transform="rotate(-20,190,40)" />
+                </svg>
+            </div>
+
+            <!-- Step 3 Container -->
+            <div class="flex flex-col items-center text-center">
+                <!-- Step 3 Icon -->
+                <div class="relative inline-block mb-4">
+                    <div class="absolute top-0 left-2 w-6 h-6 bg-[#284a77] shadow-lg z-0"></div>
+                    <div class="relative w-24 h-24 rounded-full flex items-center justify-center shadow-xl overflow-hidden">
+                        <div class="absolute inset-0 bg-[#c8d4e0] bg-opacity-40 backdrop-blur-sm border border-white/30 rounded-full"></div>
+                        <svg class="relative w-20 h-20 text-[#284a77]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="6" fill="#284a77" />
+                            <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#c8d4e0" font-family="Arial">$</text>
+                        </svg>
+                    </div>
+                </div>
+                <!-- Step 3 Text -->
+                <h3 class="text-xl font-semibold my-4">Perform Transactions</h3>
+                <p class="px-4 max-w-xs" style="color:#284a77">Perform secure online transactions with ease.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Why Payme Section -->
+    <div class="container mx-auto px-4 lg:px-8 xl:px-16 mt-16">
+        <h2 class="text-4xl font-bold text-center mb-8">Why <span class="text-blue-800">Payme</span></h2>
+        <div class="flex flex-col lg:flex-row justify-between items-center space-y-8 lg:space-y-0 lg:space-x-8">
+            <!-- Image Section -->
+            <div class="w-full lg:w-1/2 flex justify-start lg:justify-start lg:-ml-1">
+                <img src="/images/—Pngtree—hand drawn cartoon cyber security_5053337.png" class="w-80 h-auto lg:w-96 xl:w-[500px] object-contain" alt="Cyber Security" />
+            </div>
+
+            <!-- Text Section -->
+            <div class="w-full lg:w-1/2 text-center lg:text-left">
+                <h3 class="text-3xl lg:text-4xl font-semibold mb-6">The Most Secure Online Payment</h3>
+                <p class="text-lg lg:text-xl mb-4" style="color:#284a77">Payme offers the most secure way to perform your online transactions. With top-notch encryption and advanced security features, your payments are safe and secure.</p>
+                <p class="text-lg lg:text-xl" style="color:#284a77">Experience the convenience of paying online without the worry. Our platform is designed to keep your financial information protected at all times.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const section = document.querySelector("#how-it-works");
+        const learnMoreButton = document.getElementById("learn-more-btn");
+
+        // Smooth Scroll to "How It Works" section
+        learnMoreButton.addEventListener("click", function (e) {
+            e.preventDefault(); // Prevent default link behavior if necessary
+            section.scrollIntoView({ behavior: "smooth" });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("opacity-100");
+                    entry.target.classList.remove("opacity-0");
+                    observer.unobserve(entry.target); // Stop observing once it has been revealed
+                }
+            });
+        }, {
+            threshold: 0.1 // The section starts to become visible when 10% of it is in view
+        });
+
+        observer.observe(section);
+    });
+</script>

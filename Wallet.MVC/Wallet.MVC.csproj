@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Shared\_Layout_Anonymous.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
   </ItemGroup>
 
@@ -15,6 +19,21 @@
     <ProjectReference Include="..\Wallet.Data\Wallet.Data.csproj" />
     <ProjectReference Include="..\Wallet.DTO\Wallet.DTO.csproj" />
     <ProjectReference Include="..\Wallet.Services\Wallet.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Shared\_Layout_Anonymous.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Shared\_Layout_Anonymous.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Landing\_Layout_Anonymous.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\*" />
   </ItemGroup>
 
 </Project>

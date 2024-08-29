@@ -43,14 +43,21 @@ namespace Wallet.MVC.Controllers
         public async Task<IActionResult> Index(int? walletId, string interval = "daily")
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData); // Or ClaimTypes.UserData based on your setup
-            if (userId == null)
-            {
-                return RedirectToAction("Login", "Account");
-            }
+
+            //if (userId == null)
+            //{
+            //    return RedirectToAction("Login", "Account");
+            //}
             var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
+
+            //if (user == null)
+            //{
+            //   return RedirectToAction("Login", "Account");
+            //}
+
+            if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Login", "Account");
+                return RedirectToAction("Index", "Landing");
             }
             var wallets = await _walletService.GetUserWalletsAsync(userId);
 
