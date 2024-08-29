@@ -56,7 +56,7 @@ namespace Wallet.MVC.Controllers
                 return View(model); // Return the same view with error message if something goes wrong
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpGet]
@@ -87,7 +87,7 @@ namespace Wallet.MVC.Controllers
                 // Verify the code and complete the transaction
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
             catch (ArgumentException ex)
             {
@@ -116,7 +116,7 @@ namespace Wallet.MVC.Controllers
             {
 
                 await _moneyRequestService.ApproveMoneyRequestAsync(requestId, userId);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
             catch (VerificationRequiredException ex)
             {
@@ -137,7 +137,7 @@ namespace Wallet.MVC.Controllers
             {
                 // Handle any other exceptions
                 ModelState.AddModelError("", ex.Message);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
         }
 
@@ -155,7 +155,7 @@ namespace Wallet.MVC.Controllers
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

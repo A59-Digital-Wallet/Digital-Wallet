@@ -34,7 +34,7 @@ namespace Wallet.MVC.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
                 await _walletService.CreateWallet(model, userId);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
 
             return View(model);

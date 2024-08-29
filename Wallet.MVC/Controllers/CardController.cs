@@ -55,7 +55,7 @@ namespace Wallet.MVC.Controllers
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
             await _cardService.DeleteCardAsync(cardId, userId);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 

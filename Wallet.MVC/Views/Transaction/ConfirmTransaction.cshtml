@@ -48,7 +48,7 @@
 
             <div class="mb-3 text-center">
                 <button type="submit" class="btn btn-primary">Confirm and Proceed</button>
-                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" type="button" onclick="cancelTransaction()">Cancel</a>
+                <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary" type="button" onclick="cancelTransaction()">Cancel</a>
             </div>
         </form>
         
@@ -58,7 +58,7 @@
     <script>
         function cancelTransaction() {
             // Redirect to the home page without submitting the form
-            window.location.href = '@Url.Action("Index", "Home")';
+            window.location.href = '@Url.Action("Index", "Dashboard")';
         }
     </script>
 </body>

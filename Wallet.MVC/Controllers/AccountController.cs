@@ -56,7 +56,7 @@ namespace Wallet.MVC.Controllers
 
             await SignInUserAsync(user);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
 
@@ -100,7 +100,7 @@ namespace Wallet.MVC.Controllers
 
             await SignInUserAsync(user);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         // Helper method to sign in the user
@@ -260,7 +260,7 @@ namespace Wallet.MVC.Controllers
 
             await _twoFactorAuthService.EnableTwoFactorAuthenticationAsync(user);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpPost]
@@ -278,7 +278,7 @@ namespace Wallet.MVC.Controllers
 
             await _twoFactorAuthService.DisableTwoFactorAuthenticationAsync(user);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

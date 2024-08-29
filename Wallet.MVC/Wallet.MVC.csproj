@@ -28,10 +28,6 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Views\Shared\_Layout_Anonymous.cshtml" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Views\Landing\_Layout_Anonymous.cshtml" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="wwwroot\*" />
   </ItemGroup>

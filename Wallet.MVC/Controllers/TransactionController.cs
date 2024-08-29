@@ -45,7 +45,7 @@ namespace Wallet.MVC.Controllers
 
             if (preferredWallet == null)
             {
-                return RedirectToAction("Index", "Home"); // Or handle the case where the preferred wallet isn't set
+                return RedirectToAction("Index", "Dashboard"); // Or handle the case where the preferred wallet isn't set
             }
 
             var cards = await _cardService.GetCardsAsync(userId);
@@ -166,7 +166,7 @@ namespace Wallet.MVC.Controllers
 
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Dashboard");
             }
             catch (VerificationRequiredException ex)
             {

@@ -3,9 +3,102 @@
 
 @{
     ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout_Home.cshtml";
 }
+<div class="w-full h-full flex">
+    <!-- Left Side: Form Section -->
+    <div class="w-full md:w-1/2 flex flex-col justify-center h-screen p-6 sm:p-8 lg:p-32 text-white relative" style="background-color: #1f2227">
+        <!-- Logo and Brand Name -->
+        <div class="absolute top-8 left-8 flex items-center space-x-2">
+            <img style="height:50px" src="/images/letter-n-big-logo-pack-design-creative-modern-logos-design-your-business-vector-brand-name-illustration.png" alt="Alternate Text" />
+            <a href="@Url.Action("Index", "Home")" class="text-3xl font-extrabold">NiftyWallet.</a>
+        </div>
 
-<!DOCTYPE html>
+        <!-- Content Section -->
+        <div class="mt-24">
+            <!-- Adjusted margin to position content below the logo -->
+            <h1 class="text-3xl font-bold mb-2">Create your account</h1>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            </div>
+        }
+
+
+            <form method="post" asp-controller="Account" asp-action="Register" class="mt-4">
+                @Html.AntiForgeryToken()
+                <!-- Flex Container for First name and Last name -->
+                <div class="flex mb-4">
+                    <div class="flex-1 mr-2">
+                        <input input asp-for="FirstName" type="text" placeholder="First name"
+                               class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="flex-1 ml-2">
+                        <input asp-for="LastName" type="text" placeholder="Last name"
+                               class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <input asp-for="Email" type="email" placeholder="Email address"
+                           class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <input asp-for="UserName" type="text" placeholder="Username"
+                           class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <input asp-for="Password" type="password" placeholder="Password"
+                           class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-4">
+                    <input asp-for="PhoneNumber" type="tel" placeholder="Phone number"
+                           class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <button type="submit"
+                        class="w-full text-white font-bold py-3 rounded-lg mb-4" style="background-color:#6172de">
+                    Sign up
+                </button>
+            </form>
+
+            <!-- Registration Link -->
+            <div class="text-center mt-6 text-sm">
+                <p class="text-gray-400">
+                    Already have an account? <a href="@Url.Action("Login", "Account")" class="text-indigo-500">Sign in</a>
+                </p>
+            </div>
+            <p class="text-gray-400 mt-6 text-sm text-center absolute bottom-3 left-0 right-0 mb-2">
+                &copy; NiftyWallet - 2024. All rights reserved
+            </p>
+        </div>
+
+        <!-- Right Side: Image or Illustration Section -->
+    <div class="hidden md:flex md:w-1/2  items-center justify-center p-8 h-screen" style="background-color: #1f2227">
+            <div class="text-center">
+                <!-- Placeholder for the image -->
+                <img src="/images/m001t0305_b_e_commerce_25aug22.png" alt="Alternate Text" class="rounded-3xl" />
+            </div>
+        </div>
+    </div>
+            @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+            }
+
+
+
+
+
+
+
+            @* <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -70,4 +163,4 @@
         <partial name="_ValidationScriptsPartial" />
     }
 </body>
-</html>
+</html> *@
