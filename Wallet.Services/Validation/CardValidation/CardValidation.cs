@@ -34,7 +34,7 @@ namespace Wallet.Services.Validation.CardValidation
             // Validate Expiration Date
             if (!ValidateExpirationDate(expiryDate))
             {
-                result.Errors.Add("Card has expired.");
+                result.Errors.Add("The card is nearing its expiration. Please provide a card with more than one month of validity remaining.");
             }
 
             // Validate CVV
@@ -60,7 +60,15 @@ namespace Wallet.Services.Validation.CardValidation
 
         public bool ValidateExpirationDate(DateTime expiryDate)
         {
-            return expiryDate > DateTime.UtcNow;
+            DateTime now = DateTime.UtcNow;
+
+            TimeSpan difference = expiryDate - now;
+
+            if (difference.TotalDays <= 30)
+            {
+                return false;
+            }
+            return true;
         }
 
         private bool CardNumberValidation(string cardNumber)
