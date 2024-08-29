@@ -34,16 +34,16 @@
             @Html.AntiForgeryToken()
             <div class="mb-4">
                 <input asp-for="Email" type="email" placeholder="Enter your email address"
-                       class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                       class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] bg-[#272a2f] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="mb-4">
                 <input asp-for="Password" type="password" placeholder="Enter your password"
-                       class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" style="background-color:#272a2f">
+                       class="w-full p-3 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] bg-[#272a2f] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <button type="submit"
-                    class="w-full text-white font-bold py-3 rounded-lg mb-4" style="background-color:#6172de">
+                    class="w-full text-white font-bold py-3 rounded-lg mb-4 shadow-lg hover:shadow-indigo-600/70 transition-shadow duration-300 ease-in-out" style="background-color:#6172de">
                 Sign in
             </button>
         </form>
