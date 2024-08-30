@@ -53,6 +53,21 @@ namespace Wallet.Services.Implementations
             Contact contact = _contactsFactory.Map(userId, contactId);
             await _contactsRepository.AddContactAsync(contact);
         }
+        public async Task<ICollection<ContactResponseDTO>> SearchForContactsAsync(string userId, string searchQuery)
+        {
+            ICollection<Contact> contacts = await _contactsRepository.SearchForContactsAsync(userId, searchQuery);
+
+            //Should uncomment when I handle the exception in MVC 
+
+            /*            if (contacts.IsNullOrEmpty())
+                        {
+                            throw new EntityNotFoundException(Messages.Service.ContactsNotFound);
+                        }*/
+
+            ICollection<ContactResponseDTO> contactsResponse = _contactsFactory.Map(contacts);
+            return contactsResponse;
+        }
+
 
         public async Task<bool> RemoveContactAsync(string userId, string contactId)
         {

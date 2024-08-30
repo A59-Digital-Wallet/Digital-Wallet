@@ -13,5 +13,6 @@ namespace Wallet.Data.Repositories.Contracts
         Task<Contact> GetContactAsync(string userId, string contactId);
         Task AddContactAsync(Contact contact);
         Task RemoveContactAsync(Contact contact);
+        Task<ICollection<Contact>> SearchForContactsAsync(string userId, string searchQuery);
     }
 }
