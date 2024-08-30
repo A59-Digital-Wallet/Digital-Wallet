@@ -28,6 +28,12 @@ namespace Wallet.Data.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<ICollection<Contact>> SearchForContactsAsync(string userId, string searchQuery)
+        {
+            var contacts = await GetContactsAsync(userId);
+            return contacts.Where(u => (u.ContactUser.Email.Contains(searchQuery)) || (u.ContactUser.FirstName.Contains(searchQuery)) || (u.ContactUser.LastName.Contains(searchQuery)) || (u.ContactUser.UserName.Contains(searchQuery))).ToList();
+        }
+
         public async Task<Contact> GetContactAsync(string userId, string contactId)
         {
             return await _context.Contacts

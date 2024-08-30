@@ -42,43 +42,14 @@
     <div class="container mx-auto mt-12">
         <h2 class="text-3xl font-bold mb-8 text-center">All Contacts</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            @foreach (var contact in Model)
-            {
-                string name = $"{contact.FirstName} {contact.LastName}";
-                <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 transform transition duration-500 hover:scale-105">
-                    <div class="flex items-center mb-4">
-                        <img src="@contact.ProfilePictureURL" alt="@contact.FirstName's Profile Picture" class="w-16 h-16 rounded-full object-cover mr-4">
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">@name</h3>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <form asp-action="RemoveContact" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="contactId" value="@contact.Id" />
-                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full focus:outline-none transition duration-150">
-                                Remove
-                            </button>
-                        </form>
-                        <a href="@Url.Action("ContactHistory", "Transaction", new { contactId = contact.Id })" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full focus:outline-none transition duration-150">
-                            View History
-                        </a>
-                    </div>
-                    <!-- Dropdown Menu -->
-                    <div class="absolute top-4 right-4 dropdown">
-                        <button class="dropdown-button text-gray-600 hover:text-gray-900">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h.01M12 12h.01M18 12h.01" />
-                            </svg>
-                        </button>
-                        <div class="dropdown-content bg-white rounded-md shadow-lg">
-                            <a href="@Url.Action("InitiateTransfer", "Transaction", new { contactId = contact.Id })" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Transfer</a>
-                            <a href="@Url.Action("CreateRequest", "MoneyRequest", new { recipientId = contact.Id })" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Request</a>
-                        </div>
-                    </div>
-                </div>
-            }
+        <!-- Search Bar -->
+        <div class="mb-8">
+            <input type="text" id="searchQuery" class="form-input w-full p-4 border border-gray-300 rounded-lg" placeholder="Search for contacts...">
+        </div>
+
+        <!-- Contacts List -->
+        <div id="contactsList">
+            @await Html.PartialAsync("_ContactsListPartial", Model)
         </div>
 
         <div class="text-center mt-12">
@@ -87,6 +58,17 @@
             </a>
         </div>
     </div>
+
+    <script>
+        document.getElementById('searchQuery').addEventListener('input', function () {
+            var searchQuery = this.value;
+            fetch(`@Url.Action("SearchContacts", "Contacts")?searchQuery=${searchQuery}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('contactsList').innerHTML = html;
+                });
+        });
+    </script>
 </body>
 
 </html>

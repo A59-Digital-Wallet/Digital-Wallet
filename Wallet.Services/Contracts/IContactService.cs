@@ -10,6 +10,6 @@ namespace Wallet.Services.Contracts
         Task<bool> RemoveContactAsync(string userId, string contactId);
         Task<Contact> GetContactAsync(string userId, string contactId);
 
-
+        Task<ICollection<ContactResponseDTO>> SearchForContactsAsync(string userId, string searchQuery);
     }
 }

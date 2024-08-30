@@ -53,7 +53,21 @@ namespace Wallet.MVC.Controllers
             return PartialView("_SearchResults", userDtos);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SearchContacts(string searchQuery)
+        {
+            string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
 
+            if (string.IsNullOrWhiteSpace(searchQuery))
+            {
+                // Return all contacts if the search query is empty
+                var contacts = await _contactService.GetContactsAsync(userId);
+                return PartialView("_ContactsListPartial", contacts);
+            }
+
+            var searchResults = await _contactService.SearchForContactsAsync(userId, searchQuery);
+            return PartialView("_ContactsListPartial", searchResults);
+        }
         [HttpPost]
         public async Task<IActionResult> AddContact(ContactRequest model)
         {
