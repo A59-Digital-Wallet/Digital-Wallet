@@ -6,58 +6,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Transaction</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center">Confirm Transaction</h2>
-        <div class="alert alert-warning" role="alert">
-            You are about to initiate a transaction that requires verification. Please confirm to proceed.
-        </div>
-        <form asp-action="ProcessConfirmTransaction" method="post">
-            @Html.AntiForgeryToken()
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto mt-12">
+        <div class="bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto">
+            <h2 class="text-2xl font-bold text-center mb-6">Confirm Transaction</h2>
 
-            <input type="hidden" asp-for="WalletId" />
-            <input type="hidden" asp-for="CardId" />
-            <input type="hidden" asp-for="Amount" />
-            <input type="hidden" asp-for="Description" />
-            <input type="hidden" asp-for="TransactionType" />
-            <input type="hidden" asp-for="TransactionToken" />
-            <input type="hidden" asp-for="RecipinetWalletId"/>
-
-            
-
-            <div class="mb-3">
-                <label>Amount:</label>
-                <span>@Model.Amount.ToString()</span>
+            <div class="p-4 mb-4 text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50" role="alert">
+                @if (Model.RequiresCode)
+                {
+                    <span class="font-medium">This is a high value transaction. Please confirm to proceed.</span>
+                }
+                else
+                {
+                    <span class="font-medium">You are about to initiate a transaction. Please confirm to proceed.</span>
+                }
             </div>
 
-            <div class="mb-3">
-                <label>Description:</label>
-                <span>@Model.Description</span>
-            </div>
-            @if (Model.RequiresCode)
-            {
-                <div class="mb-3">
-                    <label for="VerificationCode" class="form-label">Verification Code</label>
-                    <input type="text" asp-for="VerificationCode" class="form-control" required />
-                    <span asp-validation-for="VerificationCode" class="text-danger"></span>
+            <form asp-action="ProcessConfirmTransaction" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="WalletId" />
+                <input type="hidden" asp-for="CardId" />
+                <input type="hidden" asp-for="Amount" />
+                <input type="hidden" asp-for="Description" />
+                <input type="hidden" asp-for="TransactionType" />
+                <input type="hidden" asp-for="TransactionToken" />
+                <input type="hidden" asp-for="RecipinetWalletId" />
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold">Amount:</label>
+                    <span class="block text-gray-900">@Model.Amount.ToString()</span>
                 </div>
-            }
-           
 
-            <div class="mb-3 text-center">
-                <button type="submit" class="btn btn-primary">Confirm and Proceed</button>
-                <a href="@Url.Action("Index", "Dashboard")" class="btn btn-secondary" type="button" onclick="cancelTransaction()">Cancel</a>
-            </div>
-        </form>
-        
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-bold">Description:</label>
+                    <span class="block text-gray-900">@Model.Description</span>
+                </div>
+
+                @if (Model.RequiresCode)
+                {
+                    <div class="mb-4">
+                        <label for="VerificationCode" class="block text-gray-700 font-bold">Verification Code</label>
+                        <input type="text" asp-for="VerificationCode" class="form-input mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required />
+                        <span asp-validation-for="VerificationCode" class="text-red-500 text-sm mt-2 block"></span>
+                    </div>
+                }
+
+                <div class="flex justify-center space-x-4">
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-150">
+                        Confirm and Proceed
+                    </button>
+                    <a href="@Url.Action("Index", "Dashboard")" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition duration-150" onclick="cancelTransaction()">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function cancelTransaction() {
-            // Redirect to the home page without submitting the form
             window.location.href = '@Url.Action("Index", "Dashboard")';
         }
     </script>

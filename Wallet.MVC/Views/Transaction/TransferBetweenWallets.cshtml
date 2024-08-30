@@ -1,0 +1,84 @@
+﻿@model Wallet.MVC.Models.TransferViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Between Wallets</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto mt-12">
+        <div class="bg-white p-8 rounded-xl shadow-lg">
+            <h2 class="text-3xl font-semibold text-gray-900 mb-8 text-center">Transfer Between Wallets</h2>
+
+            <form method="post" asp-action="ProcessTransferBetweenWallets" class="space-y-6">
+                <!-- Hidden field to store FromWalletId -->
+                <input type="hidden" asp-for="FromWalletId" />
+
+                <!-- Select Wallet to Transfer To -->
+                <div>
+                    <label asp-for="ToWalletId" class="block text-sm font-medium text-gray-700">Transfer To Wallet</label>
+                    <select asp-for="ToWalletId" class="form-select mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">-- Select Wallet --</option>
+                        @foreach (var wallet in Model.RecipientWallets)
+                        {
+                            <option value="@wallet.Value">@wallet.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ToWalletId" class="text-red-500 text-sm mt-2 block"></span>
+                </div>
+
+                <!-- Transfer Amount -->
+                <div>
+                    <label asp-for="Amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <input asp-for="Amount" class="form-input block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter amount" step="0.01" />
+                        <span asp-validation-for="Amount" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500 text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Description Field -->
+                <div>
+                    <label asp-for="Description" class="block text-sm font-medium text-gray-700">Description (optional)</label>
+                    <input asp-for="Description" class="form-input mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a note" />
+                </div>
+
+                <!-- Recurring Transfer Option -->
+                <div class="flex items-center">
+                    <input asp-for="IsRecurring" type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                    <label asp-for="IsRecurring" class="ml-2 block text-sm font-medium text-gray-700">Make Recurring</label>
+                </div>
+
+                <!-- Recurrence Interval Selection (only shown if recurring) -->
+                <div id="recurrenceIntervalGroup" class="mt-4" style="display: none;">
+                    <label asp-for="RecurrenceInterval" class="block text-sm font-medium text-gray-700">Recurrence Interval</label>
+                    <select asp-for="RecurrenceInterval" class="form-select mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="Daily">Daily</option>
+                        <option value="Weekly">Weekly</option>
+                        <option value="Monthly">Monthly</option>
+                    </select>
+                    <span asp-validation-for="RecurrenceInterval" class="text-red-500 text-sm"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-center">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-150">Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('IsRecurring').addEventListener('change', function () {
+            var intervalGroup = document.getElementById('recurrenceIntervalGroup');
+            if (this.checked) {
+                intervalGroup.style.display = 'block';
+            } else {
+                intervalGroup.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

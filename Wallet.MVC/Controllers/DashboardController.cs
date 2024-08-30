@@ -109,7 +109,8 @@ namespace Wallet.MVC.Controllers
             // Filter transactions based on the selected wallet
             var transactionRequest = new TransactionRequestFilter
             {
-                WalletId = selectedWallet.Id
+                WalletId = selectedWallet.Id,
+                OrderBy = "desc"
             };
             var transactions = await _transactionService.FilterTransactionsAsync(1, 5, transactionRequest, userId);
 

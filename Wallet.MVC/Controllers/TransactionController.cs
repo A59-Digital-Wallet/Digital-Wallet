@@ -131,6 +131,7 @@ namespace Wallet.MVC.Controllers
         }
 
 
+
         // GET method to show the confirmation view
         [HttpGet]
         public IActionResult ConfirmTransaction(TransactionConfirmationViewModel model)
@@ -389,6 +390,61 @@ namespace Wallet.MVC.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> TransferBetweenWallets()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+            var wallets = await _walletService.GetUserWalletsAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
+            var model = new TransferViewModel
+            {
+                RecipientWallets = wallets.Where(w => w.Id != user.LastSelectedWalletId).Select(w => new SelectListItem
+                {
+                    Value = w.Id.ToString(),
+                    Text = $"{w.Name} - {w.Balance} {w.Currency}"
+                }).ToList(),
+                FromWalletId = (int)user.LastSelectedWalletId,
+                SelectedRecipientId = userId
+               
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ProcessTransferBetweenWallets(TransferViewModel model)
+        {
+            
+            if (ModelState.IsValid)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+                var transactionRequest = new TransactionRequestModel
+                {
+                  
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    TransactionType = TransactionType.Transfer,
+                    RecepientWalletId = model.ToWalletId,
+                    IsRecurring = model.IsRecurring,
+                    RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null,
+                    WalletId = model.FromWalletId
+                };
+
+                try
+                {
+                    await _transactionService.CreateTransactionAsync(transactionRequest, userId);
+                    return RedirectToAction("TransactionHistory");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+            }
+
+            return View("TransferBetweenWallets", model);
         }
 
 

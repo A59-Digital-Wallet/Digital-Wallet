@@ -17,6 +17,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- jQuery -->
@@ -57,6 +59,46 @@
             width: 24px;
             height: 24px;
         }
+
+        .btn-custom {
+            border-radius: 25px;
+            font-weight: bold;
+            padding: 8px 16px;
+            background-color: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+            .btn-custom:hover {
+                background-color: #4338ca;
+                transform: translateY(-3px);
+            }
+
+        .btn-custom-icon {
+            font-size: 18px; /* Slightly larger than the text */
+            margin-right: 6px;
+        }
+
+        /* Additional Button Colors */
+        .btn-primary {
+            background-color: #4f46e5;
+        }
+
+        .btn-secondary {
+            background-color: #22c55e;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+        }
+
+            .btn-danger:hover {
+                background-color: #dc2626;
+            }
+
     </style>
 </head>
 
@@ -138,9 +180,18 @@
 
                                 <!-- Transaction Action Buttons -->
                                 <div class="mt-4 flex justify-center space-x-4">
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn-primary py-2 px-4 rounded-full font-bold shadow">Deposit</a>
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn-primary py-2 px-4 rounded-full font-bold shadow">Withdraw</a>
-                                    <a href="@Url.Action("Create", "Wallet")" class="btn-primary py-2 px-4 rounded-full font-bold shadow">Create a Wallet</a>
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn-custom">
+                                        <i class="fas fa-money-bill-wave btn-custom-icon"></i> Deposit
+                                    </a>
+                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn-custom">
+                                        <i class="fas fa-wallet btn-custom-icon"></i> Withdraw
+                                    </a>
+                                    <a href="@Url.Action("Create", "Wallet")" class="btn-custom">
+                                        <i class="fas fa-plus-circle btn-custom-icon"></i> Create Wallet
+                                    </a>
+                                    <a href="@Url.Action("TransferBetweenWallets", "Transaction")" class="btn-custom">
+                                        <i class="fas fa-exchange-alt btn-custom-icon"></i> Transfer Between Wallets
+                                    </a>
                                 </div>
                             </div>
 

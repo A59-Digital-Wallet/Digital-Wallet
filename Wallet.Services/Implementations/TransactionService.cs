@@ -64,6 +64,10 @@ namespace Wallet.Services.Implementations
             var user = await userManager.FindByIdAsync(wallet.OwnerId);
 
             bool isHighValue = _transactionValidator.IsHighValueTransaction(transactionRequest, wallet);
+            if(user.OwnedWallets.Any(w => w.Id == transactionRequest.RecepientWalletId))
+            {
+                isHighValue = false;
+            }
             if(wallet.WalletType == WalletType.Joint && wallet.OwnerId != userId)
             {
                 isHighValue = true;
@@ -324,15 +328,25 @@ namespace Wallet.Services.Implementations
         {
             var transactions = await _transactionRepository.FilterBy(page, pageSize, filterParameters, userId);
             var userWalletIds = (await _walletRepository.GetUserWalletsAsync(userId)).Select(w => w.Id).ToList();
-
+            var user = await userManager.FindByIdAsync(userId);
             return transactions.Select(t =>
             {
                 var transactionDto = _transactionFactory.Map(t);
                 // Determine direction for each transaction based on user's wallet involvement
-                transactionDto.Direction = userWalletIds.Contains(t.WalletId)
-                    ? DetermineDirection(transactionDto, t.WalletId)
-                    : DetermineDirection(transactionDto, t.RecipientWalletId);
-                return transactionDto;
+                if(userWalletIds.Contains(t.WalletId) && t.TransactionType == TransactionType.Transfer && userWalletIds.Contains((int)t.RecipientWalletId))
+                {
+
+                    transactionDto.Direction = DetermineDirection(transactionDto, user.LastSelectedWalletId);                   
+                    return transactionDto;
+                }
+                else
+                {
+                    transactionDto.Direction = userWalletIds.Contains(t.WalletId)
+                                       ? DetermineDirection(transactionDto, t.WalletId)
+                                       : DetermineDirection(transactionDto, t.RecipientWalletId);
+                    return transactionDto;
+                }
+               
             }).ToList();
         }
 
