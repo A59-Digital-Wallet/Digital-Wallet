@@ -5,55 +5,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - My Digital Wallet</title>
+    <!-- Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOMqvgybY/e+idvT/bJchV3PPR8XTVHIMk5N3Ocz" crossorigin="anonymous">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #7f5a83, #0d324d);
+        }
+
+            .navbar a {
+                color: #e2e8f0;
+                transition: color 0.3s;
+            }
+
+                .navbar a:hover {
+                    color: #bb86fc;
+                }
+
+        .footer {
+            background: linear-gradient(135deg, #0d324d, #7f5a83);
+        }
+
+            .footer p {
+                color: #e2e8f0;
+            }
+
+        .btn-primary {
+            background-color: #7f5a83;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background-color: #5a3f6b;
+            }
+    </style>
 </head>
 
 <body class="bg-gray-100 font-sans">
+
     <!-- Navigation Bar -->
-    <nav class="bg-white shadow-md">
+    <nav class="navbar shadow-md">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="text-xl font-bold">
-                <a href="@Url.Action("Index", "Dashboard")" class="text-indigo-600">My Digital Wallet</a>
+            <div class="text-xl font-bold text-white">
+                <a href="@Url.Action("Index", "Dashboard")">My Digital Wallet</a>
             </div>
             <div>
                 <ul class="flex space-x-6">
                     @if (User.IsInRole("Admin"))
                     {
                         <li>
-                            <a href="@Url.Action("AdminPanel", "Admin")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Admin Panel</a>
+                            <a href="@Url.Action("AdminPanel", "Admin")" onclick="checkAuthentication(event)">Admin Panel</a>
                         </li>
                     }
                     <li>
-                        <a href="@Url.Action("Index", "Dashboard")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Home</a>
+                        <a href="@Url.Action("Index", "Dashboard")" onclick="checkAuthentication(event)">Home</a>
                     </li>
                     <li>
-                        <a href="@Url.Action("Index", "Contacts")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Contacts</a>
+                        <a href="@Url.Action("Index", "Contacts")" onclick="checkAuthentication(event)">Contacts</a>
                     </li>
                     <li>
-                        <a href="@Url.Action("Index", "Stats")" class="text-gray-600 hover:text-indigo-600" onclick="checkAuthentication(event)">Statistics</a>
+                        <a href="@Url.Action("Index", "Stats")" onclick="checkAuthentication(event)">Statistics</a>
                     </li>
-                    <!-- Additional Navigation Links -->
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li>
-                            <a href="@Url.Action("Profile", "User")" class="text-gray-600 hover:text-indigo-600">Profile</a>
+                            <a href="@Url.Action("Profile", "User")">Profile</a>
                         </li>
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="text-gray-600 hover:text-red-600">Log Out</button>
+                                <button type="submit" class="text-white hover:text-red-400">Log Out</button>
                             </form>
                         </li>
                     }
                     else
                     {
                         <li>
-                            <a href="@Url.Action("Login", "Account")" class="text-gray-600 hover:text-indigo-600">Log In</a>
+                            <a href="@Url.Action("Login", "Account")">Log In</a>
                         </li>
                         <li>
-                            <a href="@Url.Action("Register", "Account")" class="text-gray-600 hover:text-indigo-600">Register</a>
+                            <a href="@Url.Action("Register", "Account")">Register</a>
                         </li>
                     }
                 </ul>
@@ -67,8 +106,8 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-white mt-8 p-4 shadow-md text-center">
-        <p class="text-gray-600">&copy; 2024 My Digital Wallet. All rights reserved.</p>
+    <footer class="footer mt-8 p-4 shadow-md text-center">
+        <p>&copy; 2024 My Digital Wallet. All rights reserved.</p>
     </footer>
 
     <!-- Optional Scripts Section -->

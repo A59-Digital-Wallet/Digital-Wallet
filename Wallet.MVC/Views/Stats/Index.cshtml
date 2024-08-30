@@ -17,26 +17,26 @@
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto mt-8">
-        <h2 class="text-center text-3xl font-bold mb-6">Your Financial Overview</h2>
+        <h2 class="text-center text-3xl font-bold text-indigo-600 mb-6">Your Financial Overview</h2>
 
         <!-- Date Filter Form -->
         <div class="mb-6 flex justify-center">
             <form method="get" class="flex space-x-4">
                 <div>
                     <label for="startDate" class="sr-only">Start Date</label>
-                    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg">
+                    <input type="date" id="startDate" name="startDate" value="@Model.StartDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg shadow-sm">
                 </div>
                 <div>
                     <label for="endDate" class="sr-only">End Date</label>
-                    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg">
+                    <input type="date" id="endDate" name="endDate" value="@Model.EndDate.ToString()" class="form-input p-2 border border-gray-300 rounded-lg shadow-sm">
                 </div>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Filter</button>
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition">Filter</button>
             </form>
         </div>
 
         <!-- Total Balance Section -->
         <div class="mb-8">
-            <div class="bg-blue-500 text-white rounded-lg p-6 shadow-md">
+            <div class="bg-indigo-600 text-white rounded-lg p-6 shadow-md">
                 <div class="text-lg font-semibold">Total Balance in BGN</div>
                 <div class="text-3xl font-bold">
                     @Model.TotalBalance.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))
@@ -49,11 +49,13 @@
         {
             <div class="mb-6">
                 <div class="bg-white rounded-lg p-6 shadow-md">
-                    <div class="text-lg font-semibold mb-4">@wallet.WalletName (@wallet.Currency)</div>
-                    <p class="text-gray-700"><strong>Total Deposits:</strong> @wallet.TotalDeposits.ToString()</p>
-                    <p class="text-gray-700"><strong>Total Withdrawals:</strong> @wallet.TotalWithdrawals.ToString()</p>
-                    <p class="text-gray-700"><strong>Total Transfers Sent:</strong> @wallet.TotalTransfersSent.ToString()</p>
-                    <p class="text-gray-700"><strong>Total Transfers Received:</strong> @wallet.TotalTransfersReceived.ToString()</p>
+                    <div class="text-lg font-semibold text-indigo-600 mb-4">@wallet.WalletName (@wallet.Currency)</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <p class="text-gray-700"><strong>Total Deposits:</strong> @wallet.TotalDeposits.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))</p>
+                        <p class="text-gray-700"><strong>Total Withdrawals:</strong> @wallet.TotalWithdrawals.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))</p>
+                        <p class="text-gray-700"><strong>Total Transfers Sent:</strong> @wallet.TotalTransfersSent.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))</p>
+                        <p class="text-gray-700"><strong>Total Transfers Received:</strong> @wallet.TotalTransfersReceived.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(Model.CurrencyCulture))</p>
+                    </div>
                 </div>
             </div>
         }

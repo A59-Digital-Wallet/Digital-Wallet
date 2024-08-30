@@ -135,7 +135,7 @@ namespace Wallet.MVC.Controllers
                         Direction = t.Status.ToString(),
                         RecurrenceInterval = t.RecurrenceInterval
                     }).ToList()
-                }).ToList();
+                }).Take(3).ToList();
             }
             catch (EntityNotFoundException ex)
             {

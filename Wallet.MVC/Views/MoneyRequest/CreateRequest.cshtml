@@ -5,25 +5,27 @@
 }
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-<div class="container mx-auto mt-8">
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Request Money</h2>
+<div class="container mx-auto mt-12">
+    <div class="bg-white p-8 rounded-xl shadow-lg">
+        <h2 class="text-3xl font-semibold text-gray-900 mb-8 text-center">Request Money</h2>
 
-        <form method="post" asp-action="CreateRequest">
+        <form method="post" asp-action="CreateRequest" class="space-y-6">
             <!-- Hidden field to store RecipientId -->
             <input type="hidden" asp-for="RecipientId" />
 
             <!-- Requested Amount -->
-            <div class="mb-4">
-                <label asp-for="Amount" class="block text-gray-700 font-bold mb-2">Amount</label>
-                <input asp-for="Amount" class="form-input mt-1 block w-full p-2 border border-gray-300 rounded-lg" step="0.01" />
-                <span asp-validation-for="Amount" class="text-red-500 text-sm"></span>
+            <div>
+                <label asp-for="Amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <input asp-for="Amount" class="form-input block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter amount" step="0.01" />
+                    <span asp-validation-for="Amount" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500 text-sm"></span>
+                </div>
             </div>
 
             <!-- Requested Currency -->
-            <div class="mb-4">
-                <label asp-for="RequestedCurrency" class="block text-gray-700 font-bold mb-2">Currency</label>
-                <select asp-for="RequestedCurrency" class="form-select mt-1 block w-full p-2 border border-gray-300 rounded-lg">
+            <div>
+                <label asp-for="RequestedCurrency" class="block text-sm font-medium text-gray-700">Currency</label>
+                <select asp-for="RequestedCurrency" class="form-select mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="USD">USD</option>
                     <option value="EUR">EUR</option>
                     <option value="BGN">BGN</option>
@@ -33,13 +35,16 @@
             </div>
 
             <!-- Description Field -->
-            <div class="mb-4">
-                <label asp-for="Description" class="block text-gray-700 font-bold mb-2">Description</label>
-                <input asp-for="Description" class="form-input mt-1 block w-full p-2 border border-gray-300 rounded-lg" />
+            <div>
+                <label asp-for="Description" class="block text-sm font-medium text-gray-700">Description</label>
+                <input asp-for="Description" class="form-input mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a note " />
                 <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
             </div>
 
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">Request Money</button>
+            <!-- Submit Button -->
+            <div class="flex justify-center">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-150">Request Money</button>
+            </div>
         </form>
     </div>
 </div>
