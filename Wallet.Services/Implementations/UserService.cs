@@ -46,6 +46,27 @@ namespace Wallet.Services.Implementations
             _defaultProfilePicture = configuration["CloudinarySettings:DefaultProfilePictureUrl"];
 
         }
+
+        public UserService(
+           IUserRepository userRepository,
+           UserManager<AppUser> userManager,
+           ICloudinaryService cloudinaryService,
+           SignInManager<AppUser> signInManager,
+           IEmailSender emailSender,
+           
+           ITwoFactorAuthService twoFactorAuthService,
+           Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            _userRepository = userRepository;
+            _userManager = userManager;
+            _cloudinaryService = cloudinaryService;
+            _signInManager = signInManager;
+            _emailSender = emailSender;
+           
+            _twoFactorAuthService = twoFactorAuthService;
+            _defaultProfilePicture = configuration["CloudinarySettings:DefaultProfilePictureUrl"];
+
+        }
         public async Task<IdentityResult> RegisterUserAsync(RegisterModel model)
         {
             var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
