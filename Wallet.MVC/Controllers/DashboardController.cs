@@ -46,22 +46,12 @@ namespace Wallet.MVC.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData); // Or ClaimTypes.UserData based on your setup
 
-            //if (userId == null)
-            //{
-            //    return RedirectToAction("Login", "Account");
-            //}
             var user = await _userManager.FindByIdAsync(userId);
 
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
-
-            //if (user == null)
-            //{
-            //   return RedirectToAction("Login", "Account");
-            //}
-
 
             var wallets = await _walletService.GetUserWalletsAsync(userId);
 
@@ -196,8 +186,8 @@ namespace Wallet.MVC.Controllers
                 ReceivedRequests = receivedRequests.ToList(),
                 DailyBalanceLabels = dailyBalanceData.Item1,
                 DailyBalanceAmounts = dailyBalanceData.Item2,
-                SelectedInterval = interval
-
+                SelectedInterval = interval,
+                profilePicture = user.ProfilePictureURL
                 // Example of other potential properties
 
             };

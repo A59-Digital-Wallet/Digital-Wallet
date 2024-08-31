@@ -20,6 +20,7 @@ namespace Wallet.MVC.Models
         public List<string> DailyBalanceLabels { get; set; }
         public List<decimal> DailyBalanceAmounts { get; set; }
         public string SelectedInterval { get; set; }
+        public string profilePicture {  get; set; }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Wallet.Common.Exceptions;
 using Wallet.DTO.Request;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
@@ -101,6 +102,41 @@ namespace Wallet.MVC.Controllers
 
             return View();
         }
+
+        [HttpPost("uploadProfilePicture")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Please select a valid image file.";
+                return RedirectToAction("Profile"); // Corrected from "Index" to "Profile"
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.UserData); // Ensure the correct claim type
+
+            try
+            {
+                await _userService.UploadProfilePictureAsync(userId, file);
+                TempData["SuccessMessage"] = "Profile picture updated successfully!";
+            }
+            catch (EntityNotFoundException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An unexpected error occurred. Please try again later.";
+                // Log the exception for debugging purposes (consider using a logging library)
+            }
+
+            return RedirectToAction("Profile"); // Ensure redirect to "Profile" action
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> DisableTwoFactorAuthentication()

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly IUserService _userService;

@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Castle.Core.Configuration;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Wallet.Common.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
@@ -8,6 +10,7 @@ using Wallet.DTO.Request;
 using Wallet.DTO.Response;
 using Wallet.Services.Contracts;
 using Wallet.Services.Factory;
+using Wallet.Services.Models;
 using IEmailSender = Wallet.Services.Contracts.IEmailSender;
 
 namespace Wallet.Services.Implementations
@@ -21,8 +24,17 @@ namespace Wallet.Services.Implementations
         private readonly IEmailSender _emailSender;
         private readonly TwilioVerifyService _verifyService;
         private readonly ITwoFactorAuthService _twoFactorAuthService;
+        private readonly string _defaultProfilePicture;
 
-        public UserService(IUserRepository userRepository, UserManager<AppUser> userManager, ICloudinaryService cloudinaryService, SignInManager<AppUser> signInManager, IEmailSender emailSender, TwilioVerifyService verifyService, ITwoFactorAuthService twoFactorAuthService)
+        public UserService(
+            IUserRepository userRepository,
+            UserManager<AppUser> userManager,
+            ICloudinaryService cloudinaryService,
+            SignInManager<AppUser> signInManager, 
+            IEmailSender emailSender, 
+            TwilioVerifyService verifyService, 
+            ITwoFactorAuthService twoFactorAuthService, 
+            Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             _userRepository = userRepository;
             _userManager = userManager;
@@ -31,6 +43,8 @@ namespace Wallet.Services.Implementations
             _emailSender = emailSender;
             _verifyService = verifyService;
             _twoFactorAuthService = twoFactorAuthService;
+            _defaultProfilePicture = configuration["CloudinarySettings:DefaultProfilePictureUrl"];
+
         }
         public async Task<IdentityResult> RegisterUserAsync(RegisterModel model)
         {
@@ -54,6 +68,7 @@ namespace Wallet.Services.Implementations
                 Email = model.Email,
                 UserName = model.UserName,
                 PhoneNumber = model.PhoneNumber,
+                ProfilePictureURL = _defaultProfilePicture
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -193,13 +208,17 @@ namespace Wallet.Services.Implementations
 
             // Upload image to Cloudinary
             var uploadResult = await _cloudinaryService.UploadImageAsync(file);
-            if (uploadResult == null)
+            if (uploadResult == null || string.IsNullOrEmpty(uploadResult.Url))
+            {
                 throw new Exception(Messages.Service.ErrorUploadingFile);
+            }
 
             // Update user's profile picture URL
             var result = await _userRepository.UpdateProfilePictureAsync(userId, uploadResult.Url);
             if (!result)
+            {
                 throw new Exception(Messages.Service.FailedToUpdateImage);
+            }
         }
 
         public async Task<IdentityResult> ManageRoleAsync(string userId, string action)

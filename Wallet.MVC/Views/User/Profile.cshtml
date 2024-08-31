@@ -6,62 +6,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .profile-container {
-            max-width: 600px;
-            margin: 50px auto;
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container profile-container">
-        <h2 class="text-center mb-4">User Profile</h2>
-        <div class="text-center mb-4">
-            <img src="@Model.ProfilePictureUrl" alt="Profile Picture" class="rounded-circle" width="100" height="100">
+<body class="bg-gray-100">
+
+    <div class="container mx-auto mt-10 p-6 max-w-lg bg-white rounded-2xl shadow-lg relative">
+        <h2 class="text-center text-2xl font-bold mb-6">User Profile</h2>
+
+        <!-- Profile Picture with Hover Effect -->
+        <div class="relative w-32 h-32 mx-auto mb-6 group">
+            <img src="@Model.ProfilePictureUrl" alt="Profile Picture" class="w-full h-full rounded-full shadow-md object-cover" id="profilePictureImage" />
+            <div class="absolute inset-0 bg-black bg-opacity-60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button class="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-700 transition duration-300" onclick="toggleModal('profilePictureModal')">Edit</button>
+            </div>
         </div>
-        <form method="post" asp-action="UpdateProfile">
-            <div class="mb-3">
-                <label for="UserName" class="form-label">Username</label>
-                <input type="text" class="form-control" id="UserName" name="UserName" value="@Model.UserName" readonly>
+
+        <!-- User Information Form -->
+        <form method="post" asp-action="UpdateProfile" class="space-y-4">
+            <div>
+                <label for="UserName" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="UserName" name="UserName" value="@Model.UserName" readonly>
             </div>
-            <div class="mb-3">
-                <label for="Email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" readonly>
+            <div>
+                <label for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="Email" name="Email" value="@Model.Email" readonly>
             </div>
-            <div class="mb-3">
-                <label for="FirstName" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="FirstName" name="FirstName" value="@Model.FirstName">
+            <div>
+                <label for="FirstName" class="block text-sm font-medium text-gray-700">First Name</label>
+                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="FirstName" name="FirstName" value="@Model.FirstName">
             </div>
-            <div class="mb-3">
-                <label for="LastName" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName">
+            <div>
+                <label for="LastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="LastName" name="LastName">
             </div>
-            <div class="mb-3">
-                <label for="PhoneNumber" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
+            <div>
+                <label for="PhoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="PhoneNumber" name="PhoneNumber">
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">Update Profile</button>
+            <div class="text-center mt-4">
+                <button type="submit" class="bg-indigo-600 text-white py-2 px-6 rounded-full hover:bg-indigo-700 transition duration-300">Update Profile</button>
             </div>
         </form>
 
         <!-- Two-Factor Authentication Setup -->
-        <div class="text-center mt-4">
+        <div class="text-center mt-6">
             @if (Model.IsTwoFactorEnabled)
             {
-                <a href="@Url.Action("DisableTwoFactorAuthentication", "User")" class="btn btn-warning">Disable Two-Factor Authentication</a>
+                <a href="@Url.Action("DisableTwoFactorAuthentication", "User")" class="bg-yellow-500 text-white py-2 px-4 rounded-full hover:bg-yellow-600 transition duration-300">Disable Two-Factor Authentication</a>
             }
             else
             {
-                <a href="@Url.Action("EnableTwoFactorAuthentication", "User")" class="btn btn-primary">Enable Two-Factor Authentication</a>
+                <a href="@Url.Action("EnableTwoFactorAuthentication", "User")" class="bg-indigo-600 text-white py-2 px-4 rounded-full hover:bg-indigo-700 transition duration-300">Enable Two-Factor Authentication</a>
             }
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Profile Picture Upload Modal -->
+    <div id="profilePictureModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden" onclick="toggleModal('profilePictureModal')">
+        <div class="bg-white shadow-lg border border-gray-300 rounded-2xl p-8 max-w-xs text-center" onclick="event.stopPropagation()">
+            <span class="block text-2xl font-semibold text-black mb-4">Upload your file</span>
+            <p class="text-sm text-gray-600 mb-6">File should be an image</p>
+
+            <!-- Upload Profile Picture Form -->
+            <form asp-action="UploadProfilePicture" method="post" enctype="multipart/form-data" id="uploadForm" onsubmit="handleFormSubmit(event)">
+                <div class="drop-container flex flex-col items-center justify-center gap-3 p-6 mt-6 bg-white border-2 border-dashed border-blue-300 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-gray-700 transition-all duration-200" id="drop-container">
+                    <span class="drop-title text-gray-700 font-bold">Drop files here</span>
+                    or
+                    <input type="file" accept="image/*" required id="file-input" name="file" class="hidden">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="mt-4 bg-green-500 text-white py-2 px-4 rounded-full hover:bg-green-600 transition duration-300">
+                    Upload
+                </button>
+
+                <!-- Cancel Button -->
+                <button type="button" class="mt-4 bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition duration-300" onclick="toggleModal('profilePictureModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+        }
+
+        // Prevent form submission if no file is selected
+        function handleFormSubmit(event) {
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files.length) {
+                event.preventDefault();
+                alert('Please select a file before uploading.');
+            }
+        }
+
+        // Drag and Drop handling
+        const dropContainer = document.getElementById('drop-container');
+        const fileInput = document.getElementById('file-input');
+
+        dropContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropContainer.classList.add('bg-blue-50', 'border-blue-500'); // Visual feedback
+        });
+
+        dropContainer.addEventListener('dragleave', () => {
+            dropContainer.classList.remove('bg-blue-50', 'border-blue-500'); // Remove visual feedback
+        });
+
+        dropContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropContainer.classList.remove('bg-blue-50', 'border-blue-500'); // Remove visual feedback
+
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files; // Set dropped files to file input
+                updateDropArea(fileInput.files[0]); // Update drop area with file info
+            }
+        });
+
+        dropContainer.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling up
+            fileInput.click(); // Click input when drop area is clicked
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                updateDropArea(fileInput.files[0]); // Update drop area with file info
+            }
+        });
+
+        function updateDropArea(file) {
+            const dropTitle = document.querySelector('.drop-title');
+            dropTitle.innerText = file.name; // Show selected file name
+        }
+    </script>
 </body>
 </html>
