@@ -113,6 +113,7 @@ namespace Wallet.MVC.Controllers
             {
                 HttpOnly = true,
                 Secure = true, // Use HTTPS in production
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddDays(1) // Match the JWT token expiry
             };
 

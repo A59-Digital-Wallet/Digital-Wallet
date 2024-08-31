@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
 using Wallet.DTO.Request;
@@ -7,8 +8,11 @@ using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+   
     public class CategoryController : Controller
     {
+
         private readonly ICategoryService _categoryService;
 
         public CategoryController(ICategoryService categoryService)
@@ -83,6 +87,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCategory(CategoryRequestDTO categoryRequest)
         {
             if (ModelState.IsValid)
@@ -134,6 +139,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
             string userId = User.FindFirstValue(ClaimTypes.UserData);

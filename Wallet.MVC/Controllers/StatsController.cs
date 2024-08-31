@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+ 
     public class StatsController : Controller
     {
         private readonly IStatsService _statsService;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using Wallet.Data.Models;
@@ -9,6 +10,8 @@ using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+   
     public class WalletController : Controller
     {
         private readonly IWalletService _walletService;
@@ -28,6 +31,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Create(UserWalletRequest model)
         {
             if (ModelState.IsValid)
@@ -114,6 +118,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddUsersToJointWallet(AddUserToJointWalletViewModel model)
         {
             var ownerId = User.FindFirstValue(ClaimTypes.UserData);
@@ -180,6 +185,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddMember(int walletId, string userId)
         {
             var ownerId = User.FindFirstValue(ClaimTypes.UserData);
@@ -197,6 +203,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveMember(int walletId, string userId)
         {
             var ownerId = User.FindFirstValue(ClaimTypes.UserData);

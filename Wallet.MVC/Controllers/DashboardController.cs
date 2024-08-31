@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
@@ -13,6 +14,7 @@ using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
+    
     public class DashboardController : Controller
     {
 
@@ -214,6 +216,8 @@ namespace Wallet.MVC.Controllers
         
         // This method handles setting the preferred wallet
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public IActionResult SetPreferredWallet(int walletId)
         {
             // Update the preferred wallet in the session

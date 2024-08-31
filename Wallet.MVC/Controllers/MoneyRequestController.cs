@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
 using Wallet.Data.Models.Enums;
@@ -8,7 +9,7 @@ using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
-
+    [Authorize]
     public class MoneyRequestController : Controller
     {
         private readonly IMoneyRequestService _moneyRequestService;
@@ -67,6 +68,7 @@ namespace Wallet.MVC.Controllers
 
         // POST method to process the transaction after confirmation
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessConfirmTransaction(TransactionConfirmationViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -108,6 +110,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveRequest(int requestId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -143,6 +146,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectRequest(int requestId)
         {
             try

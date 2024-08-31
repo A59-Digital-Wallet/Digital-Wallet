@@ -13,7 +13,7 @@
             </div>
             <div class="flex justify-between items-center">
                 <form asp-action="RemoveContact" method="post">
-                    @Html.AntiForgeryToken()
+                    @Html.AntiForgeryToken()  <!-- Anti-forgery token added here -->
                     <input type="hidden" name="contactId" value="@contact.Id" />
                     <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full focus:outline-none transition duration-150">
                         Remove

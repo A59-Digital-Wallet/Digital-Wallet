@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Wallet.Common.Exceptions;
 using Wallet.DTO.Request;
 using Wallet.DTO.Response;
@@ -6,6 +7,8 @@ using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+   
     public class ContactsController : Controller
     {
 
@@ -18,6 +21,7 @@ namespace Wallet.MVC.Controllers
             _userService = userService;
         }
         [HttpGet]
+       
         public async Task<IActionResult> Index()
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
@@ -26,6 +30,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpGet]
+      
         public async Task<IActionResult> RecentContacts()
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
@@ -35,6 +40,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpGet]
+        
         public async Task<IActionResult> SearchContact(string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
@@ -54,6 +60,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpGet]
+        
         public async Task<IActionResult> SearchContacts(string searchQuery)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
@@ -69,6 +76,7 @@ namespace Wallet.MVC.Controllers
             return PartialView("_ContactsListPartial", searchResults);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddContact(ContactRequest model)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
@@ -81,6 +89,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RemoveContact(string contactId)
         {
             string userId = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;

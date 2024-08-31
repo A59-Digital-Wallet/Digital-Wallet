@@ -1,4 +1,5 @@
-﻿@model UserSearchViewModel
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model UserSearchViewModel
 @{
     var user = User.FindFirst(System.Security.Claims.ClaimTypes.UserData)?.Value;
 }
@@ -24,6 +25,7 @@
     <h2 class="font-bold text-xl mb-4">Search Users</h2>
     <div class="flex justify-left mb-4">
         <form asp-action="SearchUsers" method="get" class="flex items-center space-x-2">
+            @Html.AntiForgeryToken()
             <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search users..." class="w-full p-2 border border-gray-300 rounded-lg" />
             <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Search</button>
         </form>
@@ -49,16 +51,16 @@
                         <td class="p-4">
                             @foreach (var role in userWithRoles.Roles)
                             {
-                                if(role == "User")
+                                if (role == "User")
                                 {
                                     <span class="bg-blue-600 text-white rounded font-bold py-1 px-4 ">@role</span>
 
                                 }
-                                else if(role == "Blocked")
+                                else if (role == "Blocked")
                                 {
                                     <span class="bg-red-600 text-white rounded font-bold py-1 px-4 ">@role</span>
                                 }
-                                else if(role == "Admin")
+                                else if (role == "Admin")
                                 {
                                     <span class="bg-violet-500 text-white rounded font-bold py-1 px-4 ">@role</span>
                                 }
@@ -68,6 +70,7 @@
                             @if (user != userWithRoles.User.Id)
                             {
                                 <form asp-action="ManageRole" method="post" class="inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="userId" value="@userWithRoles.User.Id" />
                                     <input type="hidden" name="searchTerm" value="@Model.SearchTerm" />
                                     <select name="action" class="border border-gray-300 rounded-lg p-2">

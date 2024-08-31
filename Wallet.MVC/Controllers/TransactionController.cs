@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
@@ -13,6 +14,8 @@ using Wallet.Services.Implementations;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+   
     public class TransactionController : Controller
     {
         private readonly IWalletService _walletService;
@@ -67,6 +70,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessTransaction(WalletAndCardSelectionViewModel model)
         {
             if (ModelState.IsValid)
@@ -113,6 +117,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelRecurringTransaction(int transactionId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -312,6 +317,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessTransfer(TransferViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -379,6 +385,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SearchRecipientWallets(string searchTerm)
         {
             try
@@ -414,6 +421,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessTransferBetweenWallets(TransferViewModel model)
         {
             

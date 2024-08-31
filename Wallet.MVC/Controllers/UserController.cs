@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.DTO.Request;
 using Wallet.MVC.Models;
@@ -6,6 +7,8 @@ using Wallet.Services.Contracts;
 
 namespace Wallet.MVC.Controllers
 {
+    [Authorize]
+  
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -42,6 +45,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(UserProfileViewModel model)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -79,6 +83,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnableTwoFactorAuthentication(string code)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);

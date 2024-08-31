@@ -7,6 +7,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,9 +15,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body class="bg-gray-900 text-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center text-green-500 mb-4">Verify Email</h2>
+
+<body class="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
+        <h2 class="text-3xl font-extrabold text-center text-green-400 mb-6">Verify Your Email</h2>
 
         @if (!ViewData.ModelState.IsValid)
         {
@@ -25,22 +27,25 @@
             </div>
         }
 
-        <form method="post" asp-controller="Account" asp-action="VerifyEmail" class="space-y-4">
+        <form method="post" asp-controller="Account" asp-action="VerifyEmail" class="space-y-6">
             @Html.AntiForgeryToken()
-            <div class="form-group">
-                <label asp-for="Email" class="block text-gray-300">Email</label>
-                <input asp-for="Email" class="form-control w-full p-3 rounded bg-gray-700 border border-gray-600 text-gray-300 placeholder-gray-500" />
-                <span asp-validation-for="Email" class="text-red-500"></span>
+            <div>
+                <label asp-for="Email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                <input asp-for="Email" class="block w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-300 placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:outline-none transition duration-200" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-red-500 text-sm mt-2"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Code" class="block text-gray-300">Verification Code</label>
-                <input asp-for="Code" class="form-control w-full p-3 rounded bg-gray-700 border border-gray-600 text-gray-300 placeholder-gray-500" />
-                <span asp-validation-for="Code" class="text-red-500"></span>
+
+            <div>
+                <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2">Verification Code</label>
+                <input asp-for="Code" class="block w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-300 placeholder-gray-500 focus:ring-2 focus:ring-green-400 focus:outline-none transition duration-200" placeholder="Enter your code" />
+                <span asp-validation-for="Code" class="text-red-500 text-sm mt-2"></span>
             </div>
-            <button type="submit" class="bg-green-500 text-white p-3 rounded w-full hover:bg-green-700 transition duration-300">Verify</button>
+
+            <button type="submit" class="w-full bg-green-500 text-white font-bold p-3 rounded-lg hover:bg-green-600 focus:ring-2 focus:ring-green-400 transition duration-200">Verify Email</button>
         </form>
-        <p class="text-center text-gray-400 mt-4">
-            Didn't receive a code? <a href="@Url.Action("ResendVerification", "Account")" class="text-green-500 hover:underline">Resend Code</a>
+
+        <p class="text-center text-gray-400 mt-6">
+            Didn't receive a code? <a href="@Url.Action("ResendVerification", "Account")" class="text-green-400 hover:underline">Resend Code</a>
         </p>
     </div>
 
@@ -48,4 +53,5 @@
         <partial name="_ValidationScriptsPartial" />
     }
 </body>
+
 </html>

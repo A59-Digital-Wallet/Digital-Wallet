@@ -50,6 +50,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRole(string userId, string action)
         {
             string searchTerm = Request.Form["searchTerm"];
@@ -85,6 +86,7 @@ namespace Wallet.MVC.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetInterestRateAsync(decimal newRate)
         {
             bool isSuccessful = await _overdraftSettingsService.SetInterestRateAsync(newRate);
@@ -101,6 +103,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetOverdraftLimitAsync(decimal newLimit)
         {
             bool isSuccessful = await _overdraftSettingsService.SetOverdraftLimitAsync(newLimit);
@@ -117,6 +120,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetConsecutiveNegativeMonthsAsync(int months)
         {
             bool isSuccessful = await _overdraftSettingsService.SetConsecutiveNegativeMonthsAsync(months);

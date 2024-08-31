@@ -62,13 +62,23 @@
     <script>
         document.getElementById('searchQuery').addEventListener('input', function () {
             var searchQuery = this.value;
-            fetch(`@Url.Action("SearchContacts", "Contacts")?searchQuery=${searchQuery}`)
+
+            // Get the anti-forgery token
+            var antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            fetch(`@Url.Action("SearchContacts", "Contacts")?searchQuery=${searchQuery}`, {
+                method: 'GET',
+                headers: {
+                    'RequestVerificationToken': antiForgeryToken  // Add the anti-forgery token to the header
+                }
+            })
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('contactsList').innerHTML = html;
                 });
         });
     </script>
+
 </body>
 
 </html>
