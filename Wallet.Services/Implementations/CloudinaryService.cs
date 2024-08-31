@@ -1,43 +1,43 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Wallet.Services.Models;
+using Microsoft.AspNetCore.Http;
+using Wallet.Common.Helpers;
 using Wallet.Services.Contracts;
+using Wallet.Services.Models;
 
-namespace Wallet.Services.Implementations
+public class CloudinaryService : ICloudinaryService
 {
-    public class CloudinaryService : ICloudinaryService
+    private readonly CloudinaryHelper _cloudinaryHelper; 
+
+    public CloudinaryService(CloudinaryHelper cloudinaryHelper) 
     {
-        private readonly Cloudinary _cloudinary;
+        _cloudinaryHelper = cloudinaryHelper;
+    }
 
-        public CloudinaryService(Cloudinary cloudinary)
+    public async Task<CloudinaryUploadResult> UploadImageAsync(IFormFile file)
+    {
+        if (file.Length > 0)
         {
-            _cloudinary = cloudinary;
-        }
-        public async Task<CloudinaryUploadResult> UploadImageAsync(IFormFile file)
-        {
-            if (file.Length > 0)
+            using (var stream = file.OpenReadStream())
             {
-                using (var stream = file.OpenReadStream())
+                var uploadParams = new ImageUploadParams()
                 {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Crop("fill").Gravity("face").Width(150).Height(150)
-                    };
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Crop("fill").Gravity("face").Width(150).Height(150)
+                };
 
-                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                // Use the helper class to upload the image
+                var uploadResult = await _cloudinaryHelper.UploadImageAsync(uploadParams);
 
-                    // Map the ImageUploadResult to CloudinaryUploadResult
-                    return new CloudinaryUploadResult
-                    {
-                        Url = uploadResult.SecureUrl?.AbsoluteUri,
-                        PublicId = uploadResult.PublicId
-                    };
-                }
+                // Map the ImageUploadResult to CloudinaryUploadResult
+                return new CloudinaryUploadResult
+                {
+                    Url = uploadResult.SecureUrl?.AbsoluteUri,
+                    PublicId = uploadResult.PublicId
+                };
             }
-
-            return null;
         }
+
+        return null;
     }
 }

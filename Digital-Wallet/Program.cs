@@ -8,6 +8,7 @@ using Org.BouncyCastle.Asn1.Pkcs;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 using Twilio.Clients;
+using Wallet.Common.Helpers;
 using Wallet.Data.Db;
 using Wallet.Data.Helpers;
 using Wallet.Data.Helpers.Contracts;
@@ -108,6 +109,9 @@ namespace Digital_Wallet
                 var config = provider.GetRequiredService<CloudinarySettings>();
                 return new Cloudinary(new Account(config.CloudName, config.ApiKey, config.ApiSecret));
             });
+
+            // Register CloudinaryHelper instead of Cloudinary directly
+            builder.Services.AddSingleton<CloudinaryHelper>();
 
             // Register CloudinaryService
             builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();

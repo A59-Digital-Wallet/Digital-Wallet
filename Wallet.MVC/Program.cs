@@ -20,6 +20,8 @@ using Wallet.Services.Validation.TransactionValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Wallet.Common.Helpers;
+using static Wallet.Common.Helpers.Messages;
 
 namespace Wallet.MVC
 {
@@ -118,6 +120,23 @@ namespace Wallet.MVC
             builder.Services.AddScoped<SavingsInterestService>();
             builder.Services.AddHostedService<InterestHostedService>();
             builder.Services.AddScoped<IStatsService, StatsService>();
+
+
+            var cloudinaryConfig = builder.Configuration.GetSection("CloudinarySettings").Get<CloudinarySettings>();
+            builder.Services.AddSingleton(cloudinaryConfig);
+
+            // Register Cloudinary instance
+            builder.Services.AddSingleton(provider =>
+            {
+                var config = provider.GetRequiredService<CloudinarySettings>();
+                return new Cloudinary(new Account(config.CloudName, config.ApiKey, config.ApiSecret));
+            });
+
+            // Register CloudinaryHelper instead of Cloudinary directly
+            builder.Services.AddSingleton<CloudinaryHelper>();
+
+            // Register CloudinaryService
+            builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
 
             // Seed roles and users
@@ -221,6 +240,8 @@ namespace Wallet.MVC
 
             // Register CloudinaryService
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+
 
             // Register other services
             services.AddTransient<IEmailSender, EmailSender>();
