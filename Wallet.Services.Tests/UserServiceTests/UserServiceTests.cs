@@ -41,18 +41,37 @@ namespace Wallet.Services.Tests
         {
             _mockUserRepository = new Mock<IUserRepository>();
 
-            var store = new Mock<IUserStore<AppUser>>();
-            _mockUserManager = new Mock<UserManager<AppUser>>(store.Object, null, null, null, null, null, null, null, null);
+            var mockUserStore = new Mock<IUserStore<AppUser>>();
+            var mockOptions = new Mock<IOptions<IdentityOptions>>();
+            var mockPasswordHasher = new Mock<IPasswordHasher<AppUser>>();
+            var mockUserValidators = new List<IUserValidator<AppUser>> { new Mock<IUserValidator<AppUser>>().Object };
+            var mockPasswordValidators = new List<IPasswordValidator<AppUser>> { new Mock<IPasswordValidator<AppUser>>().Object };
+            var mockKeyNormalizer = new Mock<ILookupNormalizer>();
+            var mockErrors = new Mock<IdentityErrorDescriber>();
+            var mockServices = new Mock<IServiceProvider>();
+            var mockLogger = new Mock<ILogger<UserManager<AppUser>>>();
 
-            var contextAccessor = new Mock<IHttpContextAccessor>();
-            var userPrincipalFactory = new Mock<IUserClaimsPrincipalFactory<AppUser>>();
-            var options = new Mock<IOptions<IdentityOptions>>();
-            var logger = new Mock<ILogger<SignInManager<AppUser>>>();
-            var schemes = new Mock<IAuthenticationSchemeProvider>();
-            var userConfirmation = new Mock<IUserConfirmation<AppUser>>();
-            _mockSignInManager = new Mock<SignInManager<AppUser>>(_mockUserManager.Object, contextAccessor.Object, userPrincipalFactory.Object, options.Object, logger.Object, schemes.Object, userConfirmation.Object);
+            _mockUserManager = new Mock<UserManager<AppUser>>(
+                mockUserStore.Object,
+                mockOptions.Object,
+                mockPasswordHasher.Object,
+                mockUserValidators,
+                mockPasswordValidators,
+                mockKeyNormalizer.Object,
+                mockErrors.Object,
+                mockServices.Object,
+                mockLogger.Object);
 
             _mockCloudinaryService = new Mock<ICloudinaryService>();
+            _mockSignInManager = new Mock<SignInManager<AppUser>>(
+                _mockUserManager.Object,
+                new Mock<IHttpContextAccessor>().Object,
+                new Mock<IUserClaimsPrincipalFactory<AppUser>>().Object,
+                new Mock<IOptions<IdentityOptions>>().Object,
+                new Mock<ILogger<SignInManager<AppUser>>>().Object,
+                new Mock<IAuthenticationSchemeProvider>().Object,
+                new Mock<IUserConfirmation<AppUser>>().Object);
+
             _mockEmailSender = new Mock<IEmailSender>();
             _mockTwoFactorAuthService = new Mock<ITwoFactorAuthService>();
             _mockConfiguration = new Mock<IConfiguration>();
@@ -70,7 +89,7 @@ namespace Wallet.Services.Tests
 
 
 
-      
+
 
 
 
@@ -234,84 +253,118 @@ namespace Wallet.Services.Tests
             Assert.IsTrue(result);
         }
 
+        [TestMethod]
+        public async Task RegisterUserAsync_Should_Register_User_And_Send_Confirmation_Email()
+        {
+            // Arrange
+            var registerModel = new RegisterModel
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "johndoe1@example.com",
+                UserName = "johndoe1",
+                PhoneNumber = "123456789000",
+                Password = "Password123!"
+            };
 
+            var mockUser = new AppUser
+            {
+                FirstName = "John",
+                LastName = "Doe",
+                Email = registerModel.Email,
+                UserName = registerModel.UserName,
+                PhoneNumber = registerModel.PhoneNumber,
+            };
 
+            // Mock finding by email to return null (user does not exist)
+            _mockUserManager.Setup(um => um.FindByEmailAsync(registerModel.Email))
+                .ReturnsAsync((AppUser)null);
+
+            // Mock user creation
+            _mockUserManager.Setup(um => um.CreateAsync(It.IsAny<AppUser>(), registerModel.Password))
+                .ReturnsAsync(IdentityResult.Success);
+
+            // Mock adding to role
+            _mockUserManager.Setup(um => um.AddToRoleAsync(It.IsAny<AppUser>(), "User"))
+                .ReturnsAsync(IdentityResult.Success);
+
+            // Mock sending email
+            _mockEmailSender.Setup(es => es.SendEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _userService.RegisterUserAsync(registerModel);
+
+            // Assert
+            Assert.IsTrue(result.Succeeded);
+            _mockUserManager.Verify(um => um.CreateAsync(It.IsAny<AppUser>(), registerModel.Password), Times.Once);
+            _mockEmailSender.Verify(es => es.SendEmail(It.IsAny<string>(), registerModel.Email, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task UploadProfilePictureAsync_Should_Upload_Image_And_Update_Profile_Picture()
+        {
+            // Arrange
+            var userId = "user1";
+            var fileMock = new Mock<IFormFile>();
+            fileMock.Setup(f => f.FileName).Returns("profile.jpg");
+            fileMock.Setup(f => f.Length).Returns(100);
+
+            var uploadResult = new CloudinaryUploadResult { Url = "http://example.com/profile.jpg" };
+
+            _mockCloudinaryService.Setup(cs => cs.UploadImageAsync(fileMock.Object))
+                .ReturnsAsync(uploadResult);
+
+            _mockUserRepository.Setup(repo => repo.UpdateProfilePictureAsync(userId, uploadResult.Url.ToString()))
+                .ReturnsAsync(true);
+
+            // Act
+            await _userService.UploadProfilePictureAsync(userId, fileMock.Object);
+
+            // Assert
+            _mockCloudinaryService.Verify(cs => cs.UploadImageAsync(fileMock.Object), Times.Once);
+            _mockUserRepository.Verify(repo => repo.UpdateProfilePictureAsync(userId, uploadResult.Url.ToString()), Times.Once);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "No file was uploaded.")]
+        public async Task UploadProfilePictureAsync_Should_Throw_Exception_When_File_Is_Null()
+        {
+            // Act
+            await _userService.UploadProfilePictureAsync("user1", null);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "Invalid file format.")]
+        public async Task UploadProfilePictureAsync_Should_Throw_Exception_When_File_Format_Is_Invalid()
+        {
+            // Arrange
+            var fileMock = new Mock<IFormFile>();
+            fileMock.Setup(f => f.FileName).Returns("profile.txt");
+            fileMock.Setup(f => f.Length).Returns(100);
+
+            // Act
+            await _userService.UploadProfilePictureAsync("user1", fileMock.Object);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception), "Error uploading file.")]
+        public async Task UploadProfilePictureAsync_Should_Throw_Exception_When_Upload_Fails()
+        {
+            // Arrange
+            var userId = "user1";
+            var fileMock = new Mock<IFormFile>();
+            fileMock.Setup(f => f.FileName).Returns("profile.jpg");
+            fileMock.Setup(f => f.Length).Returns(100);
+
+            _mockCloudinaryService.Setup(cs => cs.UploadImageAsync(fileMock.Object))
+                .ReturnsAsync((CloudinaryUploadResult)null);
+
+            // Act
+            await _userService.UploadProfilePictureAsync(userId, fileMock.Object);
+        }
     }
-
-    public class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
-    {
-        private readonly IQueryProvider _inner;
-
-        public TestAsyncQueryProvider(IQueryProvider inner)
-        {
-            _inner = inner;
-        }
-
-        public IQueryable CreateQuery(Expression expression)
-        {
-            return new TestAsyncEnumerable<TEntity>(expression);
-        }
-
-        public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
-        {
-            return new TestAsyncEnumerable<TElement>(expression);
-        }
-
-        public object Execute(Expression expression)
-        {
-            return _inner.Execute(expression);
-        }
-
-        public TResult Execute<TResult>(Expression expression)
-        {
-            return _inner.Execute<TResult>(expression);
-        }
-
-        public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
-        {
-            return new TestAsyncEnumerable<TResult>(expression);
-        }
-
-        public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-        {
-            return Execute<TResult>(expression);
-        }
-    }
-
-    public class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
-    {
-        public TestAsyncEnumerable(IEnumerable<T> enumerable) : base(enumerable) { }
-        public TestAsyncEnumerable(Expression expression) : base(expression) { }
-
-        public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-        {
-            return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
-        }
-
-        IQueryProvider IQueryable.Provider => new TestAsyncQueryProvider<T>(this);
-    }
-
-    public class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
-    {
-        private readonly IEnumerator<T> _inner;
-
-        public TestAsyncEnumerator(IEnumerator<T> inner)
-        {
-            _inner = inner;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            _inner.Dispose();
-            return ValueTask.CompletedTask;
-        }
-
-        public ValueTask<bool> MoveNextAsync()
-        {
-            return new ValueTask<bool>(_inner.MoveNext());
-        }
-
-        public T Current => _inner.Current;
-    }
-
 }
+
+   
+

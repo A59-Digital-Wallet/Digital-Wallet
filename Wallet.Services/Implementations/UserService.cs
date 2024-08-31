@@ -76,8 +76,10 @@ namespace Wallet.Services.Implementations
             }
 
             // Check if the phone number is already in use
-            var existingUserByPhoneNumber = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
+            var existingUserByPhoneNumber =  _userManager.Users
+                .FirstOrDefault(u => u.PhoneNumber == model.PhoneNumber);
+
+            
             if (existingUserByPhoneNumber != null)
             {
                 throw new InvalidOperationException("Phone number is already in use.");
