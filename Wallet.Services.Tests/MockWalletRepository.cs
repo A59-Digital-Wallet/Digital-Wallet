@@ -23,7 +23,7 @@ namespace Wallet.Services.Tests
                 {
                     Id = 1,
                     Name = "Savings Wallet",
-                    WalletType = WalletType.Savings,
+                    WalletType = WalletType.Joint,
                     Balance = 1000m,
                     Currency = Currency.USD,
                     IsOverdraftEnabled = false,

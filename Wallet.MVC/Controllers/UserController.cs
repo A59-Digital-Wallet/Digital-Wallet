@@ -141,7 +141,7 @@ namespace Wallet.MVC.Controllers
         [HttpGet]
         public async Task<IActionResult> DisableTwoFactorAuthentication()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
             var user = await _userService.GetUserByIdAsync(userId);
 
             await _twoFactorAuthService.DisableTwoFactorAuthenticationAsync(user);
