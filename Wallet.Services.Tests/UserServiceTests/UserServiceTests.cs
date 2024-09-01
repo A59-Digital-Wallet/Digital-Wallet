@@ -82,6 +82,7 @@ namespace Wallet.Services.Tests
                 _mockCloudinaryService.Object,
                 _mockSignInManager.Object,
                 _mockEmailSender.Object,
+                null,
                 _mockTwoFactorAuthService.Object,
                 _mockConfiguration.Object
             );

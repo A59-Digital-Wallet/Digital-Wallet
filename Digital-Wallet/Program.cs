@@ -235,7 +235,7 @@ namespace Digital_Wallet
             app.Run();
         }
 
-        private static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
+        public static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
         {
             // Define roles to be created
             string[] roleNames = { "Admin", "User", "Blocked" };

@@ -384,20 +384,7 @@ namespace Wallet.MVC.Controllers
 
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SearchRecipientWallets(string searchTerm)
-        {
-            try
-            {
-                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(searchTerm);
-                return Json(userWithWallets);
-            }
-            catch (ArgumentException ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+      
 
         [HttpGet]
         public async Task<IActionResult> TransferBetweenWallets()

@@ -137,24 +137,6 @@ namespace Wallet.API.Controllers
         }
 
 
-        [HttpGet("search-user")]
-        [Authorize]
-        public async Task<IActionResult> SearchUser(string searchTerm)
-        {
-            try
-            {
-                var userWithWallets = await _transactionService.SearchUserWithWalletsAsync(searchTerm);
-                return Ok(userWithWallets);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = Messages.OperationFailed, details = ex.Message });
-            }
-        }
 
         [HttpPost("cancel-recurring-transaction/{transactionId}")]
         [Authorize]

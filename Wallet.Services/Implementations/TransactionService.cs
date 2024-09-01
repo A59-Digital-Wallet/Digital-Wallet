@@ -351,37 +351,7 @@ namespace Wallet.Services.Implementations
         }
 
 
-        public async Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm)
-        {
-            var user = await this.userManager.Users
-                .Include(u => u.OwnedWallets)
-                .Include(u => u.JointWallets)
-                .Include(u => u.Categories)
-                .Include(u => u.LastSelectedWallet)
-                .Where(u => u.UserName.Contains(searchTerm) || u.Email.Contains(searchTerm) || u.PhoneNumber.Contains(searchTerm))
-                .Select(u => new UserWithWalletsDto
-                {
-                    UserId = u.Id,
-                    UserName = u.UserName,
-                    Wallets = u.OwnedWallets.Select(w => new WalletDto
-                    {
-                        WalletId = w.Id,
-                        Currency = w.Currency,
-                        Balance = w.Balance
-
-                    }).ToList(),
-                    Categories = u.Categories.ToList(),
-                    PreferredWallet = u.LastSelectedWallet
-                })
-                .FirstOrDefaultAsync();
-
-            if (user == null)
-            {
-                throw new ArgumentException(Messages.UserNotFound);
-            }
-
-            return user;
-        }
+        
 
         public async Task ProcessRecurringTransactionsAsync()
         {
