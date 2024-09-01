@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using Wallet.DTO.Response;
 using Wallet.MVC.Models;
 using Wallet.Services.Contracts;
@@ -18,6 +19,10 @@ namespace Wallet.MVC.Controllers
         }
         public async Task<IActionResult> AdminPanel()
         {
+            if (!User.IsInRole("Admin"))
+            {
+                return View("Error");
+            }
             var settingsResult = await _overdraftSettingsService.GetSettingsAsync();
 
             // Prepare the model with just the settings (and leave search-related properties empty)
