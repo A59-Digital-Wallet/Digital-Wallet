@@ -1,18 +1,35 @@
-﻿@{
+﻿@using System.Globalization
+@model Wallet.Data.Models.Verify2FAModel
+
+@{
     ViewData["Title"] = "Enable Two-Factor Authentication";
+    Layout = "_Layout"; // Ensure it uses the same layout
 }
 
-<div class="container mt-4">
-    <div class="text-center">
-        <h2>Enable Two-Factor Authentication</h2>
-        <p>Scan the QR code below with your authenticator app and enter the generated code to enable two-factor authentication.</p>
-        <img src="data:image/png;base64,@ViewBag.QrCodeImage" alt="QR Code" class="mb-4" />
-        <form method="post" asp-action="EnableTwoFactorAuthentication">
-            <div class="form-group mb-3">
-                <label for="code" class="form-label">Authentication Code</label>
-                <input type="text" name="code" id="code" class="form-control" required />
+<div class="container mx-auto mt-8 p-4 max-w-lg">
+    <div class="card p-6 rounded-lg shadow-lg">
+        <!-- Heading -->
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-bold mb-4">Enable Two-Factor Authentication</h2>
+            <p class="text-gray-600 mb-6">Scan the QR code below with your authenticator app and enter the generated code to enable two-factor authentication.</p>
+        </div>
+
+        <!-- QR Code Image -->
+        <div class="flex justify-center items-center mb-6">
+            <img src="data:image/png;base64,@ViewBag.QrCodeImage" alt="QR Code" class="border-4 border-gray-200 rounded-lg shadow-md w-48 h-48" />
+        </div>
+
+        <!-- Form for entering the authentication code -->
+        <form method="post" asp-action="EnableTwoFactorAuthentication" class="space-y-4">
+            <div class="form-group">
+                <label for="code" class="block text-gray-800 font-bold mb-2">Authentication Code</label>
+                <input type="text" name="code" id="code" class="w-full p-3 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" placeholder="Enter authentication code" required />
             </div>
-            <button type="submit" class="btn btn-primary">Verify and Enable</button>
+            <button type="submit" class="btn-primary w-full py-3 rounded font-bold hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">Verify and Enable</button>
         </form>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

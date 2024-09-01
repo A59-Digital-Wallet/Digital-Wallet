@@ -2,6 +2,7 @@
 using Moq;
 using Moq.Protected;
 using Newtonsoft.Json.Linq;
+using System.Globalization;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -21,6 +22,9 @@ namespace Wallet.Services.Tests.CurrencyExchangeServiceTests
         [TestInitialize]
         public void Setup()
         {
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
             _httpClient = new HttpClient(_httpMessageHandlerMock.Object);
             _sut = new CurrencyExchangeService(_httpClient, "fakeApiKey");
