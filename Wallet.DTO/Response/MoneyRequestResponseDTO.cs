@@ -5,6 +5,7 @@ namespace Wallet.DTO.Response
     public class MoneyRequestResponseDTO
     {
         public int Id { get; set; }
+        public string? UserName {  get; set; }
         public string RequesterId { get; set; }
         public string RecipientId { get; set; }
         public decimal Amount { get; set; }

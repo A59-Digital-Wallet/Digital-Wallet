@@ -35,6 +35,7 @@ namespace Wallet.Data.Repositories.Implementations
         {
             return await _context.MoneyRequests
                 .Where(mr => mr.RecipientId == recipientId && mr.Status == RequestStatus.Pending)
+                .Include(r => r.Requester)
                 .ToListAsync();
         }
 

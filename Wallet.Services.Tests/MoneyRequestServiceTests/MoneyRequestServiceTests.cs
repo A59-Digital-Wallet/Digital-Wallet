@@ -93,10 +93,24 @@ namespace Wallet.Services.Tests.MoneyRequestServiceTests
             // Arrange
             var recipientId = "recipient1";
             var requests = new List<MoneyRequest>
-            {
-                 new MoneyRequest { Id = 1, RequesterId = "requester1", RecipientId = recipientId, Amount = 50m },
-                 new MoneyRequest { Id = 2, RequesterId = "requester2", RecipientId = recipientId, Amount = 75m }
-            };
+    {
+        new MoneyRequest
+        {
+            Id = 1,
+            RequesterId = "requester1",
+            RecipientId = recipientId,
+            Amount = 50m,
+            Requester = new AppUser { UserName = "Requester1" } // Mock the Requester
+        },
+        new MoneyRequest
+        {
+            Id = 2,
+            RequesterId = "requester2",
+            RecipientId = recipientId,
+            Amount = 75m,
+            Requester = new AppUser { UserName = "Requester2" } // Mock the Requester
+        }
+    };
 
             _mockMoneyRequestRepository.Setup(mr => mr.GetReceivedRequestsAsync(recipientId))
                 .ReturnsAsync(requests);
@@ -107,6 +121,7 @@ namespace Wallet.Services.Tests.MoneyRequestServiceTests
             // Assert
             Assert.AreEqual(2, result.Count());
             Assert.AreEqual(50m, result.First().Amount);
+            Assert.AreEqual("Requester1", result.First().UserName); // Assert the Requester.UserName
             _mockMoneyRequestRepository.Verify(mr => mr.GetReceivedRequestsAsync(recipientId), Times.Once);
         }
         [TestMethod]
@@ -114,7 +129,13 @@ namespace Wallet.Services.Tests.MoneyRequestServiceTests
         {
             // Arrange
             var requestId = 1;
-            var request = new MoneyRequest { Id = requestId, RequesterId = "requester1", Amount = 50m };
+            var request = new MoneyRequest
+            {
+                Id = requestId,
+                RequesterId = "requester1",
+                Amount = 50m,
+                Requester = new AppUser { UserName = "Requester1" } // Mock the Requester
+            };
 
             _mockMoneyRequestRepository.Setup(mr => mr.GetByIdAsync(requestId))
                 .ReturnsAsync(request);
@@ -125,8 +146,10 @@ namespace Wallet.Services.Tests.MoneyRequestServiceTests
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(50m, result.Amount);
+            Assert.AreEqual("Requester1", result.UserName); // Assert the Requester.UserName
             _mockMoneyRequestRepository.Verify(mr => mr.GetByIdAsync(requestId), Times.Once);
         }
+
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException), "Money request not found.")]
