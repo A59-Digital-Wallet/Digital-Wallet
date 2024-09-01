@@ -74,7 +74,7 @@ namespace Wallet.MVC.Controllers
                         LastName = u.LastName   // Assuming these properties exist
                     }).ToList()
                     : null,
-                Transactions = transactions.Select(t => new TransactionViewModel
+                Transactions = transactions.Item1.Select(t => new TransactionViewModel
                 {
                     Id = t.Id,
                     Date = t.Date,

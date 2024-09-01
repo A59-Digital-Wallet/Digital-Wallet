@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Wallet.Data.Models;
 using Wallet.Data.Models.Enum;
 using Wallet.Data.Models.Enums;
 using Wallet.Data.Models.Transactions;
@@ -28,7 +29,7 @@ namespace Wallet.Services.Tests
                     Amount = 100,
                     Date = DateTime.UtcNow.AddDays(-10),
                     TransactionType = TransactionType.Deposit,
-                    OriginalCurrency = Wallet.Data.Models.Enums.Currency.USD,
+                    OriginalCurrency = Currency.USD,
                     Status = TransactionStatus.Pending,
                 },
                 new Transaction
@@ -39,7 +40,7 @@ namespace Wallet.Services.Tests
                     Amount = 50,
                     Date = DateTime.UtcNow.AddDays(-5),
                     TransactionType = TransactionType.Transfer,
-                    OriginalCurrency = Wallet.Data.Models.Enums.Currency.USD,
+                    OriginalCurrency = Currency.USD,
                     Status = TransactionStatus.Pending,
                 }
             };
@@ -61,11 +62,38 @@ namespace Wallet.Services.Tests
             mockRepository.Setup(repo => repo.GetTransactionsByWalletId(It.IsAny<int>()))
                 .ReturnsAsync((int walletId) => _sampleTransactions.Where(t => t.WalletId == walletId || t.RecipientWalletId == walletId).ToList());
 
+            // Mock FilterBy to simulate filtering and pagination
+            mockRepository.Setup(repo => repo.FilterBy(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TransactionRequestFilter>(), It.IsAny<string>()))
+                .ReturnsAsync((int page, int pageSize, TransactionRequestFilter filter, string userId) =>
+                {
+                    // Apply filtering logic similar to your repository method
+                    var filteredResults = _sampleTransactions.AsQueryable();
+
+                    // Apply filters based on the filter parameters
+                    if (filter.TransactionType != TransactionType.None)
+                    {
+                        filteredResults = filteredResults.Where(t => t.TransactionType == filter.TransactionType);
+                    }
+
+                    // Apply other filters...
+
+                    // Apply sorting
+                    var orderedResults = filteredResults.OrderBy(t => t.Date).ToList();
+
+                    // Get total count before pagination
+                    int totalCount = orderedResults.Count;
+
+                    // Apply pagination
+                    var pagedResults = orderedResults.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                    // Return the paged results and total count
+                    return (pagedResults, totalCount);
+                });
+
             // Mock GetRecurringTransactionsDueAsync
             mockRepository.Setup(repo => repo.GetRecurringTransactionsDueAsync(It.IsAny<DateTime>()))
                 .ReturnsAsync((DateTime dueDate) => _sampleTransactions.Where(t => t.IsRecurring && t.NextExecutionDate <= dueDate).ToList());
 
-            // Mock UpdateTransactionAsync
             // Mock UpdateTransactionAsync
             mockRepository.Setup(repo => repo.UpdateTransactionAsync(It.IsAny<Transaction>()))
                 .Callback((Transaction transaction) =>

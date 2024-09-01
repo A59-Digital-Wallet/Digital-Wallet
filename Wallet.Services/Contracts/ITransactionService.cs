@@ -8,7 +8,7 @@ namespace Wallet.Services.Contracts
     public interface ITransactionService
     {
         Task CreateTransactionAsync(TransactionRequestModel transactionRequest, string userId, string token = null);
-        Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userID);
+        Task<(ICollection<TransactionDto> Transactions, int TotalCount)> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userID);
         //Task<UserWithWalletsDto> SearchUserWithWalletsAsync(string searchTerm);
         Task ProcessRecurringTransactionsAsync();
         Task CancelRecurringTransactionAsync(int transactionId, string userId);

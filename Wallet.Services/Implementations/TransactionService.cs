@@ -324,34 +324,40 @@ namespace Wallet.Services.Implementations
 
         }
 
-        public async Task<ICollection<TransactionDto>> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
+        public async Task<(ICollection<TransactionDto> Transactions, int TotalCount)> FilterTransactionsAsync(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
         {
-            var transactions = await _transactionRepository.FilterBy(page, pageSize, filterParameters, userId);
+            // Get the filtered transactions and total count from the repository
+            var (transactions, totalCount) = await _transactionRepository.FilterBy(page, pageSize, filterParameters, userId);
+
             var userWalletIds = (await _walletRepository.GetUserWalletsAsync(userId)).Select(w => w.Id).ToList();
             var user = await userManager.FindByIdAsync(userId);
-            return transactions.Select(t =>
+
+            // Map transactions to DTOs and determine their direction
+            var transactionDtos = transactions.Select(t =>
             {
                 var transactionDto = _transactionFactory.Map(t);
-                // Determine direction for each transaction based on user's wallet involvement
-                if(userWalletIds.Contains(t.WalletId) && t.TransactionType == TransactionType.Transfer && userWalletIds.Contains((int)t.RecipientWalletId))
-                {
 
-                    transactionDto.Direction = DetermineDirection(transactionDto, user.LastSelectedWalletId);                   
-                    return transactionDto;
+                if (userWalletIds.Contains(t.WalletId) && t.TransactionType == TransactionType.Transfer && userWalletIds.Contains((int)t.RecipientWalletId))
+                {
+                    transactionDto.Direction = DetermineDirection(transactionDto, user.LastSelectedWalletId);
                 }
                 else
                 {
                     transactionDto.Direction = userWalletIds.Contains(t.WalletId)
-                                       ? DetermineDirection(transactionDto, t.WalletId)
-                                       : DetermineDirection(transactionDto, t.RecipientWalletId);
-                    return transactionDto;
+                                        ? DetermineDirection(transactionDto, t.WalletId)
+                                        : DetermineDirection(transactionDto, t.RecipientWalletId);
                 }
-               
+
+                return transactionDto;
             }).ToList();
+
+            // Return the paginated transactions and the total count
+            return (transactionDtos, totalCount);
         }
 
 
-        
+
+
 
         public async Task ProcessRecurringTransactionsAsync()
         {

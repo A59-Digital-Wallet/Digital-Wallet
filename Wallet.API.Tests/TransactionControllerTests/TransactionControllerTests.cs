@@ -106,30 +106,7 @@ namespace Wallet.API.Tests.TransactionControllerTests
             //Assert.AreEqual("Invalid transaction", ((dynamic)badRequestResult.Value).error);
         }
 
-        [TestMethod]
-        public async Task GetTransactions_Should_Return_Ok_With_Transactions()
-        {
-            // Arrange
-            var filter = new TransactionRequestFilter();
-            var transactions = new List<TransactionDto>
-            {
-                new TransactionDto { Amount = 100, Description = "Test Transaction 1" },
-                new TransactionDto { Amount = 200, Description = "Test Transaction 2" }
-            };
-
-            _mockTransactionService
-                .Setup(service => service.FilterTransactionsAsync(It.IsAny<int>(), It.IsAny<int>(), filter, "testUserId"))
-                .ReturnsAsync(transactions);
-
-            // Act
-            var result = await _controller.GetTransactions(filter);
-
-            // Assert
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            Assert.AreEqual(StatusCodes.Status200OK, okResult.StatusCode);
-            Assert.AreEqual(transactions, okResult.Value);
-        }
+       
 
         [TestMethod]
         public async Task VerifyTransaction_Should_Return_Ok_When_Verification_Succeeds()

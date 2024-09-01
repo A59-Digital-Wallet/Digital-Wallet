@@ -75,7 +75,7 @@ namespace Wallet.Data.Repositories.Implementations
                 .OrderByDescending(t => t.Date)
                 .ToListAsync();
         }
-        public async Task<ICollection<Transaction>> FilterBy(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
+        public async Task<(ICollection<Transaction> Transactions, int TotalCount)> FilterBy(int page, int pageSize, TransactionRequestFilter filterParameters, string userId)
         {
             IList<Transaction> results = await GetTransactionsByUserId(userId);
 
@@ -91,8 +91,13 @@ namespace Wallet.Data.Repositories.Implementations
             // Convert to list and apply order if necessary
             var orderedResults = Order(results.ToList(), filterParameters.OrderBy);
 
-            // Apply pagination
-            return await GetPagedTransactions(page, pageSize, orderedResults);
+            int totalCount = orderedResults.Count;
+
+            // Step 5: Apply pagination
+            var pagedResults = await GetPagedTransactions(page, pageSize, orderedResults);
+
+            // Step 6: Return both the paged results and the total count
+            return (pagedResults, totalCount);
         }
 
         private static IList<Transaction> FilterByDate(IList<Transaction> transactions, DateTime? date, DateTime? startDate, DateTime? endDate)

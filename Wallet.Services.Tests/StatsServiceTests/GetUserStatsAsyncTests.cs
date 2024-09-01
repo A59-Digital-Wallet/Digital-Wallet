@@ -53,8 +53,10 @@ namespace Wallet.Services.Tests.StatsServiceTests
     };
 
             _mockWalletService.Setup(ws => ws.GetUserWalletsAsync(It.IsAny<string>())).ReturnsAsync(wallets);
-            _mockTransactionService.Setup(ts => ts.FilterTransactionsAsync(1, int.MaxValue, It.IsAny<TransactionRequestFilter>(), userId)).ReturnsAsync(transactions);
-            _mockCurrencyExchangeService.Setup(ces => ces.ConvertAsync(It.IsAny<decimal>(), It.IsAny<Currency>(), It.IsAny<Currency>())).ReturnsAsync((decimal amount, Currency from, Currency to) => amount * 1.5m);
+            _mockTransactionService.Setup(ts => ts.FilterTransactionsAsync(1, int.MaxValue, It.IsAny<TransactionRequestFilter>(), userId))
+                                   .ReturnsAsync((transactions, transactions.Count));
+            _mockCurrencyExchangeService.Setup(ces => ces.ConvertAsync(It.IsAny<decimal>(), It.IsAny<Currency>(), It.IsAny<Currency>()))
+                                        .ReturnsAsync((decimal amount, Currency from, Currency to) => amount * 1.5m);
 
             // Act
             var result = await _statsService.GetUserStatsAsync(userId);
@@ -85,7 +87,8 @@ namespace Wallet.Services.Tests.StatsServiceTests
         new TransactionDto { WalletId = 1, TransactionType = TransactionType.Transfer, Amount = 150, OriginalAmount = 150, Date = DateTime.UtcNow.AddDays(-1), RecepientWalledId = 2 },
     };
 
-            _mockTransactionService.Setup(ts => ts.FilterTransactionsAsync(1, int.MaxValue, It.IsAny<TransactionRequestFilter>(), userId)).ReturnsAsync(transactions);
+            _mockTransactionService.Setup(ts => ts.FilterTransactionsAsync(1, int.MaxValue, It.IsAny<TransactionRequestFilter>(), userId))
+                                   .ReturnsAsync((transactions, transactions.Count));
 
             // Act
             var (labels, balances) = await _statsService.GetBalanceOverTime(walletId, interval, userId);
@@ -94,6 +97,7 @@ namespace Wallet.Services.Tests.StatsServiceTests
             Assert.AreEqual(15, labels.Count); // Expecting 14 days of labels + initial balance day
             Assert.AreEqual(-300, balances.Last()); // The last balance should reflect the final balance after all transactions
         }
+
 
     }
 }

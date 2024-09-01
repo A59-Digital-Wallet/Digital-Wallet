@@ -191,12 +191,15 @@ namespace Wallet.MVC.Controllers
             return View("ConfirmTransaction", model);
         }
 
-        public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 100)
+        public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 20)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
             var wallets = await _walletService.GetUserWalletsAsync(userId);
-            var transactions = await _transactionService.FilterTransactionsAsync(page, pageSize, filter, userId);
 
+            // Get paginated transactions and total count from the service
+            var (transactions, totalCount) = await _transactionService.FilterTransactionsAsync(page, pageSize, filter, userId);
+
+            // Group transactions by month and year
             var groupedTransactions = transactions
                 .GroupBy(t => t.Date.ToString("MMMM yyyy"))
                 .Select(g => new MonthlyTransactionViewModel
@@ -209,8 +212,8 @@ namespace Wallet.MVC.Controllers
                         Amount = t.Amount,
                         Description = t.Description,
                         Type = t.TransactionType.ToString(),
-                        Direction = t.Direction, // Direction determined by the service,
-                        FromWallet = t.WalletName,  // Pass the From wallet name
+                        Direction = t.Direction,
+                        FromWallet = t.WalletName,
                         ToWallet = t.RecepientWalledName,
                         IsRecurring = t.IsReccuring,
                         RecurrenceInterval = t.RecurrenceInterval,
@@ -219,25 +222,28 @@ namespace Wallet.MVC.Controllers
                         SentCurrency = t.SentCurrency,
                         CurrencyCulture = CurrencyHelper.GetCurrencyCulture(t.OriginalCurrency),
                         CurrencyCultureSent = CurrencyHelper.GetCurrencyCulture(t.SentCurrency),
-
                     }).ToList()
                 }).ToList();
 
+            // Create the view model
             var model = new TransactionHistoryViewModel
             {
                 MonthlyTransactions = groupedTransactions,
-                Filter = filter,
+                Filter = filter,  // Keep the filters in the view model
                 Wallets = wallets.Select(w => new WalletViewModel
                 {
                     Id = w.Id,
                     Name = w.Name,
                     Currency = w.Currency.ToString(),
-                }).ToList()
-
+                }).ToList(),
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize),
+                PageSize = pageSize
             };
 
             return View(model);
         }
+
 
 
 

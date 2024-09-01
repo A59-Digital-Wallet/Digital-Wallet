@@ -54,7 +54,7 @@ namespace Wallet.Services.Implementations
                 decimal totalTransfersSent = 0;
                 decimal totalTransfersReceived = 0;
 
-                foreach (var transaction in transactions.Where(t => t.WalletId == wallet.Id || t.RecepientWalledId == wallet.Id))
+                foreach (var transaction in transactions.Item1.Where(t => t.WalletId == wallet.Id || t.RecepientWalledId == wallet.Id))
                 {
                     var transactionAmount = transaction.Amount;
 
@@ -139,7 +139,7 @@ namespace Wallet.Services.Implementations
                 WalletId = walletId
             };
 
-            var transactions = (await _transactionRepository.FilterTransactionsAsync(1, int.MaxValue, filter, userId)).ToList();
+            var transactions = (await _transactionRepository.FilterTransactionsAsync(1, int.MaxValue, filter, userId)).Item1.ToList();
 
             var balanceLabels = new List<string>();
             var balanceAmounts = new List<decimal>();

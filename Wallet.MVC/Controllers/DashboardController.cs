@@ -156,7 +156,7 @@ namespace Wallet.MVC.Controllers
 
                 Card = cards.FirstOrDefault(),
                 MonthlySpendingByCategory = spendingByCategory,
-                Transactions = transactions.Select(transaction => new TransactionViewModel
+                Transactions = transactions.Item1.Select(transaction => new TransactionViewModel
                 {
                     Id = transaction.Id,
                     Date = transaction.Date,

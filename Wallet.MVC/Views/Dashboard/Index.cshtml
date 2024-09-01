@@ -73,10 +73,10 @@
             font-size: 16px;
         }
 
-            .btn-custom:hover {
-                background-color: #4338ca;
-                transform: translateY(-3px);
-            }
+        .btn-custom:hover {
+            background-color: #4338ca;
+            transform: translateY(-3px);
+        }
 
         .btn-custom-icon {
             font-size: 18px; /* Slightly larger than the text */
@@ -96,9 +96,52 @@
             background-color: #ef4444;
         }
 
-            .btn-danger:hover {
-                background-color: #dc2626;
-            }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-custom-large {
+    border-radius: 25px;
+    font-weight: bold;
+    padding: 16px 24px;
+    background-color: #4f46e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-custom-large:hover {
+    background-color: #4338ca;
+    transform: translateY(-3px);
+}
+
+.btn-custom-small {
+    border-radius: 20px;
+    font-weight: bold;
+    padding: 10px 16px;
+    background-color: #4f46e5;
+    color: white;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-custom-small:hover {
+    background-color: #4338ca;
+    transform: translateY(-3px);
+}
+
+.btn-custom-icon {
+    font-size: 20px;
+    margin-right: 8px;
+}
 
     </style>
 </head>
@@ -206,19 +249,35 @@
                                 </div>
 
                                 <!-- Transaction Action Buttons -->
-                                <div class="mt-4 flex justify-center space-x-4">
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn-custom">
-                                        <i class="fas fa-money-bill-wave btn-custom-icon"></i> Deposit
-                                    </a>
-                                    <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn-custom">
-                                        <i class="fas fa-wallet btn-custom-icon"></i> Withdraw
-                                    </a>
-                                    <a href="@Url.Action("Create", "Wallet")" class="btn-custom">
-                                        <i class="fas fa-plus-circle btn-custom-icon"></i> Create Wallet
-                                    </a>
-                                    <a href="@Url.Action("TransferBetweenWallets", "Transaction")" class="btn-custom">
-                                        <i class="fas fa-exchange-alt btn-custom-icon"></i> Transfer Between Wallets
-                                    </a>
+                                <div class="flex flex-wrap justify-between">
+                                    <!-- Moved Buttons -->
+                                    <div class="w-full lg:w-1/2 p-2">
+                                     
+                                            <div class="flex flex-col space-y-4">
+                                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Deposit" })" class="btn-custom-small">
+                                                    <i class="fas fa-money-bill-wave btn-custom-icon"></i> Deposit
+                                                </a>
+                                                <a href="@Url.Action("SelectWalletAndCard", "Transaction", new { type = "Withdraw" })" class="btn-custom-small">
+                                                    <i class="fas fa-wallet btn-custom-icon"></i> Withdraw
+                                                </a>
+                                               
+                                            </div>
+                                       
+                                    </div>
+
+                                    <!-- Original Buttons -->
+                                    <div class="w-full lg:w-1/2 p-2">
+                                        
+                                            <div class="flex flex-col space-y-4">                                               
+                                                <a href="@Url.Action("TransferBetweenWallets", "Transaction")" class="btn-custom-small">
+                                                    <i class="fas fa-exchange-alt btn-custom-icon"></i> Wallet Transfer
+                                                </a>
+                                                <a href="@Url.Action("Create", "Wallet")" class="btn-custom-small">
+                                                    <i class="fas fa-plus-circle btn-custom-icon"></i> Create Wallet
+                                                </a>
+                                            </div>
+                                       
+                                    </div>
                                 </div>
                             </div>
 
@@ -232,6 +291,7 @@
                                         {
                                             <li class="border-b border-gray-200 py-2 flex justify-between items-center">
                                                 <div>
+                                                    <span class="font-semibold text-gray-700">@request.Description</span>
                                                     <span class="font-semibold text-gray-700">@request.Description</span>
                                                     requested
                                                     <span class="font-semibold text-indigo-600">@request.Amount @request.RequestedCurrency</span>
@@ -261,13 +321,14 @@
                             <!-- Recent Contacts & Invite -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <div class="card p-6">
+                                    <div class="card p-6 flex flex-col justify-between min-h-full">
                                         <h5 class="font-bold text-lg text-gray-800 mb-4">
                                             <a href="@Url.Action("Index", "Contacts")" class="text-indigo-600 hover:underline">Recent Contacts</a>
                                         </h5>
-                                        <div class="flex flex-wrap" id="recentContacts">
+                                        <div class="flex flex-col items-start space-y-2" id="recentContacts" style="margin-top: -10px;">
                                             @await Html.PartialAsync("~/Views/Contacts/_RecentContacts.cshtml", Model.Contacts)
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -299,40 +360,47 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Transaction History -->
-                            <div class="card p-6 mt-6">
-                                <h5 class="font-bold text-lg text-gray-800 mb-4">
-                                    <a href="@Url.Action("TransactionHistory", "Transaction")" class="text-indigo-600 hover:underline">Transaction History</a>
-                                </h5>
-                                <div>
-                                    @foreach (var transaction in Model.Transactions)
-                                    {
-                                        <div class="flex justify-between items-center py-3 border-b last:border-0">
-                                            <div>
-                                                <p class="font-semibold text-gray-800">@transaction.Description</p>
-                                                <small class="text-gray-500">@transaction.Date.ToString("ddd, dd MMMM yyyy - h:mm tt")</small>
-                                            </div>
-                                            <div class="text-right">
-                                                <p class="@(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500") font-bold">
-                                                    @(transaction.Direction == "Incoming" ? "+" : "-")
-                                                    @if (transaction.Direction == "Incoming")
-                                                    {
-                                                        @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCultureSent))
-                                                    }
-                                                    else
-                                                    {
-                                                        @transaction.OriginalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
-                                                    }
-                                                </p>
+                            
+                                @if (ViewBag.SelectedWallet.Type != "Joint")
+                                {
+                                    <div class="card p-6 mt-6">
+                                        <h5 class="font-bold text-lg text-gray-800 mb-4">
+                                            <a href="@Url.Action("TransactionHistory", "Transaction")" class="text-indigo-600 hover:underline">Transaction History</a>
+                                        </h5>
+                                        <div>
+                                            @foreach (var transaction in Model.Transactions)
+                                            {
+                                                <div class="flex justify-between items-center py-3 border-b last:border-0">
+                                                    <div>
+                                                        <p class="font-semibold text-gray-800">@transaction.Description</p>
+                                                        <small class="text-gray-500">@transaction.Date.ToString("ddd, dd MMMM yyyy - h:mm tt")</small>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="@(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500") font-bold">
+                                                            @(transaction.Direction == "Incoming" ? "+" : "-")
+                                                            @if (transaction.Direction == "Incoming")
+                                                            {
+                                                                @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCultureSent))
+                                                            }
+                                                            else
+                                                            {
+                                                                @transaction.OriginalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
+                                                            }
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            }
+                                            <div class="text-center mt-4">
+                                                <a href="@Url.Action("TransactionHistory", "Transaction")" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4 hover:bg-indigo-100 transition">View All Transactions</a>
                                             </div>
                                         </div>
-                                    }
-                                    <div class="text-center mt-4">
-                                        <a href="@Url.Action("TransactionHistory", "Transaction")" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4 hover:bg-indigo-100 transition">View All Transactions</a>
                                     </div>
-                                </div>
-                            </div>
+                                }
+                                <!-- Transaction History -->
+                           
+                        
+
+
                         </div>
 
                         <!-- Wallet Statistics Section -->
@@ -367,11 +435,45 @@
                                     <canvas id="balanceGrowthChart" width="400" height="200"></canvas>
                                 </div>
                             }
+                            else
+                            {
+                                <!-- Transaction History for Joint Wallet -->
+                                <div class="card p-6 mt-6">
+                                    <h5 class="font-bold text-lg text-gray-800 mb-4">Transaction History</h5>
+                                    <div>
+                                        @foreach (var transaction in Model.Transactions)
+                                        {
+                                            <div class="flex justify-between items-center py-3 border-b last:border-0">
+                                                <div>
+                                                    <p class="font-semibold text-gray-800">@transaction.Description</p>
+                                                    <small class="text-gray-500">@transaction.Date.ToString("ddd, dd MMMM yyyy - h:mm tt")</small>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="@(transaction.Direction == "Incoming" ? "text-green-500" : "text-red-500") font-bold">
+                                                        @(transaction.Direction == "Incoming" ? "+" : "-")
+                                                        @if (transaction.Direction == "Incoming")
+                                                        {
+                                                            @transaction.Amount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCultureSent))
+                                                        }
+                                                        else
+                                                        {
+                                                            @transaction.OriginalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo(transaction.CurrencyCulture))
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        }
+                                        <div class="text-center mt-4">
+                                            <a href="@Url.Action("TransactionHistory", "Transaction")" class="border border-indigo-600 text-indigo-600 rounded-full font-bold py-2 px-4 hover:bg-indigo-100 transition">View All Transactions</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
 
                     <!-- Logout Button -->
-                    
+
                 </div>
             </div>
         }
@@ -457,6 +559,8 @@
             data: categorySpendingData,
             options: {
                 responsive: true,
+                maintainAspectRatio: true, // Disable the default aspect ratio maintenance
+                aspectRatio: 1.55, // Adjust this value to control the height (lower value = taller)
                 plugins: {
                     legend: {
                         position: 'top',

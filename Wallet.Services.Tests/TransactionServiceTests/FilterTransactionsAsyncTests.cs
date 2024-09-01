@@ -54,28 +54,49 @@ namespace Wallet.Services.Tests.TransactionServiceTests
             // Arrange
             var userId = "test-user-id";
             var filter = new TransactionRequestFilter();
-            var transactions = new List<Transaction> { new Transaction { Id = 1, WalletId = 1 } };
-            var wallets = new List<UserWallet> { new UserWallet { Id = 1 } };
-            var user = new AppUser { Id = userId, LastSelectedWalletId = 1 };
+            var transactions = new List<Transaction>
+    {
+        new Transaction { Id = 1, WalletId = 1 }
+    };
+            var wallets = new List<UserWallet>
+    {
+        new UserWallet { Id = 1 }
+    };
+            var user = new AppUser
+            {
+                Id = userId,
+                LastSelectedWalletId = 1
+            };
 
+            var transactionDtos = new List<TransactionDto>
+    {
+        new TransactionDto { Id = 1, WalletId = 1 }
+    };
+
+            // Setup repository mock to return filtered transactions with total count
             _mockTransactionRepository.Setup(repo => repo.FilterBy(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TransactionRequestFilter>(), It.IsAny<string>()))
-                                      .ReturnsAsync(transactions);
+                                      .ReturnsAsync((transactions, transactions.Count));
 
+            // Setup wallet repository mock to return user wallets
             _mockWalletRepository.Setup(repo => repo.GetUserWalletsAsync(It.IsAny<string>()))
                                  .ReturnsAsync(wallets);
 
+            // Setup user manager mock to return the user
             _mockUserManager.Setup(manager => manager.FindByIdAsync(It.IsAny<string>()))
                             .ReturnsAsync(user);
 
+            // Setup transaction factory mock to map transaction to transaction DTO
             _mockTransactionFactory.Setup(factory => factory.Map(It.IsAny<Transaction>()))
-                                   .Returns(new TransactionDto());
+                                   .Returns((Transaction t) => new TransactionDto { Id = t.Id, WalletId = t.WalletId });
 
             // Act
-            var result = await _transactionService.FilterTransactionsAsync(1, 10, filter, userId);
+            var (result, totalCount) = await _transactionService.FilterTransactionsAsync(1, 10, filter, userId);
 
             // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(1, totalCount);  // Since we only set up one transaction
         }
+
     }
 }
