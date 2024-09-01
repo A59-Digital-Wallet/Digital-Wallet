@@ -52,15 +52,19 @@
                         {
                             @foreach (var contact in Model.Contacts)
                             {
-                                <li class="flex justify-between items-center py-2">
-                                    <span>@contact.FirstName @contact.LastName</span>
-                                    <form asp-action="AddMember" asp-controller="Wallet" method="post" class="inline">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="walletId" value="@Model.WalletId" />
-                                        <input type="hidden" name="userId" value="@contact.Id" />
-                                        <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600">Add</button>
-                                    </form>
-                                </li>
+                                if (!Model.Members.Select(m => m.Id).Contains(contact.Id))
+                                {
+                                    <li class="flex justify-between items-center py-2">
+                                        <span>@contact.FirstName @contact.LastName</span>
+                                        <form asp-action="AddMember" asp-controller="Wallet" method="post" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="walletId" value="@Model.WalletId" />
+                                            <input type="hidden" name="userId" value="@contact.Id" />
+                                            <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600">Add</button>
+                                        </form>
+                                    </li>
+                                }
+                               
                             }
                         }
                         else

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
+using Wallet.Data.Models;
 using Wallet.Data.Models.Enums;
 using Wallet.DTO.Request;
 using Wallet.MVC.Models;
@@ -14,11 +16,13 @@ namespace Wallet.MVC.Controllers
     {
         private readonly IMoneyRequestService _moneyRequestService;
         private readonly ITransactionService _transactionService;
+        private readonly UserManager<AppUser> userManager;
 
-        public MoneyRequestController(IMoneyRequestService moneyRequestService, ITransactionService transactionService)
+        public MoneyRequestController(IMoneyRequestService moneyRequestService, ITransactionService transactionService, UserManager<AppUser> userManager)
         {
             _moneyRequestService = moneyRequestService;
             _transactionService = transactionService;
+            this.userManager = userManager;
         }
 
         // Show the form to create a new money request
@@ -39,12 +43,15 @@ namespace Wallet.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateRequest(MoneyRequestCreateDTO model)
         {
+            var requesterId = User.FindFirstValue(ClaimTypes.UserData);
+            var requester = await userManager.FindByIdAsync(requesterId);
+            model.UserName = requester.UserName;
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var requesterId = User.FindFirstValue(ClaimTypes.UserData);
+            
 
             try
             {

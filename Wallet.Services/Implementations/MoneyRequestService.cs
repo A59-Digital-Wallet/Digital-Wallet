@@ -65,7 +65,8 @@ namespace Wallet.Services.Implementations
                 RequestedCurrency = moneyRequest.RequestedCurrency.ToString(), // Convert enum back to string for response
                 Status = moneyRequest.Status,
                 CreatedAt = moneyRequest.CreatedAt,
-                UpdatedAt = moneyRequest.UpdatedAt
+                UpdatedAt = moneyRequest.UpdatedAt,
+                UserName = requestDto.UserName
             };
         }
 
@@ -83,7 +84,8 @@ namespace Wallet.Services.Implementations
                 RequestedCurrency = request.RequestedCurrency.ToString(), // Convert enum back to string
                 Status = request.Status,
                 CreatedAt = request.CreatedAt,
-                UpdatedAt = request.UpdatedAt
+                UpdatedAt = request.UpdatedAt,
+                UserName = request.Requester.UserName
             }).ToList();
         }
 
@@ -106,7 +108,8 @@ namespace Wallet.Services.Implementations
                 RequestedCurrency = request.RequestedCurrency.ToString(), // Convert enum back to string
                 Status = request.Status,
                 CreatedAt = request.CreatedAt,
-                UpdatedAt = request.UpdatedAt
+                UpdatedAt = request.UpdatedAt,
+                UserName = request.Requester.UserName
             };
         }
 

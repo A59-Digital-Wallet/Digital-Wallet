@@ -167,7 +167,8 @@ namespace Wallet.MVC.Controllers
                     TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
                     CardId = model.CardId,
                     Token = model.TransactionToken,
-                    RecepientWalletId = model.RecipinetWalletId
+                    RecepientWalletId = model.RecipinetWalletId,
+                    CategoryId = model.CategoryId,
                 };
 
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
@@ -342,8 +343,20 @@ namespace Wallet.MVC.Controllers
                     RecurrenceInterval = model.RecurrenceInterval
                 };
 
+                var transactionConfig = new TransactionConfirmationViewModel
+                {
+                    WalletId = model.FromWalletId,
+                   
+                    Amount = model.Amount,
+                    Description = model.Description,
+                    TransactionType = TransactionType.Transfer.ToString(),
+                    RecipinetWalletId = model.ToWalletId,
+                    CategoryId = model.SelectedCategoryId
+
+                };
+
                 // Create the transaction
-                await _transactionService.CreateTransactionAsync(transactionRequest, userId);
+                //  await _transactionService.CreateTransactionAsync(transactionRequest, userId);
 
                 // Automatically add the sending account to the recipient’s contacts
 
@@ -354,7 +367,7 @@ namespace Wallet.MVC.Controllers
                     await _contactService.AddContactAsync(model.ContactId, userId);
                 }
 
-                return RedirectToAction("TransactionHistory");
+                return RedirectToAction("ConfirmTransaction", transactionConfig);
             }
             catch (VerificationRequiredException ex)
             {

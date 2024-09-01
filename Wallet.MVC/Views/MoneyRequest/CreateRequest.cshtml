@@ -12,6 +12,7 @@
         <form method="post" asp-action="CreateRequest" class="space-y-6">
             <!-- Hidden field to store RecipientId -->
             <input type="hidden" asp-for="RecipientId" />
+           
 
             <!-- Requested Amount -->
             <div>
@@ -40,7 +41,7 @@
                 <input asp-for="Description" class="form-input mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a note " />
                 <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
             </div>
-
+            <input type="hidden" asp-for="UserName" />
             <!-- Submit Button -->
             <div class="flex justify-center">
                 <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition duration-150">Request Money</button>
