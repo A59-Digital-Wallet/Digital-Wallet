@@ -4,14 +4,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Org.BouncyCastle.Asn1.Pkcs;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text;
-using Twilio.Clients;
 using Wallet.Common.Helpers;
 using Wallet.Data.Db;
-using Wallet.Data.Helpers;
 using Wallet.Data.Helpers.Contracts;
+using Wallet.Data.Helpers;
 using Wallet.Data.Models;
 using Wallet.Data.Repositories.Contracts;
 using Wallet.Data.Repositories.Implementations;
@@ -45,8 +43,6 @@ namespace Digital_Wallet
             builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
-
-                // Configure lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // Lockout duration
                 options.Lockout.MaxFailedAccessAttempts = 5; // Number of failed attempts allowed before lockout
                 options.Lockout.AllowedForNewUsers = true; // Lockout new users by default
@@ -83,13 +79,15 @@ namespace Digital_Wallet
                 options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
             });
 
-
             // Add Controllers
             builder.Services.AddControllers();
 
+            // Swagger configuration
+            ConfigureSwagger(builder.Services);
+
             var apiKey = builder.Configuration["CurrencyLayer:ApiKey"];
 
-            // Add services to the container.
+            // Add services to the container
             builder.Services.AddHttpClient<ICurrencyExchangeService, CurrencyExchangeService>(client =>
             {
                 client.BaseAddress = new Uri("https://api.currencylayer.com/");
@@ -116,36 +114,6 @@ namespace Digital_Wallet
             // Register CloudinaryService
             builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 
-            // Add Swagger for API documentation
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
-            {
-                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please enter 'Bearer' followed by your token",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-                        },
-                        new List<string>()
-                    }
-                });
-            });
             builder.Services.AddTransient<IEmailSender, EmailSender>();
             builder.Services.AddTransient<TwilioVerifyService>();
 
@@ -162,7 +130,7 @@ namespace Digital_Wallet
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IWalletService, WalletService>();
             builder.Services.AddScoped<ITransactionService, TransactionService>();
-            builder.Services.AddScoped<IUserService, UserService>(); 
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IContactService, ContactService>();
             builder.Services.AddScoped<IEncryptionService, EncryptionService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -175,7 +143,6 @@ namespace Digital_Wallet
             builder.Services.AddScoped<IContactFactory, ContactFactory>();
             builder.Services.AddScoped<ICategoryFactory, CategoryFactory>();
 
-            
             builder.Services.AddScoped<CardValidation>();
             builder.Services.AddScoped<ITransactionValidator, TransactionValidator>();
             builder.Services.AddScoped<VerifyEmailService>();
@@ -191,6 +158,7 @@ namespace Digital_Wallet
             builder.Services.AddMemoryCache();
 
             var app = builder.Build();
+
             using (var scope = app.Services.CreateScope())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -235,6 +203,60 @@ namespace Digital_Wallet
             app.Run();
         }
 
+        private static void ConfigureSwagger(IServiceCollection services)
+        {
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter your JWT token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey, // Use ApiKey type to remove 'Bearer ' prefix requirement
+                    Scheme = "Bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
+                    Scheme = "Bearer",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                },
+                new List<string>()
+            }
+        });
+
+                // Enable Swagger annotations
+                options.EnableAnnotations();
+                // Register the example filters
+                options.ExampleFilters();
+
+                // Add XML comments path for better documentation (if XML comments are enabled in the project)
+                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                }
+
+                // Use Swashbuckle filters for request and response examples
+                options.ExampleFilters();
+
+            });
+
+            // Register example providers for Swagger
+            services.AddSwaggerExamplesFromAssemblyOf<Program>();
+        }
+
         public static async Task SeedRolesOnce(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
         {
             // Define roles to be created
@@ -242,12 +264,11 @@ namespace Digital_Wallet
 
             foreach (var roleName in roleNames)
             {
-                
                 if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
-            }               
+            }
         }
     }
 }
