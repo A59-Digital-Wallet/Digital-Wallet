@@ -81,51 +81,74 @@ Follow these steps to set up and run the application:
    * Open the project in your preferred IDE.  
    * Add a migration and update the database. After that, run the program and the database should be set up and the program : ready to use.
 
-Home Page - before and after login
-![Home Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392863/1_exkjpn.png)
-Login Page
-![Login Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/2_nhouap.png)
-Register Page
-![Register Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
-Dashboard
-![Dashboard](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image_kzuvaz.png)
-Google 2FA Page
-![Google 2FA Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395139/image1_r3qo6d.png)
-Payment Methods Page
-![Payment Methods Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image2_who2va.png)
-User Transactions Page
-![User Transactions Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image3_hke6zr.png)
-Admin Panel Page
-![Admin Panel Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image4_gznlk6.png)
-Contacts Page
-![Contacts Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image5_zd94oe.png)
-Contacts History Page
-![Contacts History Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image6_ihij18.png)
-Statistics Page
-![Statistics Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395141/image7_auhd5r.png)
-User Profile Page
-![User Profile Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image8_j7tv3v.png)
-Transactions Pages
-Deposit money
-![Deposit Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image9_wxhjej.png)
-Withdraw 
-![Withdraw Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395145/image10_sokoe9.png)
-Transfer 
-![Transfer Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395146/image11_vyai43.png)
-Request 
-![Request Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image12_rgc3f4.png)
-Transfer between personal wallets
-![Transfer Between Personal Wallets Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image14_yemfcb.png)
-Transaction Confirmation Page
-![Transaction Confirmation Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395149/image15_u9ey8y.png)
-Note -> with a high value transfer this will include a line for the verification code
-Note -> each transfer and request is sent to the wallet that is with the same currency. If this doesn’t exist, then the money is sent to the last selected wallet by the user.
+# Application Screenshots
 
-API Page
+## Home Page - Before and After Login
+![Home Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392863/1_exkjpn.png)
+
+## Login Page
+![Login Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/2_nhouap.png)
+
+## Register Page
+![Register Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
+
+## Dashboard
+![Dashboard](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image_kzuvaz.png)
+
+## Google 2FA Page
+![Google 2FA Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395139/image1_r3qo6d.png)
+
+## Payment Methods Page
+![Payment Methods Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image2_who2va.png)
+
+## User Transactions Page
+![User Transactions Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image3_hke6zr.png)
+
+## Admin Panel Page
+![Admin Panel Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image4_gznlk6.png)
+
+## Contacts Page
+![Contacts Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image5_zd94oe.png)
+
+## Contacts History Page
+![Contacts History Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image6_ihij18.png)
+
+## Statistics Page
+![Statistics Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395141/image7_auhd5r.png)
+
+## User Profile Page
+![User Profile Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image8_j7tv3v.png)
+
+## Transactions Pages
+
+### Deposit Money
+![Deposit Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image9_wxhjej.png)
+
+### Withdraw Money
+![Withdraw Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395145/image10_sokoe9.png)
+
+### Transfer Money
+![Transfer Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395146/image11_vyai43.png)
+
+### Request Money
+![Request Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image12_rgc3f4.png)
+
+### Transfer Between Personal Wallets
+![Transfer Between Personal Wallets Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image14_yemfcb.png)
+
+## Transaction Confirmation Page
+![Transaction Confirmation Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395149/image15_u9ey8y.png)
+
+- **Note:** For high-value transfers, this will include a line for the verification code.
+- **Note:** Each transfer and request is sent to the wallet with the same currency. If this doesn’t exist, the money is sent to the last selected wallet by the user.
+
+## API Pages
 ![API Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725393570/api-1_zhrbnk.png)
 ![API Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725393570/api-2_tb3e1o.png)
-Database Diagram
-![Database Diagram]()
+
+## Database Diagram
+![Database Diagram](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395816/db_idtixq.png)
+
 
 # **ASP.NET Framework Web Application**
 
