@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Wallet.Common.Helpers;
-using static Wallet.Common.Helpers.Messages;
 
 namespace Wallet.MVC
 {

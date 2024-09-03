@@ -83,6 +83,13 @@
             public const string CardAddedSuccessful = "Card has been added successfully.";
             public const string CardDeletedSuccessful = "Card has been deleted successfully";
 
+            public const string InvalidCardNumber = "Invalid card number.";
+            public const string UnknownCardNetwork = "Unknown card network.";
+            public const string InvalidCardNumberLength = "Invalid card number length.";
+            public const string CardNearingExpiration = "The card is nearing its expiration. Please provide a card with more than one month of validity remaining.";
+            public const string InvalidCVV = "Invalid CVV.";
+            public const string InvalidCardholderName = "Invalid cardholder name.";
+
             //Category
             public const string CategoryAddedSuccessful = "Category added successfully.";
             public const string CategoryDeletedSuccessful = "Category deleted successfully";

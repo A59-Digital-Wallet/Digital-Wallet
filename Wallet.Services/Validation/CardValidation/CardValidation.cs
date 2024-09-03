@@ -34,6 +34,7 @@ namespace Wallet.Services.Validation.CardValidation
             // Validate Expiration Date
             if (!ValidateExpirationDate(expiryDate))
             {
+
                 result.Errors.Add("The card is nearing its expiration. Please provide a card with more than one month of validity remaining.");
             }
 
