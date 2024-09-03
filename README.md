@@ -82,8 +82,30 @@ Follow these steps to set up and run the application:
    * Add a migration and update the database. After that, run the program and the database should be set up and the program : ready to use. 
 
 \<hr\>
-
-
+![Home Page - Before Login](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392863/1_exkjpn.png)
+![Home Page - After Login](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/2_nhouap.png)
+![Login Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
+![Register Page]()
+![Dashboard]()
+![Google 2FA Page]()
+![Payment Methods Page]()
+![User Transactions Page]()
+![Admin Panel Page]()
+![Contacts Page]()
+![Contacts History Page]()
+![Statistics Page]()
+![Deposit Money Page]()
+Transactions Pages
+![Deposit Money Page]()
+![Withdraw Money Page]()
+![Transfer Money Page]()
+![Request Money Page]()
+![Transfer Between Personal Wallets Page]()
+![Transfer Between Personal Wallets Page]()
+![Confirm Transaction Page (2FA Enabled)]()
+![Transaction Confirmation Page]()
+![API Page]()
+![Database Diagram]()
 
 # **ASP.NET Framework Web Application**
 
