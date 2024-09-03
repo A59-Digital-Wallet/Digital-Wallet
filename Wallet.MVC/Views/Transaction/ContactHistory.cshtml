@@ -21,7 +21,8 @@
                     var direction = Model.UserWalletIds.Contains(transaction.WalletId) ? "Outgoing" : "Incoming";
                     var currencyCulture = Wallet.Services.Implementations.CurrencyHelper.GetCurrencyCulture(transaction.OriginalCurrency.ToString());
                     var currencyCultureSent = Wallet.Services.Implementations.CurrencyHelper.GetCurrencyCulture(transaction.SentCurrency.ToString());
-                    <tr class="bg-blue-50 border-b border-blue-100">
+                    <tr class="bg-[#ece6ff] border-b border-[#d9ccff]">
+
                         <td class="py-4 px-6 text-base text-gray-700">
                             @transaction.Date.ToString("MMMM dd, yyyy - HH:mm")
                         </td>
