@@ -83,7 +83,7 @@ namespace Wallet.MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _contactService.AddContactAsync(userId, model.ContactId);
-                return RedirectToAction("Index", "Dashboard");
+                return RedirectToAction("Index");
             }
             return View();
         }
