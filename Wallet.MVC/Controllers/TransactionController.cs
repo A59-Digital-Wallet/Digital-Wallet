@@ -452,6 +452,21 @@ namespace Wallet.MVC.Controllers
                     await _transactionService.CreateTransactionAsync(transactionRequest, userId);
                     return RedirectToAction("TransactionHistory");
                 }
+                catch (VerificationRequiredException ex)
+                {
+                    var transactionConfig = new TransactionConfirmationViewModel
+                    {
+                        WalletId = ex.WalletId.GetValueOrDefault(),  // Use GetValueOrDefault for nullable int
+                        Amount = ex.Amount.GetValueOrDefault(),
+                        Description = ex.Description,
+                        TransactionType = TransactionType.Transfer.ToString(),
+                        TransactionToken = ex.TransactionToken,
+                        RecipinetWalletId = ex.RecipientWallet
+                    };
+
+
+                    return RedirectToAction("ConfirmTransaction", transactionConfig);
+                }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
