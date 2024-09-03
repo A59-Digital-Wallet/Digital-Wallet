@@ -15,7 +15,7 @@ using Wallet.Services.Implementations;
 namespace Wallet.MVC.Controllers
 {
     [Authorize]
-   
+
     public class TransactionController : Controller
     {
         private readonly IWalletService _walletService;
@@ -99,13 +99,13 @@ namespace Wallet.MVC.Controllers
                 };
                 try
                 {
-                   
-                   
+
+
                     return RedirectToAction("ConfirmTransaction", transactionConfig);
                 }
                 catch (VerificationRequiredException ex)
                 {
-                   
+
                     transactionConfig.TransactionToken = ex.TransactionToken;
                     transactionConfig.RequiresCode = true;
                     // Redirect to the confirmation page
@@ -182,6 +182,10 @@ namespace Wallet.MVC.Controllers
                 model.RequiresCode = true;
                 // Redirect to the confirmation page
                 return RedirectToAction("ConfirmTransaction", model);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
             catch (ArgumentException ex)
             {
@@ -352,7 +356,7 @@ namespace Wallet.MVC.Controllers
                 var transactionConfig = new TransactionConfirmationViewModel
                 {
                     WalletId = model.FromWalletId,
-                   
+
                     Amount = model.Amount,
                     Description = model.Description,
                     TransactionType = TransactionType.Transfer.ToString(),
@@ -403,7 +407,7 @@ namespace Wallet.MVC.Controllers
 
 
 
-      
+
 
         [HttpGet]
         public async Task<IActionResult> TransferBetweenWallets()
@@ -420,7 +424,7 @@ namespace Wallet.MVC.Controllers
                 }).ToList(),
                 FromWalletId = (int)user.LastSelectedWalletId,
                 SelectedRecipientId = userId
-               
+
             };
 
             return View(model);
@@ -430,14 +434,14 @@ namespace Wallet.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessTransferBetweenWallets(TransferViewModel model)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var userId = User.FindFirstValue(ClaimTypes.UserData);
 
                 var transactionRequest = new TransactionRequestModel
                 {
-                  
+
                     Amount = model.Amount,
                     Description = model.Description,
                     TransactionType = TransactionType.Transfer,

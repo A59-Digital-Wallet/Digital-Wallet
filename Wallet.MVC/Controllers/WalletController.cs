@@ -11,7 +11,7 @@ using Wallet.Services.Contracts;
 namespace Wallet.MVC.Controllers
 {
     [Authorize]
-   
+
     public class WalletController : Controller
     {
         private readonly IWalletService _walletService;
@@ -31,7 +31,7 @@ namespace Wallet.MVC.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] 
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserWalletRequest model)
         {
             if (ModelState.IsValid)
@@ -218,6 +218,60 @@ namespace Wallet.MVC.Controllers
             }
 
             return RedirectToAction("ManageJointWalletMembers", new { walletId });
+        }
+
+        // New Action to show Overdraft details
+        public async Task<IActionResult> Overdraft([FromQuery] int walletId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            // Fetch wallet details to populate the OverdraftViewModel
+            var wallet = await _walletService.GetWalletAsync(walletId, userId);
+
+            if (wallet == null)
+            {
+                return NotFound("Wallet not found.");
+            }
+
+            var model = new OverdraftViewModel
+            {
+                WalletId = walletId,
+                WalletName = wallet.Name,
+                IsOverdraftEnabled = wallet.IsOverdraftEnabled,
+                OverdraftLimit = wallet.OverdraftLimit,
+                ConsecutiveNegativeMonths = wallet.ConsecutiveNegativeMonths,
+                InterestRate = wallet.InterestRate
+            };
+
+            return View(model); // Render the view with the overdraft details
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleOverdraft(int walletId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            try
+            {
+                await _walletService.ToggleOverdraftAsync(walletId, userId);
+                TempData["SuccessMessage"] = "Overdraft setting toggled successfully.";
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An unexpected error occurred: {ex.Message}";
+            }
+
+            // Redirect to the new Overdraft view with the walletId
+            return RedirectToAction("Overdraft", "Wallet", new { walletId = walletId });
         }
 
 

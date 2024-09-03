@@ -9,7 +9,7 @@ using Wallet.DTO.Request;
 using Wallet.Services.Contracts;
 using Wallet.Common.Helpers;
 using Wallet.Data.Helpers.Contracts;
-using Digital_Wallet.Controllers.Digital_Wallet.Controllers;
+using Digital_Wallet.Controllers;
 using Microsoft.AspNetCore.Identity;
 using Wallet.Data.Models;
 using Wallet.Common.Exceptions;
