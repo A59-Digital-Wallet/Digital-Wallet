@@ -42,14 +42,17 @@ namespace Wallet.MVC.Controllers
         }
         public async Task<IActionResult> SearchUsersAsync(string? searchTerm, int page = 1)
         {
-            int pageSize = 10;
+            int pageSize = 3; // Define the number of users per page
             var result = await _userService.SearchUsersAsync(searchTerm, page, pageSize);
+
+            // Calculate the total number of pages
+            int totalPages = (int)Math.Ceiling((double)result.TotalCount / pageSize);
 
             var viewModel = new UserSearchViewModel()
             {
                 UsersWithRoles = result.Items,
-                PageNumber = result.PageNumber,
-                TotalPages = result.TotalCount,
+                PageNumber = page,
+                TotalPages = totalPages,
                 SearchTerm = searchTerm,
             };
 
