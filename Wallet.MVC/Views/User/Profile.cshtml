@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-100">
 
-    <div class="container mx-auto mt-10 p-6 max-w-lg bg-white rounded-2xl shadow-lg relative">
+    <div class="container mx-auto mt-10 mb-10 p-6 max-w-lg bg-white rounded-2xl shadow-lg relative">
         <h2 class="text-center text-2xl font-bold mb-6">User Profile</h2>
 
         <!-- Profile Picture with Hover Effect -->
@@ -25,23 +25,23 @@
         <form method="post" asp-action="UpdateProfile" class="space-y-4">
             <div>
                 <label for="UserName" class="block text-sm font-medium text-gray-700">Username</label>
-                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="UserName" name="UserName" value="@Model.UserName" readonly>
+                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" id="UserName" name="UserName" value="@Model.UserName" readonly>
             </div>
             <div>
                 <label for="Email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="Email" name="Email" value="@Model.Email" readonly>
+                <input type="email" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" name="Email" value="@Model.Email" readonly>
             </div>
             <div>
                 <label for="FirstName" class="block text-sm font-medium text-gray-700">First Name</label>
-                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="FirstName" name="FirstName" value="@Model.FirstName">
+                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" id="FirstName" name="FirstName" value="@Model.FirstName">
             </div>
             <div>
                 <label for="LastName" class="block text-sm font-medium text-gray-700">Last Name</label>
-                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="LastName" name="LastName">
+                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" id="LastName" name="LastName" value="@Model.LastName">
             </div>
             <div>
                 <label for="PhoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                <input type="text" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="PhoneNumber" name="PhoneNumber">
+                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
             </div>
             <div class="text-center mt-4">
                 <button type="submit" class="bg-indigo-600 text-white py-2 px-6 rounded-full hover:bg-indigo-700 transition duration-300">Update Profile</button>

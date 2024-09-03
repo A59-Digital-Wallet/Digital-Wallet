@@ -26,7 +26,7 @@
     <div class="flex justify-left mb-4">
         <form asp-action="SearchUsers" method="get" class="flex items-center space-x-2">
             @Html.AntiForgeryToken()
-            <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search users..." class="w-full p-2 border border-gray-300 rounded-lg" />
+            <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Search users..." class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" />
             <button type="submit" class="bg-indigo-600 text-white rounded-full font-bold py-2 px-4">Search</button>
         </form>
     </div>
