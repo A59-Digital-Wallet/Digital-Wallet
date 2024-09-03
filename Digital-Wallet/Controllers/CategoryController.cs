@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 using Wallet.Common.Exceptions;
 using Wallet.Common.Helpers;
@@ -19,8 +20,20 @@ namespace Digital_Wallet.Controllers
         {
             _categoryService = categoryService;
         }
+
+        /// <summary>
+        /// Retrieves a paginated list of categories for the authenticated user.
+        /// </summary>
+        /// <param name="pageNumber">The page number to retrieve (default is 1).</param>
+        /// <param name="pageSize">The number of categories per page (default is 10).</param>
+        /// <returns>A list of categories for the authenticated user.</returns>
+        /// <response code="200">Returns a list of categories for the user.</response>
+        /// <response code="404">If no categories are found for the user.</response>
         [Authorize]
         [HttpGet]
+        [SwaggerOperation(Summary = "Retrieves a paginated list of categories for the authenticated user.")]
+        [SwaggerResponse(200, "Returns a list of categories for the user.", typeof(List<CategoryResponseDTO>))]
+        [SwaggerResponse(404, "If no categories are found for the user.")]
         public async Task<IActionResult> GetUserCategories(int pageNumber = 1, int pageSize = 10)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -36,8 +49,18 @@ namespace Digital_Wallet.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds a new category for the authenticated user.
+        /// </summary>
+        /// <param name="categoryRequest">The details of the category to add.</param>
+        /// <returns>A success message if the category is added successfully.</returns>
+        /// <response code="200">If the category is added successfully.</response>
+        /// <response code="400">If the category data is invalid.</response>
         [Authorize]
         [HttpPost("add")]
+        [SwaggerOperation(Summary = "Adds a new category for the authenticated user.")]
+        [SwaggerResponse(200, "If the category is added successfully.")]
+        [SwaggerResponse(400, "If the category data is invalid.")]
         public async Task<IActionResult> AddCategory([FromBody] CategoryRequestDTO categoryRequest)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -53,8 +76,23 @@ namespace Digital_Wallet.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an existing category for the authenticated user.
+        /// </summary>
+        /// <param name="categoryId">The ID of the category to update.</param>
+        /// <param name="categoryRequest">The new details of the category.</param>
+        /// <returns>The updated category details.</returns>
+        /// <response code="200">Returns the updated category details.</response>
+        /// <response code="400">If the category data is invalid.</response>
+        /// <response code="404">If the category is not found.</response>
+        /// <response code="403">If the user is not authorized to update the category.</response>
         [Authorize]
         [HttpPut("update/{categoryId}")]
+        [SwaggerOperation(Summary = "Updates an existing category for the authenticated user.")]
+        [SwaggerResponse(200, "Returns the updated category details.", typeof(CategoryResponseDTO))]
+        [SwaggerResponse(400, "If the category data is invalid.")]
+        [SwaggerResponse(404, "If the category is not found.")]
+        [SwaggerResponse(403, "If the user is not authorized to update the category.")]
         public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryRequestDTO categoryRequest)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -76,11 +114,22 @@ namespace Digital_Wallet.Controllers
             {
                 return Forbid(ex.Message);
             }
-
         }
 
+        /// <summary>
+        /// Deletes a specific category by its ID for the authenticated user.
+        /// </summary>
+        /// <param name="categoryId">The ID of the category to delete.</param>
+        /// <returns>A success message if the category is deleted successfully.</returns>
+        /// <response code="200">If the category is deleted successfully.</response>
+        /// <response code="404">If the category is not found.</response>
+        /// <response code="403">If the user is not authorized to delete the category.</response>
         [Authorize]
         [HttpDelete("delete/{categoryId}")]
+        [SwaggerOperation(Summary = "Deletes a specific category by its ID for the authenticated user.")]
+        [SwaggerResponse(200, "If the category is deleted successfully.")]
+        [SwaggerResponse(404, "If the category is not found.")]
+        [SwaggerResponse(403, "If the user is not authorized to delete the category.")]
         public async Task<IActionResult> DeleteCategoryAsync(int categoryId)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
