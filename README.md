@@ -88,38 +88,36 @@ Login Page
 Register Page
 ![Register Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
 Dashboard
-![Dashboard]()
+![Dashboard](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image_kzuvaz.png)
 Google 2FA Page
-![Google 2FA Page]()
+![Google 2FA Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395139/image1_r3qo6d.png)
 Payment Methods Page
-![Payment Methods Page]()
+![Payment Methods Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image2_who2va.png)
 User Transactions Page
-![User Transactions Page]()
+![User Transactions Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image3_hke6zr.png)
 Admin Panel Page
-![Admin Panel Page]()
+![Admin Panel Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image4_gznlk6.png)
 Contacts Page
-![Contacts Page]()
+![Contacts Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image5_zd94oe.png)
 Contacts History Page
-![Contacts History Page]()
+![Contacts History Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395140/image6_ihij18.png)
 Statistics Page
-![Statistics Page]()
+![Statistics Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395141/image7_auhd5r.png)
 User Profile Page
-![User Profile Page]()
+![User Profile Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image8_j7tv3v.png)
 Transactions Pages
 Deposit money
-![Deposit Money Page]()
+![Deposit Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395144/image9_wxhjej.png)
 Withdraw 
-![Withdraw Money Page]()
+![Withdraw Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395145/image10_sokoe9.png)
 Transfer 
-![Transfer Money Page]()
+![Transfer Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395146/image11_vyai43.png)
 Request 
-![Request Money Page]()
+![Request Money Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image12_rgc3f4.png)
 Transfer between personal wallets
-![Transfer Between Personal Wallets Page]()
-Confirm Transaction Page (2FA Enabled)
-![Confirm Transaction Page (2FA Enabled)]()
+![Transfer Between Personal Wallets Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395147/image14_yemfcb.png)
 Transaction Confirmation Page
-![Transaction Confirmation Page]()
+![Transaction Confirmation Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725395149/image15_u9ey8y.png)
 Note -> with a high value transfer this will include a line for the verification code
 Note -> each transfer and request is sent to the wallet that is with the same currency. If this doesn’t exist, then the money is sent to the last selected wallet by the user.
 
@@ -195,6 +193,6 @@ For further information, please feel free to contact us:
 
 | Contacts | Emails | Phone Number |
 | ----- | ----- | ----- |
-| Konstantin Peev | konstantin.i.peev@gmail.com | \+359 88 52 111 28 |
-|  |  |  |
+| Konstantin Peev | konstantin.i.peev@gmail.com | +359 88 521 11 28 |
+| Rosen Damyanov | rosen.damyanov7@gmail.com | +359 88 255 14 18 |
 |  |  |  |
