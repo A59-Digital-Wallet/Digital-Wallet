@@ -79,6 +79,10 @@ namespace Wallet.Services.Implementations
                 Id = wallet.Id,
                 AppUserWallets = wallet.AppUserWallets,
                 OwnerId = userId,
+                IsOverdraftEnabled = wallet.IsOverdraftEnabled,
+                OverdraftLimit = wallet.OverdraftLimit,
+                ConsecutiveNegativeMonths = wallet.ConsecutiveNegativeMonths,
+                InterestRate = wallet.InterestRate,
 
             };
             return walletToReturn;

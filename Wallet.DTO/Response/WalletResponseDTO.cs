@@ -12,5 +12,9 @@ namespace Wallet.DTO.Response
         public WalletType WalletType { get; set; }
         public List<AppUser> AppUserWallets { get; set; } = new List<AppUser>();
         public string OwnerId { get; set; }
+        public bool IsOverdraftEnabled { get; set; }
+        public decimal OverdraftLimit { get; set; }
+        public int ConsecutiveNegativeMonths { get; set; }
+        public decimal InterestRate { get; set; }
     }
 }

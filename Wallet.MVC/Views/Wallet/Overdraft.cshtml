@@ -1,0 +1,44 @@
+﻿@model Wallet.MVC.Models.OverdraftViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Overdraft Details";
+}
+
+<div class="container mx-auto mt-6">
+    <h1 class="text-2xl font-bold mb-4">Overdraft Details for "@Model.WalletName"</h1>
+
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success: </strong>
+            <span class="block sm:inline">@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error: </strong>
+            <span class="block sm:inline">@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+    <div class="bg-white shadow-md rounded p-6">
+        <p><strong>Current Overdraft Status:</strong> @(Model.IsOverdraftEnabled ? "Enabled" : "Disabled")</p>
+        <p><strong>Overdraft Limit:</strong> @Model.OverdraftLimit.ToString("C")</p>
+        <p><strong>Consecutive Negative Months:</strong> @Model.ConsecutiveNegativeMonths</p>
+        <p><strong>Interest Rate:</strong> @Model.InterestRate.ToString("P")</p>
+
+        <!-- Button to toggle overdraft -->
+        <form asp-action="ToggleOverdraft" asp-controller="Wallet" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="walletId" value="@Model.WalletId" />
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300">
+                @(Model.IsOverdraftEnabled ? "Disable Overdraft" : "Enable Overdraft")
+            </button>
+        </form>
+    </div>
+</div>

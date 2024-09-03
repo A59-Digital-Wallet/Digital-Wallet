@@ -151,7 +151,8 @@ namespace Wallet.MVC.Controllers
                     Balance = wallet.Balance,
                     Currency = wallet.Currency.ToString(),
                     Type = wallet.WalletType.ToString(),
-                    CurrencyCulture = CurrencyHelper.GetCurrencyCulture(wallet.Currency.ToString())
+
+        CurrencyCulture = CurrencyHelper.GetCurrencyCulture(wallet.Currency.ToString())
                 }).ToList(),
 
                 Card = cards.FirstOrDefault(),
