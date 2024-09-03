@@ -73,47 +73,59 @@ namespace Wallet.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessTransaction(WalletAndCardSelectionViewModel model)
         {
-            if (ModelState.IsValid)
+            var userId = User.FindFirstValue(ClaimTypes.UserData);
+
+            // Check if the description is empty and add a model error
+            if (string.IsNullOrWhiteSpace(model.Description))
             {
-                var userId = User.FindFirstValue(ClaimTypes.UserData);
-
-                var transactionRequest = new TransactionRequestModel
-                {
-                    WalletId = model.SelectedWalletId, // This is automatically set in SelectWalletAndCard
-                    Amount = model.Amount,
-                    Description = model.Description,
-                    TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
-                    CardId = int.Parse(model.SelectedCardId),
-                    IsRecurring = model.IsRecurring,
-                    RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null
-                };
-                var transactionConfig = new TransactionConfirmationViewModel
-                {
-                    WalletId = model.SelectedWalletId,
-                    CardId = int.Parse(model.SelectedCardId),
-                    Amount = model.Amount,
-                    Description = model.Description,
-                    TransactionType = model.TransactionType,
-
-
-                };
-                try
-                {
-
-
-                    return RedirectToAction("ConfirmTransaction", transactionConfig);
-                }
-                catch (VerificationRequiredException ex)
-                {
-
-                    transactionConfig.TransactionToken = ex.TransactionToken;
-                    transactionConfig.RequiresCode = true;
-                    // Redirect to the confirmation page
-                    return RedirectToAction("ConfirmTransaction", transactionConfig);
-                }
+                ModelState.AddModelError("Description", "Description is required.");
             }
 
-            return View("SelectWalletAndCard", model);
+            if (!ModelState.IsValid)
+            {
+                // Repopulate Cards list if ModelState is not valid
+                var cards = await _cardService.GetCardsAsync(userId);
+                model.Cards = cards.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = $"{c.CardNumber} - {c.CardHolderName} (Exp: {c.ExpiryDate:MM/yy})"
+                }).ToList();
+
+                return View("SelectWalletAndCard", model); // Return view with repopulated data
+            }
+
+            var transactionRequest = new TransactionRequestModel
+            {
+                WalletId = model.SelectedWalletId, // This is automatically set in SelectWalletAndCard
+                Amount = model.Amount,
+                Description = model.Description,
+                TransactionType = Enum.TryParse<TransactionType>(model.TransactionType, true, out var transaction) ? transaction : TransactionType.None,
+                CardId = int.Parse(model.SelectedCardId),
+                IsRecurring = model.IsRecurring,
+                RecurrenceInterval = model.IsRecurring ? model.RecurrenceInterval : null
+            };
+
+            var transactionConfig = new TransactionConfirmationViewModel
+            {
+                WalletId = model.SelectedWalletId,
+                CardId = int.Parse(model.SelectedCardId),
+                Amount = model.Amount,
+                Description = model.Description,
+                TransactionType = model.TransactionType,
+            };
+
+            try
+            {
+                // Process the transaction logic here
+
+                return RedirectToAction("ConfirmTransaction", transactionConfig);
+            }
+            catch (VerificationRequiredException ex)
+            {
+                transactionConfig.TransactionToken = ex.TransactionToken;
+                transactionConfig.RequiresCode = true;
+                return RedirectToAction("ConfirmTransaction", transactionConfig);
+            }
         }
 
         [HttpPost]
@@ -134,8 +146,6 @@ namespace Wallet.MVC.Controllers
 
             return RedirectToAction("TransactionHistory");
         }
-
-
 
         // GET method to show the confirmation view
         [HttpGet]
@@ -194,7 +204,6 @@ namespace Wallet.MVC.Controllers
 
             return View("ConfirmTransaction", model);
         }
-
         public async Task<IActionResult> TransactionHistory(TransactionRequestFilter filter, int page = 1, int pageSize = 20)
         {
             var userId = User.FindFirstValue(ClaimTypes.UserData);
@@ -248,10 +257,6 @@ namespace Wallet.MVC.Controllers
             return View(model);
         }
 
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> InitiateTransfer(string contactId)
         {
@@ -299,7 +304,6 @@ namespace Wallet.MVC.Controllers
         }
 
 
-
         [HttpGet]
         public async Task<IActionResult> ContactHistory(string contactId)
         {
@@ -322,10 +326,6 @@ namespace Wallet.MVC.Controllers
 
             return View(model);
         }
-
-
-
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -401,14 +401,6 @@ namespace Wallet.MVC.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
         [HttpGet]
         public async Task<IActionResult> TransferBetweenWallets()
         {
@@ -479,11 +471,6 @@ namespace Wallet.MVC.Controllers
 
             return View("TransferBetweenWallets", model);
         }
-
-
-
-
-
     }
 
 }

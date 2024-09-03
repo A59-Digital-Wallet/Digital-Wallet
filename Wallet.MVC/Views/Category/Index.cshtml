@@ -7,73 +7,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Categories</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f7f7f7;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .card-container {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 20px auto;
-        }
-
-        .btn-primary-custom {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-            .btn-primary-custom:hover {
-                background-color: #594ad5;
-                border-color: #594ad5;
-            }
-
-        .list-group-item {
-            background-color: transparent;
-            border: none;
-            padding-left: 0;
-            padding-right: 0;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-            .list-group-item .d-flex {
-                align-items: center;
-            }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container mt-4">
-        <h2 class="mb-4">Categories</h2>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto mt-10">
+        <h2 class="text-2xl font-bold mb-6">Categories</h2>
 
         @if (Model.Any())
         {
             @foreach (var category in Model)
             {
-                <div class="card-container mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <a href="@Url.Action("CategoryTransactions", "Category", new { categoryId = category.Id })" class="text-decoration-none text-dark">
-                                <span>@category.Name</span>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="@Url.Action("EditCategory", new { id = category.Id })" class="btn btn-warning">Edit</a>
-                            <form asp-action="DeleteCategory" method="post" style="display:inline-block;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="categoryId" value="@category.Id" />
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
+                <div class="bg-white rounded-xl p-6 shadow-md mb-6 relative max-w-lg mx-auto">
+                    <div class="flex justify-between items-center">
+                        <a href="@Url.Action("CategoryTransactions", "Category", new { categoryId = category.Id })" class="text-lg font-semibold text-gray-800 hover:text-indigo-600">
+                            @category.Name
+                        </a>
+
+                        <!-- Dropdown Menu -->
+                        <div class="relative">
+                            <button class="text-gray-600 hover:text-gray-900 focus:outline-none" onclick="toggleDropdown(this)">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h.01M12 12h.01M18 12h.01" />
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10 hidden">
+                                <a href="@Url.Action("EditCategory", new { id = category.Id })" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                                <form asp-action="DeleteCategory" method="post" class="block w-full">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="categoryId" value="@category.Id" />
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -81,18 +46,33 @@
         }
         else
         {
-            <div class="alert alert-info">
+            <div class="bg-blue-100 border border-blue-200 text-blue-800 px-4 py-3 rounded relative max-w-lg mx-auto">
                 @ViewBag.ErrorMessage
             </div>
         }
 
-        <div class="text-center mt-4">
-            <a href="@Url.Action("CreateCategory", "Category")" class="btn btn-primary-custom">Add Category</a>
+        <div class="text-center mt-6">
+            <a href="@Url.Action("CreateCategory", "Category")" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-150">Add Category</a>
         </div>
     </div>
 
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript to toggle dropdown menu visibility
+        function toggleDropdown(button) {
+            const dropdownContent = button.nextElementSibling;
+            dropdownContent.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (event) {
+            const dropdowns = document.querySelectorAll('.relative .absolute');
+            dropdowns.forEach(function (dropdown) {
+                if (!dropdown.contains(event.target) && !dropdown.previousElementSibling.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

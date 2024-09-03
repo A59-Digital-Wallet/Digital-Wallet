@@ -2,12 +2,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transfer Between Wallets</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
     <div class="container mx-auto mt-12">
         <div class="bg-white p-8 rounded-xl shadow-lg">
@@ -20,7 +22,7 @@
                 <!-- Select Wallet to Transfer To -->
                 <div>
                     <label asp-for="ToWalletId" class="block text-sm font-medium text-gray-700">Transfer To Wallet</label>
-                    <select asp-for="ToWalletId" class="form-select mt-1 block w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <select asp-for="ToWalletId" class="form-select mt-1 block w-full p-3 border @((ViewData.ModelState["ToWalletId"]?.Errors.Count > 0) ? "border-red-500" : "border-gray-300") rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" id="ToWalletId">
                         <option value="">-- Select Wallet --</option>
                         @foreach (var wallet in Model.RecipientWallets)
                         {
@@ -34,20 +36,21 @@
                 <div>
                     <label asp-for="Amount" class="block text-sm font-medium text-gray-700">Amount</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input asp-for="Amount" class="form-input block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter amount" step="0.01" />
-                        <span asp-validation-for="Amount" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500 text-sm"></span>
+                        <input asp-for="Amount" class="form-input block w-full p-3 border @((ViewData.ModelState["Amount"]?.Errors.Count > 0) ? "border-red-500" : "border-gray-300") rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter amount" step="0.01" id="AmountInput" />
+                        <span asp-validation-for="Amount" class="text-red-500 text-sm mt-2 block"></span>
                     </div>
                 </div>
 
                 <!-- Description Field -->
                 <div>
                     <label asp-for="Description" class="block text-sm font-medium text-gray-700">Description (optional)</label>
-                    <input asp-for="Description" class="form-input mt-1 block w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a note" />
+                    <input asp-for="Description" class="form-input mt-1 block w-full p-3 border @((ViewData.ModelState["Description"]?.Errors.Count > 0) ? "border-red-500" : "border-gray-300") rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="Add a note" id="DescriptionInput" value="Transfer" />
+                    <span asp-validation-for="Description" class="text-red-500 text-sm mt-2 block"></span>
                 </div>
 
                 <!-- Recurring Transfer Option -->
                 <div class="flex items-center">
-                    <input asp-for="IsRecurring" type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" />
+                    <input asp-for="IsRecurring" type="checkbox" class="form-checkbox h-5 w-5 text-indigo-600 rounded focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" id="IsRecurring" />
                     <label asp-for="IsRecurring" class="ml-2 block text-sm font-medium text-gray-700">Make Recurring</label>
                 </div>
 
@@ -79,6 +82,28 @@
                 intervalGroup.style.display = 'none';
             }
         });
+
+        // Reset the border color when changing the Card selection
+        var toWalletInput = document.getElementById('ToWalletId');
+        toWalletInput.addEventListener('change', function () {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        });
+
+        // Reset the border color when clicking or typing in the Amount input field
+        var amountInput = document.getElementById('AmountInput');
+        amountInput.addEventListener('input', function () {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        });
+
+        // Reset the border color when clicking or typing in the Description input field
+        var descriptionInput = document.getElementById('DescriptionInput');
+        descriptionInput.addEventListener('input', function () {
+            this.classList.remove('border-red-500');
+            this.classList.add('border-gray-300');
+        });
     </script>
 </body>
+
 </html>

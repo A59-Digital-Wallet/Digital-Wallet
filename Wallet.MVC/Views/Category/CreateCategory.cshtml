@@ -7,62 +7,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Category</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f7f7f7;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .card-container {
-            background-color: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 20px auto;
-        }
-
-        .btn-primary-custom {
-            background-color: #6c63ff;
-            border-color: #6c63ff;
-            color: #fff;
-            border-radius: 50px;
-            padding: 10px 20px;
-        }
-
-            .btn-primary-custom:hover {
-                background-color: #594ad5;
-                border-color: #594ad5;
-            }
-
-        .form-group label {
-            font-weight: bold;
-            color: #333;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-    <div class="container mt-4">
-        <div class="card-container">
-            <h2 class="mb-4">Create Category</h2>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto mt-10">
+        <div class="bg-white rounded-xl p-8 shadow-lg max-w-lg mx-auto">
+            <h2 class="text-2xl font-bold mb-6">Create Category</h2>
 
-            <form method="post" asp-action="CreateCategory">
-                <div class="form-group mb-3">
-                    <label asp-for="Name" class="font-semibold text-gray-700">Category Name</label>
-                    <input asp-for="Name" class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+            <form method="post" asp-action="CreateCategory" class="space-y-6">
+                <!-- Category Name Input -->
+                <div>
+                    <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                    <input asp-for="Name"
+                           class="w-full p-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out @((ViewData.ModelState["Name"]?.Errors.Count > 0 ? "border-red-500" : "border-gray-300"))" />
+                    <span asp-validation-for="Name" class="text-red-500 text-sm mt-2 block"></span>
                 </div>
-                <button type="submit" class="btn btn-primary-custom">Save Changes</button>
-                <a href="@Url.Action("Index", "Category")" class="btn btn-outline-secondary">Cancel</a>
-            </form>
 
+                <!-- Buttons -->
+                <div class="flex space-x-4">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow-lg transition duration-150">Save Changes</button>
+                    <a href="@Url.Action("Index", "Category")" class="bg-gray-300 hover:bg-gray-400 text-gray-700 font-bold py-2 px-6 rounded-full shadow-lg transition duration-150">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
 
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

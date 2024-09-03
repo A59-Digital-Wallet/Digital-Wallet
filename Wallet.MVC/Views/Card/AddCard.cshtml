@@ -32,7 +32,7 @@
         <div>
             <label for="CardHolderName" class="block text-sm font-medium text-gray-700">Cardholder Name</label>
             <input type="text" id="CardHolderName" name="CardHolderName" required
-                   class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]"
+                   class="w-full p-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color] @((ViewData.ModelState["CardHolderName"]?.Errors.Count > 0 ? "border-red-500" : "border-gray-300"))"
                    placeholder="John Smith">
             <span asp-validation-for="CardHolderName" class="text-red-500 text-sm"></span>
         </div>
@@ -41,7 +41,7 @@
         <div>
             <label for="CardNumber" class="block text-sm font-medium text-gray-700">Card Number</label>
             <input type="text" id="CardNumber" name="CardNumber" required
-                   class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]"
+                   class="w-full p-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color] @((ViewData.ModelState["CardNumber"]?.Errors.Count > 0 ? "border-red-500" : "border-gray-300"))"
                    placeholder="4256 7890 5678 4532">
             <span asp-validation-for="CardNumber" class="text-red-500 text-sm"></span>
         </div>
@@ -50,7 +50,7 @@
         <div>
             <label for="ExpiryDate" class="block text-sm font-medium text-gray-700">Expiry Date</label>
             <input type="text" id="ExpiryDate" name="ExpiryDate" required pattern="\d{2}/\d{2}" title="Format: MM/YY"
-                   class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]"
+                   class="w-full p-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color] @((ViewData.ModelState["ExpiryDate"]?.Errors.Count > 0 ? "border-red-500" : "border-gray-300"))"
                    placeholder="MM/YY">
             <span asp-validation-for="ExpiryDate" class="text-red-500 text-sm"></span>
         </div>
@@ -59,7 +59,7 @@
         <div>
             <label for="CVV" class="block text-sm font-medium text-gray-700">CVV</label>
             <input type="text" id="CVV" name="CVV" required
-                   class="w-full p-3 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color]"
+                   class="w-full p-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:shadow-md shadow-[#6172de] transition duration-300 ease-in-out transition-property[box-shadow,border-color] @((ViewData.ModelState["CVV"]?.Errors.Count > 0 ? "border-red-500" : "border-gray-300"))"
                    placeholder="145">
             <span asp-validation-for="CVV" class="text-red-500 text-sm"></span>
         </div>
@@ -80,6 +80,14 @@
             if (this.value.length === 2 && !this.value.includes("/")) {
                 this.value = this.value + "/";
             }
+        });
+
+        // Reset the border color when typing in input fields
+        document.querySelectorAll('input').forEach(function (input) {
+            input.addEventListener('input', function () {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-gray-300');
+            });
         });
     });
 </script>
