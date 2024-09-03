@@ -79,32 +79,54 @@ Follow these steps to set up and run the application:
    * Modify the "DefaultConnection" string in each file to include your database server and database name details. Utilize the following format as a reference: `json "DefaultConnection": "Server=YourServerName;Database=YourDatabaseName; Integrated Security=True; MultipleActiveResultSets=True; TrustServerCertificate=True"`  
 3. **Run the Application**  
    * Open the project in your preferred IDE.  
-   * Add a migration and update the database. After that, run the program and the database should be set up and the program : ready to use. 
+   * Add a migration and update the database. After that, run the program and the database should be set up and the program : ready to use.
 
-\<hr\>
-![Home Page - Before Login](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392863/1_exkjpn.png)
-![Home Page - After Login](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/2_nhouap.png)
-![Login Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
-![Register Page]()
+Home Page - before and after login
+![Home Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392863/1_exkjpn.png)
+Login Page
+![Login Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/2_nhouap.png)
+Register Page
+![Register Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725392860/3_q4qki7.png)
+Dashboard
 ![Dashboard]()
+Google 2FA Page
 ![Google 2FA Page]()
+Payment Methods Page
 ![Payment Methods Page]()
+User Transactions Page
 ![User Transactions Page]()
+Admin Panel Page
 ![Admin Panel Page]()
+Contacts Page
 ![Contacts Page]()
+Contacts History Page
 ![Contacts History Page]()
+Statistics Page
 ![Statistics Page]()
-![Deposit Money Page]()
+User Profile Page
+![User Profile Page]()
 Transactions Pages
+Deposit money
 ![Deposit Money Page]()
+Withdraw 
 ![Withdraw Money Page]()
+Transfer 
 ![Transfer Money Page]()
+Request 
 ![Request Money Page]()
+Transfer between personal wallets
 ![Transfer Between Personal Wallets Page]()
-![Transfer Between Personal Wallets Page]()
+Confirm Transaction Page (2FA Enabled)
 ![Confirm Transaction Page (2FA Enabled)]()
+Transaction Confirmation Page
 ![Transaction Confirmation Page]()
-![API Page]()
+Note -> with a high value transfer this will include a line for the verification code
+Note -> each transfer and request is sent to the wallet that is with the same currency. If this doesn’t exist, then the money is sent to the last selected wallet by the user.
+
+API Page
+![API Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725393570/api-1_zhrbnk.png)
+![API Page](https://res.cloudinary.com/dpfnd2zns/image/upload/v1725393570/api-2_tb3e1o.png)
+Database Diagram
 ![Database Diagram]()
 
 # **ASP.NET Framework Web Application**
