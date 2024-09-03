@@ -7,46 +7,44 @@
     ViewData["Title"] = "Transaction History";
 }
 
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Ensure Tailwind CSS is included in your layout -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 
-<div class="container shadow-md rounded-lg p-4">
+<div class="container mx-auto bg-white shadow-md rounded-lg p-6 max-w-4xl my-8">
     <h2 class="text-3xl font-bold text-gray-800 mb-5">Transaction History</h2>
 
     <!-- Toggle Button for Filters -->
-    <button class="btn btn-primary mb-4" type="button" id="toggleFiltersButton">
+    <button class="btn btn-primary mb-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" type="button" id="toggleFiltersButton">
         Show Filters
     </button>
 
     <!-- Filters Container (Initially Hidden) -->
     <div id="filtersContainer" class="mb-4" style="display: none;">
         <form method="get" asp-action="TransactionHistory">
-            <div class="row">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- First Row of Filters -->
-                <div class="col-md-6 mb-2">
-                    <label for="Date" class="font-semibold text-gray-700">Specific Date</label>
-                    <input type="date" id="Date" name="filter.Date" class="form-control p-2 rounded-lg border-gray-300" value="@Model.Filter.Date?.ToString("yyyy-MM-dd")" />
+                <div>
+                    <label for="Date" class="block font-semibold text-gray-700 mb-1">Specific Date</label>
+                    <input type="date" id="Date" name="filter.Date" class="form-control p-2 rounded-lg border-gray-300 w-full" value="@Model.Filter.Date?.ToString("yyyy-MM-dd")" />
                 </div>
-                <div class="col-md-6 mb-2">
-                    <label for="StartDate" class="font-semibold text-gray-700">Start Date</label>
-                    <input type="date" id="StartDate" name="filter.StartDate" class="form-control p-2 rounded-lg border-gray-300" value="@Model.Filter.StartDate?.ToString("yyyy-MM-dd")" />
+                <div>
+                    <label for="StartDate" class="block font-semibold text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="StartDate" name="filter.StartDate" class="form-control p-2 rounded-lg border-gray-300 w-full" value="@Model.Filter.StartDate?.ToString("yyyy-MM-dd")" />
                 </div>
-            </div>
-            <div class="row">
+
                 <!-- Second Row of Filters -->
-                <div class="col-md-6 mb-2">
-                    <label for="TransactionType" class="font-semibold text-gray-700">Transaction Type</label>
-                    <select id="TransactionType" name="filter.TransactionType" class="form-control p-2 rounded-lg border-gray-300">
+                <div>
+                    <label for="TransactionType" class="block font-semibold text-gray-700 mb-1">Transaction Type</label>
+                    <select id="TransactionType" name="filter.TransactionType" class="form-control p-2 rounded-lg border-gray-300 w-full">
                         <option value="0" selected="@(Model.Filter.TransactionType == TransactionType.None ? "selected" : null)">All</option>
                         <option value="2" selected="@(Model.Filter.TransactionType == TransactionType.Deposit ? "selected" : null)">Deposit</option>
                         <option value="1" selected="@(Model.Filter.TransactionType == TransactionType.Withdraw ? "selected" : null)">Withdraw</option>
                         <option value="3" selected="@(Model.Filter.TransactionType == TransactionType.Transfer ? "selected" : null)">Transfer</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-2">
-                    <label for="Currency" class="font-semibold text-gray-700">Currency</label>
-                    <select id="Currency" name="filter.Currency" class="form-control p-2 rounded-lg border-gray-300">
+                <div>
+                    <label for="Currency" class="block font-semibold text-gray-700 mb-1">Currency</label>
+                    <select id="Currency" name="filter.Currency" class="form-control p-2 rounded-lg border-gray-300 w-full">
                         <option value="0" selected="@(Model.Filter.Currency == Currency.None ? "selected" : null)">All</option>
                         @foreach (var currency in Enum.GetValues(typeof(Currency)))
                         {
@@ -54,16 +52,15 @@
                         }
                     </select>
                 </div>
-            </div>
-            <div class="row">
+
                 <!-- Third Row of Filters -->
-                <div class="col-md-6 mb-2">
-                    <label for="Amount" class="font-semibold text-gray-700">Amount</label>
-                    <input type="number" id="Amount" name="filter.Amount" class="form-control p-2 rounded-lg border-gray-300" value="@Model.Filter.Amount" />
+                <div>
+                    <label for="Amount" class="block font-semibold text-gray-700 mb-1">Amount</label>
+                    <input type="number" id="Amount" name="filter.Amount" class="form-control p-2 rounded-lg border-gray-300 w-full" value="@Model.Filter.Amount" />
                 </div>
-                <div class="col-md-6 mb-2">
-                    <label for="WalletId" class="font-semibold text-gray-700">Wallet</label>
-                    <select id="WalletId" name="filter.WalletId" class="form-control p-2 rounded-lg border-gray-300">
+                <div>
+                    <label for="WalletId" class="block font-semibold text-gray-700 mb-1">Wallet</label>
+                    <select id="WalletId" name="filter.WalletId" class="form-control p-2 rounded-lg border-gray-300 w-full">
                         <option value="0" selected="@(Model.Filter.WalletId == 0 ? "selected" : null)">All</option>
                         @foreach (var wallet in Model.Wallets)
                         {
@@ -71,43 +68,42 @@
                         }
                     </select>
                 </div>
-            </div>
-            <div class="row">
+
                 <!-- Fourth Row of Filters -->
-                <div class="col-md-6 mb-2">
-                    <label for="SortBy" class="font-semibold text-gray-700">Sort By</label>
-                    <select id="SortBy" name="filter.SortBy" class="form-control p-2 rounded-lg border-gray-300">
+                <div>
+                    <label for="SortBy" class="block font-semibold text-gray-700 mb-1">Sort By</label>
+                    <select id="SortBy" name="filter.SortBy" class="form-control p-2 rounded-lg border-gray-300 w-full">
                         <option value="Date" selected="@(Model.Filter.SortBy == "Date" ? "selected" : null)">Date</option>
                         <option value="Amount" selected="@(Model.Filter.SortBy == "Amount" ? "selected" : null)">Amount</option>
                         <option value="Status" selected="@(Model.Filter.SortBy == "Status" ? "selected" : null)">Status</option>
                     </select>
                 </div>
-                <div class="col-md-6 mb-2">
-                    <label for="OrderBy" class="font-semibold text-gray-700">Order By</label>
-                    <select id="OrderBy" name="filter.OrderBy" class="form-control p-2 rounded-lg border-gray-300">
+                <div>
+                    <label for="OrderBy" class="block font-semibold text-gray-700 mb-1">Order By</label>
+                    <select id="OrderBy" name="filter.OrderBy" class="form-control p-2 rounded-lg border-gray-300 w-full">
                         <option value="asc" selected="@(Model.Filter.OrderBy == "asc" ? "selected" : null)">Ascending</option>
                         <option value="desc" selected="@(Model.Filter.OrderBy == "desc" ? "selected" : null)">Descending</option>
                     </select>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600">Apply Filters</button>
+            <button type="submit" class="btn btn-primary mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Apply Filters</button>
         </form>
     </div>
 
     <!-- Transactions Display -->
-    <div class="mt-5">
+    <div class="mt-8">
         @foreach (var monthlyGroup in Model.MonthlyTransactions)
         {
             <h3 class="text-xl font-bold text-gray-700 mt-4">@monthlyGroup.MonthYear</h3>
-            <table class="table-auto w-full mt-2 border-collapse">
+            <table class="table-auto w-full mt-2 border border-gray-200 rounded-lg">
                 <thead>
-                    <tr class="border-b text-left">
-                        <th class="p-2 text-sm font-semibold text-gray-700">Date</th>
-                        <th class="p-2 text-sm font-semibold text-gray-700">Description</th>
-                        <th class="p-2 text-sm font-semibold text-gray-700">Amount</th>
-                        <th class="p-2 text-sm font-semibold text-gray-700">Type</th>
-                        <th class="p-2 text-sm font-semibold text-gray-700">Direction</th>
-                        <th class="p-2 text-sm font-semibold text-gray-700">Action</th>
+                    <tr class="bg-gray-100 text-left">
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Date</th>
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Description</th>
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Amount</th>
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Type</th>
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Direction</th>
+                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -153,26 +149,27 @@
                                 {
                                     <form asp-action="CancelRecurringTransaction" method="post" onsubmit="return confirm('Are you sure you want to cancel this recurring transaction?');">
                                         <input type="hidden" name="transactionId" value="@transaction.Id" />
-                                        <button type="submit" class="btn btn-sm btn-danger">Cancel Recurring</button>
+                                        <button type="submit" class="bg-red-500 text-white px-4 py-1 rounded text-sm hover:bg-red-600">Cancel Recurring</button>
                                     </form>
                                 }
                             </td>
                         </tr>
                     }
-
                 </tbody>
             </table>
         }
     </div>
-    <div class="pagination mt-4">
+
+    <!-- Pagination -->
+    <div class="pagination mt-6">
         @if (Model.TotalPages > 1)
         {
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
+                <ul class="inline-flex items-center -space-x-px">
                     @if (Model.CurrentPage > 1)
                     {
-                        <li class="page-item">
-                            <a class="page-link" href="@Url.Action("TransactionHistory", new {
+                        <li>
+                            <a class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700" href="@Url.Action("TransactionHistory", new {
                             page = Model.CurrentPage - 1,
                             pageSize = Model.PageSize,
                             Date = Model.Filter.Date,
@@ -189,8 +186,8 @@
 
                     @for (int i = 1; i <= Model.TotalPages; i++)
                     {
-                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("TransactionHistory", new {
+                        <li>
+                            <a class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 @(i == Model.CurrentPage ? "bg-blue-500 text-white" : "")" href="@Url.Action("TransactionHistory", new {
                             page = i,
                             pageSize = Model.PageSize,
                             Date = Model.Filter.Date,
@@ -207,8 +204,8 @@
 
                     @if (Model.CurrentPage < Model.TotalPages)
                     {
-                        <li class="page-item">
-                            <a class="page-link" href="@Url.Action("TransactionHistory", new {
+                        <li>
+                            <a class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700" href="@Url.Action("TransactionHistory", new {
                             page = Model.CurrentPage + 1,
                             pageSize = Model.PageSize,
                             Date = Model.Filter.Date,
@@ -226,9 +223,6 @@
             </nav>
         }
     </div>
-
-
-
 </div>
 
 <script>
@@ -243,98 +237,3 @@
         }
     });
 </script>
-
-<style>
-    .container {
-        background-color: #ffffff;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        max-width: 800px;
-        margin: 20px auto;
-    }
-
-    h2 {
-        color: #333;
-    }
-
-    .mt-4 {
-        margin-top: 1rem;
-    }
-
-    .mt-5 {
-        margin-top: 2rem;
-    }
-
-    .shadow-md {
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .rounded-lg {
-        border-radius: 10px;
-    }
-
-    .border-b {
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    .last\:border-none {
-        border-bottom: none;
-    }
-
-    .p-4 {
-        padding: 1rem;
-    }
-
-    .text-3xl {
-        font-size: 1.875rem;
-        line-height: 2.25rem;
-    }
-
-    .text-xl {
-        font-size: 1.25rem;
-        line-height: 1.75rem;
-    }
-
-    .text-lg {
-        font-size: 1.125rem;
-        line-height: 1.75rem;
-    }
-
-    .text-sm {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
-
-    .text-gray-500 {
-        color: #6b7280;
-    }
-
-    .text-gray-700 {
-        color: #374151;
-    }
-
-    .text-gray-800 {
-        color: #1f2937;
-    }
-
-    .text-green-500 {
-        color: #10b981;
-    }
-
-    .text-red-500 {
-        color: #ef4444;
-    }
-
-    .font-bold {
-        font-weight: 700;
-    }
-
-    .font-semibold {
-        font-weight: 600;
-    }
-
-    .font-medium {
-        font-weight: 500;
-    }
-</style>
