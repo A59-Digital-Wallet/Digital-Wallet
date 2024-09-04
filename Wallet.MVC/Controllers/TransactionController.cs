@@ -62,6 +62,7 @@ namespace Wallet.MVC.Controllers
                     Value = c.Id.ToString(),
                     Text = $"{c.CardNumber} - {c.CardHolderName} (Exp: {c.ExpiryDate:MM/yy})"
                 }).ToList(),
+                
 
             };
 
@@ -116,7 +117,11 @@ namespace Wallet.MVC.Controllers
 
             try
             {
-                // Process the transaction logic here
+                if(transactionRequest.IsRecurring)
+                {
+                    await _transactionService.CreateTransactionAsync(transactionRequest, userId);
+                    return RedirectToAction("Index", "Dashboard");
+                }
 
                 return RedirectToAction("ConfirmTransaction", transactionConfig);
             }
@@ -179,6 +184,7 @@ namespace Wallet.MVC.Controllers
                     Token = model.TransactionToken,
                     RecepientWalletId = model.RecipinetWalletId,
                     CategoryId = model.CategoryId,
+                    
                 };
 
                 await _transactionService.CreateTransactionAsync(transactionRequest, userId, model.VerificationCode);
