@@ -261,6 +261,12 @@
                                                     </option>
                                                 }
                                             </select>
+                                            @if (ViewBag.ShowManageMembersButton)
+                                            {
+                                                <a href="@Url.Action("ManageJointWalletMembers", "Wallet", new { walletId = ViewBag.SelectedWallet.Id })" class="btn-secondary py-2 px-4 rounded-full font-bold shadow">
+                                                    Manage Members
+                                                </a>
+                                            }
                                         </form>
                                     </div>
                                 </div>
