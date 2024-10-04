@@ -214,8 +214,3 @@ This is the main project for client-side interactions, containing all HTML, CSS,
 
 For further information, please feel free to contact us:
 
-| Contacts | Emails | Phone Number |
-| ----- | ----- | ----- |
-| Konstantin Peev | konstantin.i.peev@gmail.com | +359 88 521 11 28 |
-| Rosen Damyanov | rosen.damyanov7@gmail.com | +359 88 255 14 18 |
-|  |  |  |
